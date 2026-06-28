@@ -59,6 +59,9 @@ export function generateUniqueSlug(
 
 /** 슬러그가 키워드 서브페이지 패턴인지 판별 (Next.js 예약 경로 제외) */
 export function isKeywordSlug(pathname: string): boolean {
+  const segment = pathname.replace(/^\//, "").split("/")[0]?.toLowerCase();
+  if (!segment) return false;
+
   const reserved = [
     "api",
     "admin",
@@ -66,7 +69,9 @@ export function isKeywordSlug(pathname: string): boolean {
     "favicon.ico",
     "robots.txt",
     "sitemap.xml",
+    "feed.xml",
+    "rss.xml",
   ];
-  const segment = pathname.replace(/^\//, "").split("/")[0];
-  return segment.length > 0 && !reserved.includes(segment);
+
+  return !reserved.includes(segment);
 }

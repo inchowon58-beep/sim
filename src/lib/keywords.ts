@@ -7,8 +7,15 @@ import { readJsonArray, writeJsonArray } from "./data-store";
 import { generateUniqueSlug, keywordToSlug } from "./slug";
 import { mixContentForBottom } from "./content-mixer";
 import { pickRandomImage } from "./image-picker";
-import { submitIndexNowForSlug } from "./indexnow";
+import { submitIndexNow, submitIndexNowForSlug, buildSubpageUrl } from "./indexnow";
 import { buildAutoSeo } from "./seo-auto";
+import {
+  MAX_BULK_KEYWORDS,
+  parseKeywordList,
+} from "./keyword-import";
+import type { IndexNowLogEntry } from "@/types/indexnow";
+
+export { parseKeywordList, MAX_BULK_KEYWORDS };
 
 const DATA_FILE = "data/keywords.json";
 
@@ -149,4 +156,109 @@ export async function updateKeyword(
 export async function deactivateKeyword(slug: string): Promise<boolean> {
   const { entry } = await updateKeyword(slug, { active: false });
   return entry !== null;
+}
+
+export interface BulkCreateKeywordResult {
+  created: KeywordEntry[];
+  failed: { keyword: string; error: string }[];
+  indexNow?: IndexNowLogEntry;
+}
+
+/** txt·쉼표 구분 키워드 대량 등록 (단일 저장 + IndexNow 일괄 제출) */
+export async function createKeywordsBulk(
+  rawKeywords: string[]
+): Promise<BulkCreateKeywordResult> {
+  const keywords = rawKeywords
+    .map((k) => k.trim())
+    .filter(Boolean);
+
+  if (keywords.length === 0) {
+    throw new Error("등록할 키워드가 없습니다.");
+  }
+
+  if (keywords.length > MAX_BULK_KEYWORDS) {
+    throw new Error(
+      `한 번에 최대 ${MAX_BULK_KEYWORDS}개까지 등록할 수 있습니다. (요청: ${keywords.length}개)`
+    );
+  }
+
+  const allEntries = await readAllEntries();
+  const slugList = allEntries.map((k) => k.slug);
+  const slugSet = new Set(slugList.map((s) => decodeURIComponent(s)));
+
+  const created: KeywordEntry[] = [];
+  const failed: { keyword: string; error: string }[] = [];
+  const now = new Date().toISOString();
+
+  for (let i = 0; i < keywords.length; i++) {
+    const baseKeyword = keywords[i];
+
+    try {
+      const { slug, suffix } = generateUniqueSlug(baseKeyword, slugList);
+      slugList.push(slug);
+      slugSet.add(slug);
+
+      const autoSeo = await buildAutoSeo(baseKeyword, slug);
+      const mixedImageUrl = await pickRandomImage(slug);
+
+      const entry: KeywordEntry = {
+        id: `kw-${Date.now().toString(36)}-${i.toString(36)}`,
+        slug,
+        baseKeyword,
+        suffix,
+        title: autoSeo.title,
+        description: autoSeo.description,
+        content: "",
+        useContentMixer: true,
+        mixedImageUrl: mixedImageUrl ?? undefined,
+        ogImage: mixedImageUrl ?? undefined,
+        tags: autoSeo.relatedKeywords,
+        active: true,
+        createdAt: now,
+        updatedAt: now,
+      };
+
+      allEntries.push(entry);
+      created.push(entry);
+    } catch (error) {
+      failed.push({
+        keyword: baseKeyword,
+        error: error instanceof Error ? error.message : "등록 실패",
+      });
+    }
+  }
+
+  if (created.length > 0) {
+    await writeAllEntries(allEntries);
+  }
+
+  let indexNow: IndexNowLogEntry | undefined;
+  if (created.length > 0) {
+    const urlList = created.map((entry) => buildSubpageUrl(entry.slug));
+    const chunkSize = 100;
+
+    for (let i = 0; i < urlList.length; i += chunkSize) {
+      const chunk = urlList.slice(i, i + chunkSize);
+      const result = await submitIndexNow(chunk, "create").catch((error) => {
+        console.error("[IndexNow] bulk submit failed:", error);
+        return undefined;
+      });
+      if (result) indexNow = result;
+    }
+  }
+
+  return { created, failed, indexNow };
+}
+
+/** txt 본문에서 파싱 후 대량 등록 */
+export async function createKeywordsFromText(
+  text: string
+): Promise<BulkCreateKeywordResult> {
+  const parsed = parseKeywordList(text);
+  if (parsed.length === 0) {
+    throw new Error(
+      "파일에서 키워드를 찾을 수 없습니다. 한 줄에 하나 또는 쉼표(,)로 구분해 주세요."
+    );
+  }
+  return createKeywordsBulk(parsed);
 }

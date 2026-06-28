@@ -1,13 +1,6 @@
-/** agapetstory 가 사용하는 단일 경로 (SEO 서브페이지 아님) */
-const AGAPET_SINGLE_SEGMENTS = new Set(["pets"]);
+import { AGAPET_SINGLE_SEGMENTS, APP_STATIC_PATHS } from "./app-paths";
 
-const APP_RESERVED_SEGMENTS = new Set([
-  "api",
-  "admin",
-  "favicon.ico",
-  "robots.txt",
-  "sitemap.xml",
-]);
+export { AGAPET_SINGLE_SEGMENTS, APP_STATIC_PATHS };
 
 /**
  * SEO 서브페이지 후보 경로 (한글 단일 세그먼트)
@@ -23,7 +16,7 @@ export function isPotentialKeywordSubpagePath(pathname: string): boolean {
   const segment = decodeURIComponent(segments[0]);
   const lower = segment.toLowerCase();
 
-  if (APP_RESERVED_SEGMENTS.has(lower)) return false;
+  if (APP_STATIC_PATHS.has(lower)) return false;
   if (AGAPET_SINGLE_SEGMENTS.has(lower)) return false;
   if (lower.startsWith("_next")) return false;
 

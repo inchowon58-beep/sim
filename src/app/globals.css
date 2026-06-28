@@ -533,6 +533,39 @@ a:hover {
   margin-top: 0.5rem;
 }
 
+.admin-bulk-import {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed var(--color-border);
+}
+
+.admin-bulk-import-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.admin-bulk-import-desc {
+  margin: 0 0 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.admin-file-input {
+  display: none;
+}
+
+.admin-info-card a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+.admin-info-card a:hover {
+  text-decoration: underline;
+}
+
 .admin-section-head {
   display: flex;
   align-items: flex-start;

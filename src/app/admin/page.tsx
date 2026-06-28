@@ -37,6 +37,18 @@ export default async function AdminPage() {
           <strong>키워드 URL</strong>
           <span>SEO + 아가펫스토리</span>
         </div>
+        <div className="admin-info-card">
+          <strong>사이트맵 / RSS</strong>
+          <span>
+            <a href="/sitemap.xml" target="_blank" rel="noopener noreferrer">
+              sitemap.xml
+            </a>
+            {" · "}
+            <a href="/feed.xml" target="_blank" rel="noopener noreferrer">
+              feed.xml
+            </a>
+          </span>
+        </div>
         <div className="admin-info-card admin-info-card--active">
           <strong>/admin</strong>
           <span>설정 전용 (지금 여기)</span>

@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 const PAGE_SIZE = 10;
 const MAX_DISPLAY = 100;
+const MAX_BULK = 500;
 
 interface KeywordItem {
   id: string;
@@ -30,8 +31,10 @@ export function KeywordAdminPanel({ initialKeywords }: KeywordAdminPanelProps) {
   const [page, setPage] = useState(1);
   const [baseKeyword, setBaseKeyword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [bulkLoading, setBulkLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [lastCreated, setLastCreated] = useState<{
     title: string;
     description: string;
@@ -107,6 +110,76 @@ export function KeywordAdminPanel({ initialKeywords }: KeywordAdminPanelProps) {
     setPage(Math.max(1, Math.min(totalPages, next)));
   }
 
+  async function handleBulkFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    setBulkLoading(true);
+    setMessage(null);
+    setError(null);
+    setLastCreated(null);
+
+    try {
+      const text = await file.text();
+      const res = await fetch("/api/keywords/bulk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "대량 등록 실패");
+
+      if (data.created?.length) {
+        setKeywords((prev) =>
+          sortByLatest([
+            ...data.created.map(
+              (entry: {
+                id: string;
+                slug: string;
+                baseKeyword: string;
+                createdAt: string;
+              }) => ({
+                id: entry.id,
+                slug: entry.slug,
+                baseKeyword: entry.baseKeyword,
+                createdAt: entry.createdAt,
+              })
+            ),
+            ...prev,
+          ])
+        );
+        setPage(1);
+      }
+
+      const failedNote =
+        data.failedCount > 0 ? ` · 실패 ${data.failedCount}개` : "";
+      const indexNowNote = data.indexNow?.status
+        ? ` · IndexNow: ${data.indexNow.status}`
+        : "";
+
+      setMessage(
+        `파일 등록 완료: ${data.createdCount}개${failedNote}${indexNowNote}`
+      );
+
+      if (data.failed?.length) {
+        setError(
+          `실패 항목: ${data.failed
+            .slice(0, 5)
+            .map((f: { keyword: string; error: string }) => `${f.keyword} (${f.error})`)
+            .join(", ")}${data.failed.length > 5 ? " …" : ""}`
+        );
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "파일 등록 중 오류");
+    } finally {
+      setBulkLoading(false);
+    }
+  }
+
+  const isBusy = loading || bulkLoading;
+
   return (
     <div className="admin-panel">
       <section className="admin-section">
@@ -129,10 +202,35 @@ export function KeywordAdminPanel({ initialKeywords }: KeywordAdminPanelProps) {
             />
           </label>
 
-          <button type="submit" disabled={loading || !baseKeyword.trim()}>
+          <button type="submit" disabled={isBusy || !baseKeyword.trim()}>
             {loading ? "등록 중…" : "서브페이지 생성"}
           </button>
         </form>
+
+        <div className="admin-bulk-import">
+          <p className="admin-bulk-import-label">대량 등록</p>
+          <p className="admin-bulk-import-desc">
+            txt 파일 — <strong>한 줄에 키워드 하나</strong> 또는{" "}
+            <strong>쉼표(,)</strong>로 구분 · 최대 {MAX_BULK}개 · IndexNow
+            일괄 전송
+          </p>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".txt,text/plain"
+            className="admin-file-input"
+            onChange={handleBulkFile}
+            disabled={isBusy}
+          />
+          <button
+            type="button"
+            className="admin-btn admin-btn--ghost"
+            disabled={isBusy}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            {bulkLoading ? "파일 등록 중…" : "파일로 불러오기"}
+          </button>
+        </div>
 
         {lastCreated && (
           <div className="admin-preview">

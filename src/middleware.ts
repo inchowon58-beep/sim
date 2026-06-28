@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { isAdminPath } from "@/lib/admin-path";
 import { isPotentialKeywordSubpagePath } from "@/lib/keyword-slugs";
+import { isAppStaticPath } from "@/lib/app-paths";
 
 /** SEO 서브페이지용 public 이미지 */
 const OUR_ASSET_PREFIX = "/assets/images/";
@@ -35,6 +36,7 @@ function shouldBypassAgapetProxy(
 ): boolean {
   if (pathname.startsWith("/api")) return true;
   if (isAdminPath(pathname)) return true;
+  if (isAppStaticPath(pathname)) return true;
   if (isPotentialKeywordSubpagePath(pathname)) return true;
   if (pathname.startsWith(OUR_ASSET_PREFIX)) return true;
   if (INDEXNOW_KEY_PATTERN.test(pathname)) return true;
