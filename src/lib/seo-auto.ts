@@ -4,6 +4,9 @@ import {
   findMatchingKeywordGroup,
 } from "./keyword-groups";
 import { getBrandName } from "./site-settings";
+import { buildAutoTitle, compactKeyword } from "./seo-title";
+
+export { buildAutoTitle, compactKeyword } from "./seo-title";
 
 export interface AutoSeoResult {
   title: string;
@@ -11,11 +14,6 @@ export interface AutoSeoResult {
   relatedKeywords: string[];
   region: string | null;
   matchedGroup?: string;
-}
-
-/** 공백 제거 (의정부 강아지 분양 → 의정부강아지분양) */
-export function compactKeyword(keyword: string): string {
-  return keyword.trim().replace(/\s+/g, "");
 }
 
 const PET_TOPIC_START =
@@ -119,14 +117,6 @@ export function generateRelatedKeywords(
   }
 
   return [...new Set(picked)].slice(0, Math.min(9, Math.max(7, targetCount)));
-}
-
-export function buildAutoTitle(
-  baseKeyword: string,
-  brandName: string
-): string {
-  const compact = compactKeyword(baseKeyword);
-  return `${compact} | ${brandName}`;
 }
 
 export async function buildAutoDescription(

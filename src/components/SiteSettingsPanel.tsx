@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { buildAutoTitle } from "@/lib/seo-auto";
+import { buildAutoTitle } from "@/lib/seo-title";
 
 interface SiteSettingsPanelProps {
   initialBrandName: string;
