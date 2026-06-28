@@ -49,13 +49,17 @@ export default async function AdminPage() {
       />
 
       <KeywordAdminPanel
-        initialKeywords={keywords.map((k) => ({
-          id: k.id,
-          slug: k.slug,
-          title: k.title,
-          baseKeyword: k.baseKeyword,
-          description: k.description,
-        }))}
+        initialKeywords={keywords
+          .map((k) => ({
+            id: k.id,
+            slug: k.slug,
+            baseKeyword: k.baseKeyword,
+            createdAt: k.createdAt,
+          }))
+          .sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )}
       />
     </>
   );

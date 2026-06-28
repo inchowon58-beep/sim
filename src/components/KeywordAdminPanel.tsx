@@ -1,21 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+
+const PAGE_SIZE = 10;
+const MAX_DISPLAY = 100;
 
 interface KeywordItem {
   id: string;
   slug: string;
-  title: string;
   baseKeyword: string;
-  description?: string;
+  createdAt: string;
 }
 
 interface KeywordAdminPanelProps {
   initialKeywords: KeywordItem[];
 }
 
+function sortByLatest(items: KeywordItem[]): KeywordItem[] {
+  return [...items].sort(
+    (a, b) =>
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+}
+
 export function KeywordAdminPanel({ initialKeywords }: KeywordAdminPanelProps) {
-  const [keywords, setKeywords] = useState(initialKeywords);
+  const [keywords, setKeywords] = useState(() =>
+    sortByLatest(initialKeywords)
+  );
+  const [page, setPage] = useState(1);
   const [baseKeyword, setBaseKeyword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -25,6 +37,20 @@ export function KeywordAdminPanel({ initialKeywords }: KeywordAdminPanelProps) {
     description: string;
     matchedGroup?: string;
   } | null>(null);
+
+  const displayList = useMemo(
+    () => sortByLatest(keywords).slice(0, MAX_DISPLAY),
+    [keywords]
+  );
+
+  const totalPages = Math.max(1, Math.ceil(displayList.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const pageItems = displayList.slice(
+    (safePage - 1) * PAGE_SIZE,
+    safePage * PAGE_SIZE
+  );
+
+  const totalCount = keywords.length;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -46,7 +72,18 @@ export function KeywordAdminPanel({ initialKeywords }: KeywordAdminPanelProps) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "등록 실패");
 
-      setKeywords((prev) => [...prev, data.entry]);
+      setKeywords((prev) =>
+        sortByLatest([
+          {
+            id: data.entry.id,
+            slug: data.entry.slug,
+            baseKeyword: data.entry.baseKeyword,
+            createdAt: data.entry.createdAt,
+          },
+          ...prev,
+        ])
+      );
+      setPage(1);
       setLastCreated({
         title: data.entry.title,
         description: data.entry.description,
@@ -64,6 +101,10 @@ export function KeywordAdminPanel({ initialKeywords }: KeywordAdminPanelProps) {
     } finally {
       setLoading(false);
     }
+  }
+
+  function goToPage(next: number) {
+    setPage(Math.max(1, Math.min(totalPages, next)));
   }
 
   return (
@@ -113,29 +154,83 @@ export function KeywordAdminPanel({ initialKeywords }: KeywordAdminPanelProps) {
         {error && <p className="admin-error">{error}</p>}
       </section>
 
-      <section className="admin-section">
-        <h2>활성 서브페이지 ({keywords.length})</h2>
-        {keywords.length === 0 ? (
+      <section className="admin-section admin-section--keywords">
+        <div className="admin-section-head">
+          <div>
+            <h2>활성 서브페이지</h2>
+            <p className="admin-section-meta">
+              총 {totalCount}개 · 최신 {Math.min(totalCount, MAX_DISPLAY)}개
+              표시 · 페이지당 {PAGE_SIZE}개
+            </p>
+          </div>
+          {displayList.length > 0 && (
+            <span className="admin-page-indicator">
+              {safePage} / {totalPages}
+            </span>
+          )}
+        </div>
+
+        {displayList.length === 0 ? (
           <p className="admin-empty">등록된 키워드가 없습니다.</p>
         ) : (
-          <ul className="admin-list">
-            {keywords.map((kw) => (
-              <li key={kw.id}>
-                <a
-                  href={`/${encodeURIComponent(kw.slug)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
+          <>
+            <ul className="admin-kw-grid">
+              {pageItems.map((kw) => (
+                <li key={kw.id}>
+                  <a
+                    className="admin-kw-link"
+                    href={`/${encodeURIComponent(kw.slug)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {kw.baseKeyword}
+                  </a>
+                </li>
+              ))}
+            </ul>
+
+            {totalPages > 1 && (
+              <nav className="admin-pagination" aria-label="서브페이지 목록">
+                <button
+                  type="button"
+                  className="admin-btn admin-btn--ghost"
+                  disabled={safePage <= 1}
+                  onClick={() => goToPage(safePage - 1)}
                 >
-                  {kw.title}
-                </a>
-                <span className="admin-slug">/{kw.slug}</span>
-                <span className="admin-kw">{kw.baseKeyword}</span>
-                {kw.description && (
-                  <span className="admin-desc-inline">{kw.description}</span>
-                )}
-              </li>
-            ))}
-          </ul>
+                  이전
+                </button>
+                <div className="admin-pagination-pages">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (n) => (
+                      <button
+                        key={n}
+                        type="button"
+                        className={`admin-page-btn${n === safePage ? " is-active" : ""}`}
+                        onClick={() => goToPage(n)}
+                        aria-current={n === safePage ? "page" : undefined}
+                      >
+                        {n}
+                      </button>
+                    )
+                  )}
+                </div>
+                <button
+                  type="button"
+                  className="admin-btn admin-btn--ghost"
+                  disabled={safePage >= totalPages}
+                  onClick={() => goToPage(safePage + 1)}
+                >
+                  다음
+                </button>
+              </nav>
+            )}
+          </>
+        )}
+
+        {totalCount > MAX_DISPLAY && (
+          <p className="admin-list-note">
+            최신 {MAX_DISPLAY}개만 표시됩니다. (전체 {totalCount}개)
+          </p>
         )}
       </section>
     </div>
