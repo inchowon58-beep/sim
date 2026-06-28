@@ -1,17 +1,20 @@
 import type { Metadata } from "next";
 import { getAllKeywords } from "@/lib/keywords";
 import { getAllKeywordGroups } from "@/lib/keyword-groups";
+import { getSiteSettings } from "@/lib/site-settings";
 import { KeywordAdminPanel } from "@/components/KeywordAdminPanel";
 import { KeywordGroupAdminPanel } from "@/components/KeywordGroupAdminPanel";
+import { SiteSettingsPanel } from "@/components/SiteSettingsPanel";
 import { StorageStatusBanner } from "@/components/StorageStatusBanner";
 
 /**
  * /admin — 키워드 등록·관리 (검색 노출 제외)
  */
 export default async function AdminPage() {
-  const [keywords, groups] = await Promise.all([
+  const [keywords, groups, siteSettings] = await Promise.all([
     getAllKeywords(),
     getAllKeywordGroups(),
+    getSiteSettings(),
   ]);
 
   return (
@@ -39,6 +42,8 @@ export default async function AdminPage() {
           <span>설정 전용 (지금 여기)</span>
         </div>
       </div>
+
+      <SiteSettingsPanel initialBrandName={siteSettings.brandName} />
 
       <KeywordGroupAdminPanel
         initialGroups={groups.map((g) => ({

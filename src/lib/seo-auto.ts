@@ -3,6 +3,7 @@ import {
   buildDescriptionFromGroup,
   findMatchingKeywordGroup,
 } from "./keyword-groups";
+import { getBrandName } from "./site-settings";
 
 export interface AutoSeoResult {
   title: string;
@@ -120,9 +121,12 @@ export function generateRelatedKeywords(
   return [...new Set(picked)].slice(0, Math.min(9, Math.max(7, targetCount)));
 }
 
-export function buildAutoTitle(baseKeyword: string): string {
+export function buildAutoTitle(
+  baseKeyword: string,
+  brandName: string
+): string {
   const compact = compactKeyword(baseKeyword);
-  return `${compact} | 아가펫스토리`;
+  return `${compact} | ${brandName}`;
 }
 
 export async function buildAutoDescription(
@@ -148,13 +152,14 @@ export async function buildAutoSeo(
   baseKeyword: string,
   slug: string
 ): Promise<AutoSeoResult> {
+  const brandName = await getBrandName();
   const group = await findMatchingKeywordGroup(baseKeyword);
   const relatedKeywords = group
     ? buildDescriptionFromGroup(baseKeyword, group, slug)
     : generateRelatedKeywords(baseKeyword, slug);
 
   return {
-    title: buildAutoTitle(baseKeyword),
+    title: buildAutoTitle(baseKeyword, brandName),
     description: relatedKeywords.join(", "),
     relatedKeywords,
     region: extractRegion(baseKeyword),

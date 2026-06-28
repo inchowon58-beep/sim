@@ -173,6 +173,71 @@ export async function readJsonArray<T>(
   return [...seed];
 }
 
+function parseJsonObject<T extends object>(raw: string, seed: T): T {
+  const parsed = JSON.parse(raw) as unknown;
+  if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+    return parsed as T;
+  }
+  return { ...seed };
+}
+
+/** Blob → 로컬 파일 → seed 순으로 JSON 객체 로드 */
+export async function readJsonObject<T extends object>(
+  relativePath: string,
+  seed: T
+): Promise<T> {
+  const fileName = path.basename(relativePath);
+
+  const blobRaw = await readFromBlob(fileName);
+  if (blobRaw) {
+    return parseJsonObject(blobRaw, seed);
+  }
+
+  if (!isVercelRuntime()) {
+    const fsRaw = await readFromFilesystem(relativePath);
+    if (fsRaw) {
+      return parseJsonObject(fsRaw, seed);
+    }
+  }
+
+  return { ...seed };
+}
+
+/** Vercel: Blob 필수 / 로컬: 파일시스템 — 저장 후 읽기 검증 */
+export async function writeJsonObject<T extends object>(
+  relativePath: string,
+  data: T
+): Promise<void> {
+  const fileName = path.basename(relativePath);
+  const content = JSON.stringify(data, null, 2);
+
+  if (isVercelRuntime()) {
+    const blobOk = await writeToBlob(fileName, content);
+    if (!blobOk) {
+      throw new Error(
+        "Vercel Blob 저장 실패. Storage → sim-blob → 프로젝트 연결 후 재배포하세요."
+      );
+    }
+
+    const verify = await readFromBlob(fileName);
+    if (!verify) {
+      throw new Error(
+        "Blob 저장은 됐지만 읽기에 실패했습니다. BLOB_READ_WRITE_TOKEN을 추가 후 Redeploy 하세요."
+      );
+    }
+
+    return;
+  }
+
+  const fsOk = await writeToFilesystem(relativePath, content);
+  if (!fsOk) {
+    const blobOk = await writeToBlob(fileName, content);
+    if (!blobOk) {
+      throw new Error("데이터 저장에 실패했습니다.");
+    }
+  }
+}
+
 /** Vercel: Blob 필수 / 로컬: 파일시스템 — 저장 후 읽기 검증 */
 export async function writeJsonArray<T>(
   relativePath: string,

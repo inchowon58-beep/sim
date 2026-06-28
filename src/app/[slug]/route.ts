@@ -26,7 +26,9 @@ export async function GET(
     request.headers.get("x-forwarded-host") ?? request.headers.get("host");
   const protocol = request.headers.get("x-forwarded-proto") ?? "https";
   const canonicalBase = resolveCanonicalBase(host, protocol);
-  const seoMeta = buildSeoMeta(entry, canonicalBase, entry.ogImage);
+  const seoMeta = buildSeoMeta(entry, canonicalBase, {
+    imageOverride: entry.ogImage,
+  });
 
   const bottomHtml =
     entry.useContentMixer !== false

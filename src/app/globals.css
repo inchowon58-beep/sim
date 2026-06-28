@@ -500,6 +500,35 @@ a:hover {
   margin-top: 0.25rem;
 }
 
+.admin-section--settings {
+  border: 1px solid #e0e7ff;
+  background: linear-gradient(180deg, #fafbff 0%, #fff 100%);
+}
+
+.admin-form--settings {
+  max-width: 28rem;
+}
+
+.admin-title-preview {
+  padding: 0.875rem 1rem;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+}
+
+.admin-title-preview-label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  margin-bottom: 0.35rem;
+}
+
+.admin-title-preview strong {
+  font-size: 0.9375rem;
+  color: #0f172a;
+  word-break: keep-all;
+}
+
 .admin-section--keywords {
   margin-top: 0.5rem;
 }
