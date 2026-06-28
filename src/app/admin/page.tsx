@@ -2,29 +2,35 @@ import type { Metadata } from "next";
 import { getAllKeywords } from "@/lib/keywords";
 import { KeywordAdminPanel } from "@/components/KeywordAdminPanel";
 
-export const metadata: Metadata = {
-  title: "SEO 서브페이지 관리",
-  description: "키워드 등록 및 서브페이지 설정",
-  robots: { index: false, follow: false },
-};
-
 /**
  * /admin — 키워드 등록·관리 (검색 노출 제외)
- * 메인(/)은 아가펫스토리 프록시, 키워드 URL은 SEO + 아가펫스토리
  */
 export default async function AdminPage() {
   const keywords = await getAllKeywords();
 
   return (
-    <main className="home admin-home">
-      <header className="admin-header">
-        <h1>SEO 서브페이지 관리</h1>
-        <p>
-          <strong>메인(/)·일반 경로</strong> → 아가펫스토리 ·{" "}
-          <strong>키워드 URL</strong> → SEO 메타 + 아가펫스토리 ·{" "}
-          <strong>이 페이지</strong> → 설정 전용
-        </p>
+    <>
+      <header className="admin-topbar">
+        <div>
+          <p className="admin-eyebrow">dmcmusic.co.kr · 관리자</p>
+          <h1>SEO 서브페이지 관리</h1>
+        </div>
       </header>
+
+      <div className="admin-info-cards">
+        <div className="admin-info-card">
+          <strong>메인 /</strong>
+          <span>아가펫스토리 표시</span>
+        </div>
+        <div className="admin-info-card">
+          <strong>키워드 URL</strong>
+          <span>SEO + 아가펫스토리</span>
+        </div>
+        <div className="admin-info-card admin-info-card--active">
+          <strong>/admin</strong>
+          <span>설정 전용 (지금 여기)</span>
+        </div>
+      </div>
 
       <KeywordAdminPanel
         initialKeywords={keywords.map((k) => ({
@@ -34,6 +40,6 @@ export default async function AdminPage() {
           baseKeyword: k.baseKeyword,
         }))}
       />
-    </main>
+    </>
   );
 }
