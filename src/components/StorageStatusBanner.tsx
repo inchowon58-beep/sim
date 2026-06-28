@@ -54,7 +54,11 @@ export function StorageStatusBanner() {
       <ol className="admin-warning-steps">
         <li>Vercel → Storage → <strong>sim-blob</strong> → Connect to Project</li>
         <li>프로젝트 선택 후 <strong>Redeploy</strong> (필수)</li>
-        <li>Settings → Environment Variables에 <code>BLOB_READ_WRITE_TOKEN</code> 확인</li>
+        <li>
+          Settings → Environment Variables에{" "}
+          <code>BLOB_READ_WRITE_TOKEN</code> 또는 <code>BLOB_STORE_ID</code>{" "}
+          확인 (Connect to Project 시 자동 추가)
+        </li>
         <li>이 페이지 새로고침 후 초록색 &quot;저장소 연결됨&quot; 확인</li>
         <li>키워드·그룹 다시 등록</li>
       </ol>

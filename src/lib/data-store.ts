@@ -31,30 +31,29 @@ function blobPathname(fileName: string): string {
   return `${BLOB_PREFIX}/${fileName}`;
 }
 
-function blobPutOptions() {
+function blobAccessOptions() {
   const token = resolveBlobToken();
   const storeId = process.env.BLOB_STORE_ID?.trim();
 
   return {
-    access: "public" as const,
-    addRandomSuffix: false,
-    allowOverwrite: true,
-    contentType: "application/json; charset=utf-8",
+    access: "private" as const,
     ...(token ? { token } : {}),
     ...(storeId ? { storeId } : {}),
   };
 }
 
+function blobPutOptions() {
+  return {
+    ...blobAccessOptions(),
+    addRandomSuffix: false,
+    allowOverwrite: true,
+    contentType: "application/json; charset=utf-8",
+  };
+}
+
 async function readFromBlob(fileName: string): Promise<string | null> {
   try {
-    const token = resolveBlobToken();
-    const storeId = process.env.BLOB_STORE_ID?.trim();
-
-    const result = await get(blobPathname(fileName), {
-      access: "public",
-      ...(token ? { token } : {}),
-      ...(storeId ? { storeId } : {}),
-    });
+    const result = await get(blobPathname(fileName), blobAccessOptions());
 
     if (!result || result.statusCode !== 200) return null;
     return await new Response(result.stream).text();
