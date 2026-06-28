@@ -7,9 +7,10 @@ import type {
 } from "@/types/keyword";
 import keywordsSeed from "../../data/keywords.json";
 import { generateUniqueSlug } from "./slug";
-import { mixContent } from "./content-mixer";
+import { mixContentForBottom } from "./content-mixer";
 import { pickRandomImage } from "./image-picker";
 import { submitIndexNowForSlug } from "./indexnow";
+import { buildAutoSeo } from "./seo-auto";
 
 const DATA_PATH = path.join(process.cwd(), "data", "keywords.json");
 
@@ -71,25 +72,25 @@ export async function createKeyword(
   const { slug, suffix } = generateUniqueSlug(input.baseKeyword, existingSlugs);
 
   const now = new Date().toISOString();
-  const useContentMixer = input.useContentMixer ?? !input.content?.trim();
+  const baseKeyword = input.baseKeyword.trim();
+  const autoSeo = buildAutoSeo(baseKeyword, slug);
+  const useContentMixer = input.useContentMixer ?? true;
   const mixedImageUrl = await pickRandomImage(slug);
 
   const entry: KeywordEntry = {
     id: createId(),
     slug,
-    baseKeyword: input.baseKeyword.trim(),
+    baseKeyword,
     suffix,
-    title: input.title ?? `${input.baseKeyword} | Agapet Story`,
-    description:
-      input.description ??
-      `${input.baseKeyword}에 대한 상세 정보와 가이드를 확인하세요.`,
+    title: input.title?.trim() || autoSeo.title,
+    description: input.description?.trim() || autoSeo.description,
     content: useContentMixer
-      ? mixContent(input.baseKeyword.trim(), slug)
+      ? mixContentForBottom(baseKeyword, slug)
       : (input.content ?? ""),
     useContentMixer,
     mixedImageUrl: mixedImageUrl ?? undefined,
     ogImage: input.ogImage ?? mixedImageUrl ?? undefined,
-    tags: input.tags ?? [input.baseKeyword],
+    tags: input.tags ?? autoSeo.relatedKeywords,
     active: true,
     createdAt: now,
     updatedAt: now,

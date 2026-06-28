@@ -3,6 +3,10 @@ import type { SeoMeta } from "@/types/keyword";
 const PROXY_TARGET =
   process.env.MAIN_PROXY_TARGET ?? "https://www.agapetstory.co.kr";
 
+export interface ProxiedPageOptions {
+  bottomHtml?: string;
+}
+
 function escapeHtml(text: string): string {
   return text
     .replace(/&/g, "&amp;")
@@ -55,6 +59,35 @@ function buildSeoHeadBlock(seo: SeoMeta, pageOrigin: string): string {
   return lines.join("\n");
 }
 
+function getBottomBlockStyles(): string {
+  return `<style>
+.seo-bottom-block{margin:0;padding:2.5rem 1.25rem 3rem;background:#f8fafc;border-top:1px solid #e2e8f0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#1e293b;line-height:1.7}
+.seo-bottom-inner{max-width:720px;margin:0 auto}
+.seo-bottom-title{font-size:1.375rem;margin:0 0 1.25rem;color:#0f172a}
+.seo-bottom-block .mixed-sections{display:flex;flex-direction:column;gap:1.25rem}
+.seo-bottom-block .mixed-section{padding:1.25rem 1.5rem;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.seo-bottom-block .mixed-section h2{font-size:1.0625rem;margin:0 0 .75rem;color:#0f172a}
+.seo-bottom-block .mixed-section p{margin:0 0 .625rem;font-size:.9375rem;color:#334155}
+.seo-bottom-block .mixed-section p:last-child{margin-bottom:0}
+.seo-bottom-keywords{margin-top:1.5rem;padding-top:1rem;border-top:1px dashed #cbd5e1;font-size:.8125rem;color:#64748b;word-break:keep-all}
+</style>`;
+}
+
+function injectBottomBlock(html: string, bottomHtml: string, keywordLine: string): string {
+  const block = `${getBottomBlockStyles()}
+<aside class="seo-bottom-block" aria-label="키워드 상세 안내">
+  <div class="seo-bottom-inner">
+    ${bottomHtml}
+    <p class="seo-bottom-keywords">${escapeHtml(keywordLine)}</p>
+  </div>
+</aside>`;
+
+  if (/<\/body>/i.test(html)) {
+    return html.replace(/<\/body>/i, `${block}\n</body>`);
+  }
+  return `${html}${block}`;
+}
+
 function stripSeoTags(html: string): string {
   return html
     .replace(/<title[^>]*>[\s\S]*?<\/title>/gi, "")
@@ -66,12 +99,10 @@ function stripSeoTags(html: string): string {
     .replace(/<base[^>]*>/gi, "");
 }
 
-/** Next.js 클라이언트 스크립트 제거 — 타 도메인 URL에서 hydration 오류 방지 */
 function stripScripts(html: string): string {
   return html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
 }
 
-/** 상대 경로 → 아가펫스토리 절대 URL (CSS·이미지·링크) */
 function rewriteRelativeUrls(html: string, origin: string): string {
   const toAbs = (path: string): string => {
     const trimmed = path.trim();
@@ -107,6 +138,7 @@ function rewriteRelativeUrls(html: string, origin: string): string {
 
 export async function fetchProxiedPage(
   seo: SeoMeta,
+  options: ProxiedPageOptions = {},
   targetPath = "/"
 ): Promise<string> {
   const base = PROXY_TARGET.replace(/\/$/, "");
@@ -137,10 +169,7 @@ export async function fetchProxiedPage(
   const marker = "<!-- agapet-seo-proxy -->";
 
   if (/<head[^>]*>/i.test(html)) {
-    html = html.replace(
-      /<head([^>]*)>/i,
-      `<head$1>${marker}\n${seoBlock}`
-    );
+    html = html.replace(/<head([^>]*)>/i, `<head$1>${marker}\n${seoBlock}`);
   } else if (/<html[^>]*>/i.test(html)) {
     html = html.replace(
       /<html([^>]*)>/i,
@@ -152,6 +181,10 @@ export async function fetchProxiedPage(
 
   if (!/<meta[^>]+charset/i.test(html)) {
     html = html.replace(/<head([^>]*)>/i, `<head$1><meta charset="utf-8"/>`);
+  }
+
+  if (options.bottomHtml?.trim()) {
+    html = injectBottomBlock(html, options.bottomHtml, seo.description);
   }
 
   return html;

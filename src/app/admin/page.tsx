@@ -38,6 +38,7 @@ export default async function AdminPage() {
           slug: k.slug,
           title: k.title,
           baseKeyword: k.baseKeyword,
+          description: k.description,
         }))}
       />
     </>

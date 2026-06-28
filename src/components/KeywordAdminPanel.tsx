@@ -7,6 +7,7 @@ interface KeywordItem {
   slug: string;
   title: string;
   baseKeyword: string;
+  description?: string;
 }
 
 interface KeywordAdminPanelProps {
@@ -16,17 +17,20 @@ interface KeywordAdminPanelProps {
 export function KeywordAdminPanel({ initialKeywords }: KeywordAdminPanelProps) {
   const [keywords, setKeywords] = useState(initialKeywords);
   const [baseKeyword, setBaseKeyword] = useState("");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [lastCreated, setLastCreated] = useState<{
+    title: string;
+    description: string;
+  } | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
     setError(null);
+    setLastCreated(null);
 
     try {
       const res = await fetch("/api/keywords", {
@@ -34,9 +38,7 @@ export function KeywordAdminPanel({ initialKeywords }: KeywordAdminPanelProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           baseKeyword,
-          title: title.trim() || undefined,
-          description: description.trim() || undefined,
-          useContentMixer: false,
+          useContentMixer: true,
         }),
       });
 
@@ -44,6 +46,10 @@ export function KeywordAdminPanel({ initialKeywords }: KeywordAdminPanelProps) {
       if (!res.ok) throw new Error(data.error ?? "등록 실패");
 
       setKeywords((prev) => [...prev, data.entry]);
+      setLastCreated({
+        title: data.entry.title,
+        description: data.entry.description,
+      });
       setMessage(
         `등록 완료: /${data.entry.slug}` +
           (data.indexNow?.status
@@ -51,8 +57,6 @@ export function KeywordAdminPanel({ initialKeywords }: KeywordAdminPanelProps) {
             : "")
       );
       setBaseKeyword("");
-      setTitle("");
-      setDescription("");
     } catch (err) {
       setError(err instanceof Error ? err.message : "등록 중 오류");
     } finally {
@@ -65,9 +69,10 @@ export function KeywordAdminPanel({ initialKeywords }: KeywordAdminPanelProps) {
       <section className="admin-section">
         <h2>키워드 등록</h2>
         <p className="admin-desc">
-          등록하면 서브페이지가 생성됩니다. 방문자에게는{" "}
-          <strong>아가펫스토리(서버 프록시)</strong>가 보이고, 검색엔진에는
-          입력한 키워드 SEO가 적용됩니다.
+          키워드만 입력하면 <strong>Title</strong>, <strong>Description</strong>
+          (지역·연관 키워드 7~9개), <strong>하단 SEO 본문</strong>이 자동
+          생성됩니다. 화면 상단은 아가펫스토리, 하단에 고유 텍스트가
+          추가됩니다.
         </p>
 
         <form className="admin-form" onSubmit={handleSubmit}>
@@ -77,28 +82,8 @@ export function KeywordAdminPanel({ initialKeywords }: KeywordAdminPanelProps) {
               type="text"
               value={baseKeyword}
               onChange={(e) => setBaseKeyword(e.target.value)}
-              placeholder="예: 강아지 분양"
+              placeholder="예: 의정부 강아지 분양"
               required
-            />
-          </label>
-
-          <label>
-            SEO Title
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="비워두면 자동 생성"
-            />
-          </label>
-
-          <label>
-            SEO Description
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="비워두면 자동 생성"
-              rows={3}
             />
           </label>
 
@@ -106,6 +91,17 @@ export function KeywordAdminPanel({ initialKeywords }: KeywordAdminPanelProps) {
             {loading ? "등록 중…" : "서브페이지 생성"}
           </button>
         </form>
+
+        {lastCreated && (
+          <div className="admin-preview">
+            <p>
+              <strong>자동 Title:</strong> {lastCreated.title}
+            </p>
+            <p>
+              <strong>자동 Description:</strong> {lastCreated.description}
+            </p>
+          </div>
+        )}
 
         {message && <p className="admin-success">{message}</p>}
         {error && <p className="admin-error">{error}</p>}
@@ -128,6 +124,9 @@ export function KeywordAdminPanel({ initialKeywords }: KeywordAdminPanelProps) {
                 </a>
                 <span className="admin-slug">/{kw.slug}</span>
                 <span className="admin-kw">{kw.baseKeyword}</span>
+                {kw.description && (
+                  <span className="admin-desc-inline">{kw.description}</span>
+                )}
               </li>
             ))}
           </ul>

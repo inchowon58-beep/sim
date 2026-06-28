@@ -47,21 +47,18 @@ export function mixContent(keyword: string, slug: string): string {
   return `${intro}\n<div class="mixed-sections">\n${sections}\n</div>`;
 }
 
-export interface MixedContentResult {
-  html: string;
-  sectionIds: string[];
-}
-
-export function mixContentWithMeta(
-  keyword: string,
-  slug: string
-): MixedContentResult {
+/**
+ * 하단 SEO 블록용 — h1 없이 섹션만 (상단은 아가펫스토리)
+ */
+export function mixContentForBottom(keyword: string, slug: string): string {
   const rng = createSeededRandom(`mix:${slug}:${keyword}`);
   const pool = getContentSectionPool();
   const selected = shuffle(rng, pickUnique(rng, pool, SECTION_COUNT));
 
-  return {
-    html: mixContent(keyword, slug),
-    sectionIds: selected.map((s) => s.id),
-  };
+  const intro = `<h2 class="seo-bottom-title">${keyword} 안내</h2>`;
+  const sections = selected
+    .map((section) => renderSectionHtml(section, keyword, rng))
+    .join("\n");
+
+  return `${intro}\n<div class="mixed-sections">\n${sections}\n</div>`;
 }

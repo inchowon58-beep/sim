@@ -353,6 +353,32 @@ a:hover {
   font-size: 0.875rem;
 }
 
+.admin-preview {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+.admin-preview p {
+  margin: 0 0 0.5rem;
+}
+
+.admin-preview p:last-child {
+  margin-bottom: 0;
+}
+
+.admin-desc-inline {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  margin-top: 0.35rem;
+  line-height: 1.5;
+}
+
 /* ── 서브페이지: 아가펫스토리 iframe ── */
 .subpage-shell {
   margin: 0;

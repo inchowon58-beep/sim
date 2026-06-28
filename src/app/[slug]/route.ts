@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getKeywordBySlug } from "@/lib/keywords";
 import { fetchProxiedPage } from "@/lib/html-proxy";
+import { mixContentForBottom } from "@/lib/content-mixer";
 import { buildSeoMeta, resolveCanonicalBase } from "@/lib/seo";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
-/**
- * SEO 서브페이지 — 서버 프록시
- * 아가펫스토리 HTML을 fetch → 키워드 SEO head 주입 → 그대로 반환
- */
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ slug: string }> }
@@ -31,8 +28,13 @@ export async function GET(
   const canonicalBase = resolveCanonicalBase(host, protocol);
   const seoMeta = buildSeoMeta(entry, canonicalBase, entry.ogImage);
 
+  const bottomHtml =
+    entry.useContentMixer !== false
+      ? mixContentForBottom(entry.baseKeyword, entry.slug)
+      : entry.content;
+
   try {
-    const html = await fetchProxiedPage(seoMeta);
+    const html = await fetchProxiedPage(seoMeta, { bottomHtml });
     return new NextResponse(html, {
       status: 200,
       headers: {
