@@ -418,6 +418,30 @@ a:hover {
   line-height: 1.6;
 }
 
+.admin-warning-steps {
+  margin: 0.75rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.admin-warning-steps li {
+  margin-bottom: 0.35rem;
+}
+
+.admin-warning-detail {
+  margin: 0.75rem 0 0;
+  font-size: 0.8125rem;
+}
+
+.admin-success-banner {
+  margin: 0 0 1.25rem;
+  padding: 0.875rem 1rem;
+  background: #ecfdf5;
+  border: 1px solid #6ee7b7;
+  color: #065f46;
+  border-radius: 10px;
+  font-size: 0.875rem;
+}
+
 .admin-group-item {
   display: flex;
   flex-direction: column;
