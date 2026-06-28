@@ -1,10 +1,15 @@
 import { createSeededRandom, pickUnique, shuffle } from "./seeded-random";
+import {
+  buildDescriptionFromGroup,
+  findMatchingKeywordGroup,
+} from "./keyword-groups";
 
 export interface AutoSeoResult {
   title: string;
   description: string;
   relatedKeywords: string[];
   region: string | null;
+  matchedGroup?: string;
 }
 
 /** 공백 제거 (의정부 강아지 분양 → 의정부강아지분양) */
@@ -12,7 +17,10 @@ export function compactKeyword(keyword: string): string {
   return keyword.trim().replace(/\s+/g, "");
 }
 
-/** 키워드 앞부분에서 지역명 추출 */
+const PET_TOPIC_START =
+  /^(?:강아지|고양이|애견|유기|반려|무료|입양|애완|펫|믹스|견종|파양|분양|보호|샵|센터|동물)/;
+
+/** 키워드 앞부분에서 지역명 추출 (공백·붙여쓰기 모두 지원) */
 export function extractRegion(keyword: string): string | null {
   const trimmed = keyword.trim();
 
@@ -21,9 +29,21 @@ export function extractRegion(keyword: string): string | null {
   );
   if (withSuffix) return withSuffix[1];
 
-  const first = trimmed.split(/\s+/)[0];
-  if (first && first.length >= 2 && !/^(강아지|고양이|애견|반려|무료|입양)/.test(first)) {
-    return first;
+  if (/\s/.test(trimmed)) {
+    const first = trimmed.split(/\s+/)[0];
+    if (first && first.length >= 2 && !PET_TOPIC_START.test(first)) {
+      return first;
+    }
+    return null;
+  }
+
+  const compact = compactKeyword(trimmed);
+  const compactMatch = compact.match(
+    /^([\uAC00-\uD7A3]{2,4}(?:시|군|구|도)?)(?=(?:강아지|고양이|애견|유기|반려|무료|입양|애완|펫|믹스|견종|파양|분양|보호))/
+  );
+  if (compactMatch) {
+    const raw = compactMatch[1];
+    return raw.replace(/(시|군|구|도)$/u, "") || raw;
   }
 
   return null;
@@ -68,7 +88,7 @@ function applyRegion(template: string, region: string): string {
   return template.replace(/\{r\}/g, region);
 }
 
-/** 지역 + 연관 키워드 7~9개 (slug 시드 → URL마다 고정) */
+/** 지역 + 연관 키워드 7~9개 (slug 시드 → URL마다 고정) — 그룹 미매칭 시 fallback */
 export function generateRelatedKeywords(
   baseKeyword: string,
   slug: string,
@@ -105,23 +125,39 @@ export function buildAutoTitle(baseKeyword: string): string {
   return `${compact} | 아가펫스토리`;
 }
 
-export function buildAutoDescription(
+export async function buildAutoDescription(
   baseKeyword: string,
   slug: string
-): string {
-  const related = generateRelatedKeywords(baseKeyword, slug);
+): Promise<string> {
+  const related = await generateRelatedKeywordsForSeo(baseKeyword, slug);
   return related.join(", ");
 }
 
-export function buildAutoSeo(
+export async function generateRelatedKeywordsForSeo(
   baseKeyword: string,
   slug: string
-): AutoSeoResult {
-  const relatedKeywords = generateRelatedKeywords(baseKeyword, slug);
+): Promise<string[]> {
+  const group = await findMatchingKeywordGroup(baseKeyword);
+  if (group) {
+    return buildDescriptionFromGroup(baseKeyword, group);
+  }
+  return generateRelatedKeywords(baseKeyword, slug);
+}
+
+export async function buildAutoSeo(
+  baseKeyword: string,
+  slug: string
+): Promise<AutoSeoResult> {
+  const group = await findMatchingKeywordGroup(baseKeyword);
+  const relatedKeywords = group
+    ? buildDescriptionFromGroup(baseKeyword, group)
+    : generateRelatedKeywords(baseKeyword, slug);
+
   return {
     title: buildAutoTitle(baseKeyword),
     description: relatedKeywords.join(", "),
     relatedKeywords,
     region: extractRegion(baseKeyword),
+    matchedGroup: group?.name,
   };
 }

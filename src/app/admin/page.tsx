@@ -1,12 +1,17 @@
 import type { Metadata } from "next";
 import { getAllKeywords } from "@/lib/keywords";
+import { getAllKeywordGroups } from "@/lib/keyword-groups";
 import { KeywordAdminPanel } from "@/components/KeywordAdminPanel";
+import { KeywordGroupAdminPanel } from "@/components/KeywordGroupAdminPanel";
 
 /**
  * /admin — 키워드 등록·관리 (검색 노출 제외)
  */
 export default async function AdminPage() {
-  const keywords = await getAllKeywords();
+  const [keywords, groups] = await Promise.all([
+    getAllKeywords(),
+    getAllKeywordGroups(),
+  ]);
 
   return (
     <>
@@ -31,6 +36,14 @@ export default async function AdminPage() {
           <span>설정 전용 (지금 여기)</span>
         </div>
       </div>
+
+      <KeywordGroupAdminPanel
+        initialGroups={groups.map((g) => ({
+          id: g.id,
+          name: g.name,
+          keywords: g.keywords,
+        }))}
+      />
 
       <KeywordAdminPanel
         initialKeywords={keywords.map((k) => ({

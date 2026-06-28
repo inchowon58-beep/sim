@@ -38,13 +38,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { entry, indexNow } = await createKeyword(body);
+    const { entry, indexNow, matchedGroup } = await createKeyword(body);
 
     return NextResponse.json(
       {
         message: "키워드가 등록되었습니다. 페이지가 활성화되었습니다.",
         entry,
         url: `/${encodeURIComponent(entry.slug)}`,
+        matchedGroup,
         indexNow: formatIndexNowResponse(indexNow),
       },
       { status: 201 }

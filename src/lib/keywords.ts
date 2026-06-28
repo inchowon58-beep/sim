@@ -1,63 +1,47 @@
-import fs from "fs/promises";
-import path from "path";
 import type {
   CreateKeywordInput,
   KeywordEntry,
-  KeywordStore,
 } from "@/types/keyword";
 import keywordsSeed from "../../data/keywords.json";
+import { readJsonArray, writeJsonArray } from "./data-store";
 import { generateUniqueSlug } from "./slug";
 import { mixContentForBottom } from "./content-mixer";
 import { pickRandomImage } from "./image-picker";
 import { submitIndexNowForSlug } from "./indexnow";
 import { buildAutoSeo } from "./seo-auto";
 
-const DATA_PATH = path.join(process.cwd(), "data", "keywords.json");
-
-async function readStore(): Promise<KeywordStore> {
-  try {
-    const raw = await fs.readFile(DATA_PATH, "utf-8");
-    const keywords = JSON.parse(raw) as KeywordEntry[];
-    return { keywords };
-  } catch {
-    return { keywords: [...(keywordsSeed as KeywordEntry[])] };
-  }
-}
-
-async function writeStore(store: KeywordStore): Promise<void> {
-  try {
-    await fs.writeFile(
-      DATA_PATH,
-      JSON.stringify(store.keywords, null, 2),
-      "utf-8"
-    );
-  } catch (error) {
-    console.warn("[keywords] write skipped (read-only env):", error);
-  }
-}
+const DATA_FILE = "data/keywords.json";
 
 function createId(): string {
   return `kw-${Date.now().toString(36)}`;
 }
 
+async function readAllEntries(): Promise<KeywordEntry[]> {
+  return readJsonArray<KeywordEntry>(DATA_FILE, keywordsSeed as KeywordEntry[]);
+}
+
+async function writeAllEntries(keywords: KeywordEntry[]): Promise<void> {
+  await writeJsonArray(DATA_FILE, keywords);
+}
+
 export async function getAllKeywords(): Promise<KeywordEntry[]> {
-  const store = await readStore();
-  return store.keywords.filter((k) => k.active);
+  const keywords = await readAllEntries();
+  return keywords.filter((k) => k.active);
 }
 
 export async function getKeywordBySlug(
   slug: string
 ): Promise<KeywordEntry | null> {
-  const store = await readStore();
+  const keywords = await readAllEntries();
   const decoded = decodeURIComponent(slug);
   return (
-    store.keywords.find((k) => k.active && k.slug === decoded) ?? null
+    keywords.find((k) => k.active && k.slug === decoded) ?? null
   );
 }
 
 export async function getAllSlugs(): Promise<string[]> {
-  const store = await readStore();
-  return store.keywords.map((k) => k.slug);
+  const keywords = await readAllEntries();
+  return keywords.map((k) => k.slug);
 }
 
 /** 키워드 추가 → 슬러그 자동 생성 → 페이지 즉시 활성화 + IndexNow 제출 */
@@ -65,15 +49,16 @@ export async function createKeyword(
   input: CreateKeywordInput
 ): Promise<{
   entry: KeywordEntry;
+  matchedGroup?: string;
   indexNow?: Awaited<ReturnType<typeof submitIndexNowForSlug>>;
 }> {
-  const store = await readStore();
-  const existingSlugs = store.keywords.map((k) => k.slug);
+  const keywords = await readAllEntries();
+  const existingSlugs = keywords.map((k) => k.slug);
   const { slug, suffix } = generateUniqueSlug(input.baseKeyword, existingSlugs);
 
   const now = new Date().toISOString();
   const baseKeyword = input.baseKeyword.trim();
-  const autoSeo = buildAutoSeo(baseKeyword, slug);
+  const autoSeo = await buildAutoSeo(baseKeyword, slug);
   const useContentMixer = input.useContentMixer ?? true;
   const mixedImageUrl = await pickRandomImage(slug);
 
@@ -96,8 +81,8 @@ export async function createKeyword(
     updatedAt: now,
   };
 
-  store.keywords.push(entry);
-  await writeStore(store);
+  keywords.push(entry);
+  await writeAllEntries(keywords);
 
   const indexNow = await submitIndexNowForSlug(entry.slug, "create").catch(
     (error) => {
@@ -106,7 +91,7 @@ export async function createKeyword(
     }
   );
 
-  return { entry, indexNow };
+  return { entry, matchedGroup: autoSeo.matchedGroup, indexNow };
 }
 
 export async function updateKeyword(
@@ -121,20 +106,20 @@ export async function updateKeyword(
   entry: KeywordEntry | null;
   indexNow?: Awaited<ReturnType<typeof submitIndexNowForSlug>>;
 }> {
-  const store = await readStore();
+  const keywords = await readAllEntries();
   const decoded = decodeURIComponent(slug);
-  const index = store.keywords.findIndex((k) => k.slug === decoded);
+  const index = keywords.findIndex((k) => k.slug === decoded);
 
   if (index === -1) return { entry: null };
 
-  store.keywords[index] = {
-    ...store.keywords[index],
+  keywords[index] = {
+    ...keywords[index],
     ...patch,
     updatedAt: new Date().toISOString(),
   };
 
-  await writeStore(store);
-  const updated = store.keywords[index];
+  await writeAllEntries(keywords);
+  const updated = keywords[index];
 
   let indexNow: Awaited<ReturnType<typeof submitIndexNowForSlug>> | undefined;
   if (updated.active) {

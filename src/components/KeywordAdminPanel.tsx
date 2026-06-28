@@ -23,6 +23,7 @@ export function KeywordAdminPanel({ initialKeywords }: KeywordAdminPanelProps) {
   const [lastCreated, setLastCreated] = useState<{
     title: string;
     description: string;
+    matchedGroup?: string;
   } | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -49,6 +50,7 @@ export function KeywordAdminPanel({ initialKeywords }: KeywordAdminPanelProps) {
       setLastCreated({
         title: data.entry.title,
         description: data.entry.description,
+        matchedGroup: data.matchedGroup,
       });
       setMessage(
         `등록 완료: /${data.entry.slug}` +
@@ -70,9 +72,8 @@ export function KeywordAdminPanel({ initialKeywords }: KeywordAdminPanelProps) {
         <h2>키워드 등록</h2>
         <p className="admin-desc">
           키워드만 입력하면 <strong>Title</strong>, <strong>Description</strong>
-          (지역·연관 키워드 7~9개), <strong>하단 SEO 본문</strong>이 자동
-          생성됩니다. 화면 상단은 아가펫스토리, 하단에 고유 텍스트가
-          추가됩니다.
+          (키워드 그룹 매칭 시 그룹 기준, 없으면 자동 연관 키워드),{" "}
+          <strong>하단 SEO 본문</strong>이 생성됩니다.
         </p>
 
         <form className="admin-form" onSubmit={handleSubmit}>
@@ -100,6 +101,11 @@ export function KeywordAdminPanel({ initialKeywords }: KeywordAdminPanelProps) {
             <p>
               <strong>자동 Description:</strong> {lastCreated.description}
             </p>
+            {lastCreated.matchedGroup && (
+              <p>
+                <strong>적용 그룹:</strong> {lastCreated.matchedGroup}
+              </p>
+            )}
           </div>
         )}
 

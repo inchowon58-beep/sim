@@ -1,19 +1,16 @@
-import fs from "fs/promises";
-import path from "path";
 import type { KeywordEntry } from "@/types/keyword";
 import keywordsSeed from "../../data/keywords.json";
+import { readJsonArray } from "./data-store";
 import { keywordToSlug, parseSlug } from "./slug";
 
-const DATA_PATH = path.join(process.cwd(), "data", "keywords.json");
+const DATA_FILE = "data/keywords.json";
 
 async function readActiveKeywords(): Promise<KeywordEntry[]> {
-  try {
-    const raw = await fs.readFile(DATA_PATH, "utf-8");
-    const keywords = JSON.parse(raw) as KeywordEntry[];
-    return keywords.filter((k) => k.active);
-  } catch {
-    return (keywordsSeed as KeywordEntry[]).filter((k) => k.active);
-  }
+  const keywords = await readJsonArray<KeywordEntry>(
+    DATA_FILE,
+    keywordsSeed as KeywordEntry[]
+  );
+  return keywords.filter((k) => k.active);
 }
 
 function normalizeKeywordKey(keyword: string): string {
