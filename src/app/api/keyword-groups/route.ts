@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import {
   createKeywordGroup,
-  deactivateKeywordGroup,
+  deleteKeywordGroup,
   getAllKeywordGroupsIncludingInactive,
   updateKeywordGroup,
 } from "@/lib/keyword-groups";
@@ -49,7 +49,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: "id 쿼리가 필요합니다." }, { status: 400 });
   }
 
-  const ok = await deactivateKeywordGroup(id);
+  const ok = await deleteKeywordGroup(id);
   if (!ok) {
     return NextResponse.json({ error: "그룹을 찾을 수 없습니다." }, { status: 404 });
   }

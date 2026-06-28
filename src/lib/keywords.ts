@@ -4,7 +4,7 @@ import type {
 } from "@/types/keyword";
 import keywordsSeed from "../../data/keywords.json";
 import { readJsonArray, writeJsonArray } from "./data-store";
-import { generateUniqueSlug } from "./slug";
+import { generateUniqueSlug, keywordToSlug } from "./slug";
 import { mixContentForBottom } from "./content-mixer";
 import { pickRandomImage } from "./image-picker";
 import { submitIndexNowForSlug } from "./indexnow";
@@ -29,14 +29,26 @@ export async function getAllKeywords(): Promise<KeywordEntry[]> {
   return keywords.filter((k) => k.active);
 }
 
+function normalizeSlug(value: string): string {
+  return decodeURIComponent(value).trim();
+}
+
 export async function getKeywordBySlug(
   slug: string
 ): Promise<KeywordEntry | null> {
   const keywords = await readAllEntries();
-  const decoded = decodeURIComponent(slug);
-  return (
-    keywords.find((k) => k.active && k.slug === decoded) ?? null
+  const decoded = normalizeSlug(slug);
+  const active = keywords.filter((k) => k.active);
+
+  const exact = active.find((k) => normalizeSlug(k.slug) === decoded);
+  if (exact) return exact;
+
+  const byGenerated = active.find(
+    (k) => keywordToSlug(k.baseKeyword) === decoded
   );
+  if (byGenerated) return byGenerated;
+
+  return null;
 }
 
 export async function getAllSlugs(): Promise<string[]> {

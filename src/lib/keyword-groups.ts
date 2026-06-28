@@ -131,3 +131,12 @@ export async function deactivateKeywordGroup(id: string): Promise<boolean> {
   const updated = await updateKeywordGroup(id, { active: false });
   return updated !== null;
 }
+
+/** 그룹 완전 삭제 */
+export async function deleteKeywordGroup(id: string): Promise<boolean> {
+  const groups = await getAllKeywordGroupsIncludingInactive();
+  const next = groups.filter((g) => g.id !== id);
+  if (next.length === groups.length) return false;
+  await writeJsonArray(DATA_FILE, next);
+  return true;
+}

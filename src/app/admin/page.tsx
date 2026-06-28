@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getAllKeywords } from "@/lib/keywords";
 import { getAllKeywordGroups } from "@/lib/keyword-groups";
+import { isPersistentStorageReady } from "@/lib/data-store";
 import { KeywordAdminPanel } from "@/components/KeywordAdminPanel";
 import { KeywordGroupAdminPanel } from "@/components/KeywordGroupAdminPanel";
 
@@ -12,6 +13,7 @@ export default async function AdminPage() {
     getAllKeywords(),
     getAllKeywordGroups(),
   ]);
+  const storageReady = isPersistentStorageReady();
 
   return (
     <>
@@ -21,6 +23,15 @@ export default async function AdminPage() {
           <h1>SEO 서브페이지 관리</h1>
         </div>
       </header>
+
+      {!storageReady && (
+        <div className="admin-warning" role="alert">
+          <strong>저장소 미연결:</strong> Vercel 대시보드 → Storage →{" "}
+          <strong>Blob</strong>을 프로젝트에 연결해야 등록한 키워드·그룹이
+          배포 후에도 유지됩니다. 연결 전에는 서브페이지가 404가 날 수
+          있습니다.
+        </div>
+      )}
 
       <div className="admin-info-cards">
         <div className="admin-info-card">

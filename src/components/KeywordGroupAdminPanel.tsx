@@ -21,6 +21,23 @@ export function KeywordGroupAdminPanel({
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editKeywordsText, setEditKeywordsText] = useState("");
+
+  function startEdit(group: KeywordGroupItem) {
+    setEditingId(group.id);
+    setEditName(group.name);
+    setEditKeywordsText(group.keywords.join(", "));
+    setMessage(null);
+    setError(null);
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+    setEditName("");
+    setEditKeywordsText("");
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -49,6 +66,61 @@ export function KeywordGroupAdminPanel({
     }
   }
 
+  async function handleSaveEdit(id: string) {
+    setLoading(true);
+    setMessage(null);
+    setError(null);
+
+    try {
+      const res = await fetch(`/api/keyword-groups?id=${encodeURIComponent(id)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: editName,
+          keywords: editKeywordsText,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "수정 실패");
+
+      setGroups((prev) =>
+        prev.map((g) => (g.id === id ? data.entry : g))
+      );
+      setMessage(`그룹 "${data.entry.name}" 수정 완료`);
+      cancelEdit();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "수정 중 오류");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleDelete(id: string, groupName: string) {
+    if (!confirm(`"${groupName}" 그룹을 삭제할까요?`)) return;
+
+    setLoading(true);
+    setMessage(null);
+    setError(null);
+
+    try {
+      const res = await fetch(
+        `/api/keyword-groups?id=${encodeURIComponent(id)}`,
+        { method: "DELETE" }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "삭제 실패");
+
+      setGroups((prev) => prev.filter((g) => g.id !== id));
+      if (editingId === id) cancelEdit();
+      setMessage(`그룹 "${groupName}" 삭제 완료`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "삭제 중 오류");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="admin-panel">
       <section className="admin-section">
@@ -56,12 +128,6 @@ export function KeywordGroupAdminPanel({
         <p className="admin-desc">
           쉼표(,)로 키워드를 등록합니다. 키워드 등록 시 입력값에 그룹 키워드가
           포함되면 해당 그룹으로 <strong>Description</strong>을 만듭니다.
-          <br />
-          예: 그룹에 <code>강아지파양</code> → <code>인천강아지파양</code>{" "}
-          등록 시 →{" "}
-          <code>
-            인천강아지파양, 인천강아지보호소, 인천유기견보호소…
-          </code>
         </p>
 
         <form className="admin-form" onSubmit={handleSubmit}>
@@ -91,7 +157,7 @@ export function KeywordGroupAdminPanel({
             type="submit"
             disabled={loading || !name.trim() || !keywordsText.trim()}
           >
-            {loading ? "등록 중…" : "그룹 추가"}
+            {loading ? "처리 중…" : "그룹 추가"}
           </button>
         </form>
 
@@ -106,9 +172,76 @@ export function KeywordGroupAdminPanel({
         ) : (
           <ul className="admin-list admin-list--groups">
             {groups.map((g) => (
-              <li key={g.id}>
-                <strong>{g.name}</strong>
-                <span className="admin-desc-inline">{g.keywords.join(", ")}</span>
+              <li key={g.id} className="admin-group-item">
+                {editingId === g.id ? (
+                  <div className="admin-form admin-form--inline">
+                    <label>
+                      그룹명
+                      <input
+                        type="text"
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                      />
+                    </label>
+                    <label>
+                      키워드 (쉼표 구분)
+                      <textarea
+                        value={editKeywordsText}
+                        onChange={(e) => setEditKeywordsText(e.target.value)}
+                        rows={3}
+                      />
+                    </label>
+                    <div className="admin-row-actions">
+                      <button
+                        type="button"
+                        className="admin-btn admin-btn--primary"
+                        disabled={
+                          loading ||
+                          !editName.trim() ||
+                          !editKeywordsText.trim()
+                        }
+                        onClick={() => handleSaveEdit(g.id)}
+                      >
+                        저장
+                      </button>
+                      <button
+                        type="button"
+                        className="admin-btn admin-btn--ghost"
+                        disabled={loading}
+                        onClick={cancelEdit}
+                      >
+                        취소
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="admin-group-head">
+                      <strong>{g.name}</strong>
+                      <div className="admin-row-actions">
+                        <button
+                          type="button"
+                          className="admin-btn admin-btn--ghost"
+                          disabled={loading}
+                          onClick={() => startEdit(g)}
+                        >
+                          수정
+                        </button>
+                        <button
+                          type="button"
+                          className="admin-btn admin-btn--danger"
+                          disabled={loading}
+                          onClick={() => handleDelete(g.id, g.name)}
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    </div>
+                    <span className="admin-desc-inline">
+                      {g.keywords.join(", ")}
+                    </span>
+                  </>
+                )}
               </li>
             ))}
           </ul>
