@@ -14,6 +14,13 @@ function shouldSkipProxy(pathname: string): boolean {
   return false;
 }
 
+/** rewrite missing/has 조건은 요청 헤더 기준 — response 헤더가 아님 */
+function nextWithSkipProxy(request: NextRequest) {
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-seo-subpage", "true");
+  return NextResponse.next({ request: { headers: requestHeaders } });
+}
+
 /**
  * 라우팅 분기
  * - /admin, /api → Next.js 앱
@@ -24,9 +31,7 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (shouldSkipProxy(pathname) || isRegisteredKeywordPath(pathname)) {
-    const response = NextResponse.next();
-    response.headers.set("x-seo-subpage", "true");
-    return response;
+    return nextWithSkipProxy(request);
   }
 
   return NextResponse.next();
