@@ -6,9 +6,10 @@
 
 | 경로 | 설명 |
 |------|------|
-| `/` | 메인 (Nginx → agapetstory.co.kr 프록시 권장) |
-| `/[키워드슬러그]` | 첫 번째 키워드 페이지 |
+| `/` | agapetstory.co.kr 메인 (앱/Nginx 프록시) |
+| `/[키워드슬러그]` | SEO 서브페이지 |
 | `/[키워드슬러그]01` | 동일 키워드 중복 시 접미사 |
+| 그 외 경로 | agapetstory.co.kr 해당 경로로 프록시 |
 
 ## 빠른 시작
 
@@ -27,7 +28,7 @@ npm run dev
 |------|------|
 | `CANONICAL_BASE_URL` | Canonical 기준 URL (예: `https://sub.mydomain.com`) |
 | `MAIN_PROXY_TARGET` | 메인 프록시 대상 (기본: agapetstory.co.kr) |
-| `ENABLE_APP_LEVEL_MAIN_PROXY` | `true` 시 `/`를 앱 레벨에서 프록시 (개발용) |
+| `ENABLE_APP_LEVEL_MAIN_PROXY` | `false`가 아니면 agapetstory 프록시 ON (Vercel 기본) |
 
 ## Nginx 역방향 프록시 예시
 
