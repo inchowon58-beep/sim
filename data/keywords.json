@@ -1,0 +1,32 @@
+[
+  {
+    "id": "kw-001",
+    "slug": "강아지-분양",
+    "baseKeyword": "강아지 분양",
+    "suffix": null,
+    "title": "강아지 분양 정보 | 아가펫스토리",
+    "description": "믿을 수 있는 강아지 분양 정보와 입양 가이드를 확인하세요.",
+    "content": "",
+    "useContentMixer": true,
+    "ogImage": "/assets/images/pet-dog-1.svg",
+    "tags": ["강아지", "분양", "입양"],
+    "active": true,
+    "createdAt": "2026-06-28T00:00:00.000Z",
+    "updatedAt": "2026-06-28T00:00:00.000Z"
+  },
+  {
+    "id": "kw-002",
+    "slug": "고양이-입양",
+    "baseKeyword": "고양이 입양",
+    "suffix": null,
+    "title": "고양이 입양 정보 | 아가펫스토리",
+    "description": "고양이 입양 전 알아야 할 준비물과 주의사항을 확인하세요.",
+    "content": "",
+    "useContentMixer": true,
+    "ogImage": "/assets/images/pet-cat-1.svg",
+    "tags": ["고양이", "입양"],
+    "active": true,
+    "createdAt": "2026-06-28T00:00:00.000Z",
+    "updatedAt": "2026-06-28T00:00:00.000Z"
+  }
+]
