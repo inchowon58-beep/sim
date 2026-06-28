@@ -6,8 +6,10 @@
 
 | 경로 | 설명 |
 |------|------|
-| `/` | **관리 전용** — 키워드 등록·설정 (noindex) |
-| `/[키워드슬러그]` | **서버 프록시** 아가펫스토리 + 키워드 SEO head |
+| `/` | **아가펫스토리** 메인 (프록시) |
+| `/pets` 등 | **아가펫스토리** 해당 경로 (프록시) |
+| `/admin` | **관리자** — 키워드 등록·설정 (noindex) |
+| `/[키워드슬러그]` | **SEO head** + 아가펫스토리 본문 |
 | `/[키워드슬러그]01` | 동일 키워드 중복 시 접미사 |
 
 ## 빠른 시작
@@ -18,26 +20,29 @@ npm install
 npm run dev
 ```
 
-- 메인 허브: http://localhost:3000
-- 샘플 서브페이지: http://localhost:3000/강아지-분양
+- 메인(아가펫): http://localhost:3000/
+- 관리자: http://localhost:3000/admin
+- 샘플 SEO: http://localhost:3000/강아지-분양
 
-## 환경 변수
+## 환경 변수 (dmcmusic.co.kr 예시)
 
-| 변수 | 설명 |
+| 변수 | 예시 |
 |------|------|
-| `CANONICAL_BASE_URL` | Canonical 기준 URL (예: `https://sub.mydomain.com`) |
-| `MAIN_PROXY_TARGET` | 메인 프록시 대상 (기본: agapetstory.co.kr) |
-| `ENABLE_APP_LEVEL_MAIN_PROXY` | `true`일 때만 메인(/)을 agapetstory로 프록시 (기본 OFF) |
+| `CANONICAL_BASE_URL` | `https://dmcmusic.co.kr` |
+| `MAIN_PROXY_TARGET` | `https://www.agapetstory.co.kr` |
+| `ADMIN_PATH` | `/admin` |
+| `ENABLE_APP_LEVEL_MAIN_PROXY` | `true` (기본, `/admin`·키워드 URL 제외) |
 
 ## 동작 원리
 
 ```
-/ (메인)          → 관리 UI (키워드 등록, 목록) — 검색 노출 안 함
-/강아지-분양      → 서버가 agapetstory HTML fetch → SEO head 주입 → HTML 반환
+/ , /pets …       → agapetstory 프록시
+/admin            → 키워드 등록 UI (검색 노출 안 함)
+/의정부-강아지-분양 → SEO head(키워드) + agapetstory HTML 본문
 ```
 
-- **방문자**: 아가펫스토리 HTML 본문 (iframe 없음, `<base href>`로 에셋 로드)
-- **검색엔진**: 각 서브 URL의 Title, Description, Canonical, OG 태그는 등록 키워드 기준
+- **방문자**: 메인·서브 모두 아가펫스토리 화면
+- **검색엔진**: 키워드 URL만 Title / Description / Canonical 별도 적용
 
 ## Nginx 역방향 프록시 예시
 

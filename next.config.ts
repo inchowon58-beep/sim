@@ -7,9 +7,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROXY_TARGET =
   process.env.MAIN_PROXY_TARGET ?? "https://www.agapetstory.co.kr";
 
-/** 메인(/) 프록시 — 기본 OFF. 서브페이지는 iframe으로 agapetstory 표시 */
+/** false 가 아니면 / 및 비-키워드 경로 → agapetstory 프록시 (기본 ON) */
 function isMainProxyEnabled(): boolean {
-  return process.env.ENABLE_APP_LEVEL_MAIN_PROXY === "true";
+  return process.env.ENABLE_APP_LEVEL_MAIN_PROXY !== "false";
 }
 
 const nextConfig: NextConfig = {

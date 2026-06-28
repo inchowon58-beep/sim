@@ -9,10 +9,10 @@ export const metadata: Metadata = {
 };
 
 /**
- * 메인 (/) — 관리 전용
- * 키워드 등록·목록 확인. 아가펫스토리 콘텐츠는 서브페이지에서만 노출.
+ * /admin — 키워드 등록·관리 (검색 노출 제외)
+ * 메인(/)은 아가펫스토리 프록시, 키워드 URL은 SEO + 아가펫스토리
  */
-export default async function AdminHomePage() {
+export default async function AdminPage() {
   const keywords = await getAllKeywords();
 
   return (
@@ -20,9 +20,9 @@ export default async function AdminHomePage() {
       <header className="admin-header">
         <h1>SEO 서브페이지 관리</h1>
         <p>
-          이 페이지는 <strong>설정·키워드 등록</strong> 전용입니다.
-          생성된 서브페이지는 서버가 아가펫스토리 HTML을 프록시하며, 각
-          URL마다 키워드별 SEO가 head에 주입됩니다.
+          <strong>메인(/)·일반 경로</strong> → 아가펫스토리 ·{" "}
+          <strong>키워드 URL</strong> → SEO 메타 + 아가펫스토리 ·{" "}
+          <strong>이 페이지</strong> → 설정 전용
         </p>
       </header>
 
