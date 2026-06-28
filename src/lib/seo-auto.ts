@@ -139,7 +139,7 @@ export async function generateRelatedKeywordsForSeo(
 ): Promise<string[]> {
   const group = await findMatchingKeywordGroup(baseKeyword);
   if (group) {
-    return buildDescriptionFromGroup(baseKeyword, group);
+    return buildDescriptionFromGroup(baseKeyword, group, slug);
   }
   return generateRelatedKeywords(baseKeyword, slug);
 }
@@ -150,7 +150,7 @@ export async function buildAutoSeo(
 ): Promise<AutoSeoResult> {
   const group = await findMatchingKeywordGroup(baseKeyword);
   const relatedKeywords = group
-    ? buildDescriptionFromGroup(baseKeyword, group)
+    ? buildDescriptionFromGroup(baseKeyword, group, slug)
     : generateRelatedKeywords(baseKeyword, slug);
 
   return {

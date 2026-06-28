@@ -4,6 +4,7 @@ import type {
 } from "@/types/keyword-group";
 import groupsSeed from "../../data/keyword-groups.json";
 import { readJsonArray, writeJsonArray } from "./data-store";
+import { createSeededRandom, pickOne, shuffle } from "./seeded-random";
 import { compactKeyword, extractRegion } from "./seo-auto";
 
 const DATA_FILE = "data/keyword-groups.json";
@@ -57,24 +58,54 @@ export async function findMatchingKeywordGroup(
   return best?.group ?? null;
 }
 
-/** 그룹 키워드 + 지역 접두 → description 목록 */
+/** 자동 추가 description 키워드 풀 (그룹 키워드 외 1개) */
+const EXTRA_DESCRIPTION_KEYWORDS = [
+  "반려동물입양",
+  "애완견분양",
+  "펫분양",
+  "무료입양",
+  "입양정보",
+  "견종분양",
+  "믹스견입양",
+  "애완동물분양",
+  "강아지입양",
+  "강아지무료분양",
+  "반려견분양",
+  "애견입양",
+];
+
+function withRegionPrefix(term: string, regionNorm: string | null): string {
+  return regionNorm ? `${regionNorm}${term}` : term;
+}
+
+/** 그룹 키워드 + 지역 접두 → description 목록 (slug 시드로 순서 고정·랜덤) */
 export function buildDescriptionFromGroup(
   baseKeyword: string,
-  group: KeywordGroup
+  group: KeywordGroup,
+  slug: string
 ): string[] {
   const compact = compactKeyword(baseKeyword);
   const region = extractRegion(baseKeyword);
   const regionNorm = region?.replace(/(시|군|구)$/u, "") ?? null;
+  const rng = createSeededRandom(`desc:${slug}:${baseKeyword}:${group.id}`);
 
-  const terms = group.keywords.map((k) => k.replace(/\s+/g, ""));
+  const withRegion = group.keywords.map((k) =>
+    withRegionPrefix(k.replace(/\s+/g, ""), regionNorm)
+  );
 
-  const result = terms.map((term) => {
-    if (regionNorm) return `${regionNorm}${term}`;
-    return term;
-  });
+  const pool = [...new Set(withRegion)];
+  if (!pool.includes(compact)) {
+    pool.push(compact);
+  }
 
-  if (!result.includes(compact)) {
-    result.unshift(compact);
+  let result = shuffle(rng, pool);
+
+  const extraCandidates = EXTRA_DESCRIPTION_KEYWORDS.map((term) =>
+    withRegionPrefix(term, regionNorm)
+  ).filter((k) => !result.includes(k));
+
+  if (extraCandidates.length > 0) {
+    result = [...result, pickOne(rng, extraCandidates)];
   }
 
   return [...new Set(result)];
