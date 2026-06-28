@@ -85,7 +85,7 @@ export async function createKeyword(
     title: input.title?.trim() || autoSeo.title,
     description: input.description?.trim() || autoSeo.description,
     content: useContentMixer
-      ? mixContentForBottom(baseKeyword, slug)
+      ? await mixContentForBottom(baseKeyword, slug)
       : (input.content ?? ""),
     useContentMixer,
     mixedImageUrl: mixedImageUrl ?? undefined,

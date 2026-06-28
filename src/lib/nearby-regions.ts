@@ -1,3 +1,4 @@
+import { findActiveKeywordSlug } from "./keyword-lookup";
 import { createSeededRandom, pickUnique, shuffle } from "./seeded-random";
 import { extractRegion } from "./seo-auto";
 
@@ -57,6 +58,14 @@ const FALLBACK_POOL = [
 
 const NEARBY_COUNT = 5;
 
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 function normalizeRegionName(region: string): string {
   return region.replace(/(시|군|구)$/u, "").trim();
 }
@@ -114,30 +123,52 @@ function buildRegionKeyword(region: string, tail: string): string {
   return `${region}${compactTail}`;
 }
 
-/** 인근지역정보 HTML (하단 SEO 블록용) */
-export function buildNearbyRegionsHtml(
+function buildNearbyListItem(
+  near: string,
+  tail: string,
+  targetSlug: string | null
+): string {
+  const kw = buildRegionKeyword(near, tail);
+  const extras = `${near}애견분양, ${near}반려동물분양`;
+  const nearHtml = escapeHtml(near);
+
+  if (targetSlug) {
+    const href = `/${encodeURIComponent(targetSlug)}`;
+    return `<li><strong>${nearHtml}</strong> — <a href="${escapeHtml(href)}" class="seo-nearby-link">${escapeHtml(kw)}</a>, ${escapeHtml(extras)}</li>`;
+  }
+
+  return `<li><strong>${nearHtml}</strong> — ${escapeHtml(kw)}, ${escapeHtml(extras)}</li>`;
+}
+
+/** 인근지역정보 HTML — 등록된 서브페이지만 내부 링크 */
+export async function buildNearbyRegionsHtml(
   baseKeyword: string,
   slug: string
-): string {
+): Promise<string> {
   const region = extractRegion(baseKeyword);
   const tail = extractKeywordTail(baseKeyword, region);
   const nearby = pickNearbyRegions(baseKeyword, slug);
 
   if (nearby.length === 0) return "";
 
-  const centerLabel = region ?? baseKeyword.trim();
-  const items = nearby
-    .map((near) => {
-      const kw = buildRegionKeyword(near, tail);
-      return `<li><strong>${near}</strong> — ${kw}, ${near}애견분양, ${near}반려동물분양</li>`;
+  const centerLabel = escapeHtml(region ?? baseKeyword.trim());
+  const tailLabel = escapeHtml(tail);
+
+  const items = await Promise.all(
+    nearby.map(async (near) => {
+      const candidateKeyword = `${near} ${tail}`;
+      const targetSlug = await findActiveKeywordSlug(candidateKeyword);
+      const linkSlug =
+        targetSlug && targetSlug !== slug ? targetSlug : null;
+      return buildNearbyListItem(near, tail, linkSlug);
     })
-    .join("\n");
+  );
 
   return `<section class="mixed-section mixed-section--nearby">
   <h2>인근지역정보</h2>
-  <p>${centerLabel} 인근에서 ${tail} 정보를 찾으신다면 아래 지역도 함께 확인해 보세요.</p>
+  <p>${centerLabel} 인근에서 ${tailLabel} 정보를 찾으신다면 아래 지역도 함께 확인해 보세요.</p>
   <ul class="seo-nearby-list">
-${items}
+${items.join("\n")}
   </ul>
 </section>`;
 }

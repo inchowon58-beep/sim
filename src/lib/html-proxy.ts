@@ -74,6 +74,8 @@ function getBottomBlockStyles(): string {
 .seo-bottom-block .seo-nearby-list li{margin-bottom:.5rem}
 .seo-bottom-block .seo-nearby-list li:last-child{margin-bottom:0}
 .seo-bottom-block .seo-nearby-list strong{color:#0f172a}
+.seo-bottom-block .seo-nearby-link{color:#2563eb;text-decoration:none;font-weight:600}
+.seo-bottom-block .seo-nearby-link:hover{text-decoration:underline}
 </style>`;
 }
 

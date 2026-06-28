@@ -51,7 +51,10 @@ export function mixContent(keyword: string, slug: string): string {
 /**
  * 하단 SEO 블록용 — h1 없이 섹션만 (상단은 아가펫스토리)
  */
-export function mixContentForBottom(keyword: string, slug: string): string {
+export async function mixContentForBottom(
+  keyword: string,
+  slug: string
+): Promise<string> {
   const rng = createSeededRandom(`mix:${slug}:${keyword}`);
   const pool = getContentSectionPool();
   const selected = shuffle(rng, pickUnique(rng, pool, SECTION_COUNT));
@@ -60,7 +63,7 @@ export function mixContentForBottom(keyword: string, slug: string): string {
   const sections = selected
     .map((section) => renderSectionHtml(section, keyword, rng))
     .join("\n");
-  const nearby = buildNearbyRegionsHtml(keyword, slug);
+  const nearby = await buildNearbyRegionsHtml(keyword, slug);
 
   return `${intro}\n<div class="mixed-sections">\n${sections}\n${nearby}\n</div>`;
 }

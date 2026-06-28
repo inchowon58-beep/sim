@@ -30,7 +30,7 @@ export async function GET(
 
   const bottomHtml =
     entry.useContentMixer !== false
-      ? mixContentForBottom(entry.baseKeyword, entry.slug)
+      ? await mixContentForBottom(entry.baseKeyword, entry.slug)
       : entry.content;
 
   try {
