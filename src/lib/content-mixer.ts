@@ -4,6 +4,7 @@ import {
   getContentSectionPool,
   type ContentSectionTemplate,
 } from "./content-sections";
+import { buildNearbyRegionsHtml } from "./nearby-regions";
 
 const SECTION_COUNT = 4;
 
@@ -59,6 +60,7 @@ export function mixContentForBottom(keyword: string, slug: string): string {
   const sections = selected
     .map((section) => renderSectionHtml(section, keyword, rng))
     .join("\n");
+  const nearby = buildNearbyRegionsHtml(keyword, slug);
 
-  return `${intro}\n<div class="mixed-sections">\n${sections}\n</div>`;
+  return `${intro}\n<div class="mixed-sections">\n${sections}\n${nearby}\n</div>`;
 }

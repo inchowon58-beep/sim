@@ -70,6 +70,10 @@ function getBottomBlockStyles(): string {
 .seo-bottom-block .mixed-section p{margin:0 0 .625rem;font-size:.9375rem;color:#334155}
 .seo-bottom-block .mixed-section p:last-child{margin-bottom:0}
 .seo-bottom-keywords{margin-top:1.5rem;padding-top:1rem;border-top:1px dashed #cbd5e1;font-size:.8125rem;color:#64748b;word-break:keep-all}
+.seo-bottom-block .seo-nearby-list{margin:.75rem 0 0;padding:0 0 0 1.125rem;font-size:.875rem;color:#475569}
+.seo-bottom-block .seo-nearby-list li{margin-bottom:.5rem}
+.seo-bottom-block .seo-nearby-list li:last-child{margin-bottom:0}
+.seo-bottom-block .seo-nearby-list strong{color:#0f172a}
 </style>`;
 }
 
@@ -130,6 +134,15 @@ function rewriteRelativeUrls(html: string, origin: string): string {
         })
         .join(", ");
       return ` srcset=${quote}${rewritten}${quote}`;
+    }
+  );
+
+  html = html.replace(
+    /url\(\s*(["']?)([^"')]+)\1\s*\)/gi,
+    (_match, quote: string, path: string) => {
+      const trimmed = path.trim();
+      if (/^(https?:|\/\/|data:)/i.test(trimmed)) return `url(${quote}${trimmed}${quote})`;
+      return `url(${quote}${toAbs(trimmed)}${quote})`;
     }
   );
 
