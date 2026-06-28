@@ -11,9 +11,10 @@ function escapeHtml(text: string): string {
     .replace(/"/g, "&quot;");
 }
 
-function resolveAbsoluteUrl(url: string, pageOrigin: string): string {
+function resolveAbsoluteUrl(url: string, baseOrigin: string): string {
   if (/^https?:\/\//i.test(url)) return url;
-  const base = pageOrigin.replace(/\/$/, "");
+  if (url.startsWith("//")) return `https:${url}`;
+  const base = baseOrigin.replace(/\/$/, "");
   return `${base}${url.startsWith("/") ? url : `/${url}`}`;
 }
 
@@ -54,7 +55,6 @@ function buildSeoHeadBlock(seo: SeoMeta, pageOrigin: string): string {
   return lines.join("\n");
 }
 
-/** 원본 HTML에서 SEO 관련 태그 제거 (치환 충돌 방지) */
 function stripSeoTags(html: string): string {
   return html
     .replace(/<title[^>]*>[\s\S]*?<\/title>/gi, "")
@@ -66,11 +66,45 @@ function stripSeoTags(html: string): string {
     .replace(/<base[^>]*>/gi, "");
 }
 
-/**
- * 아가펫스토리 HTML을 서버에서 fetch 후 키워드 SEO head 주입
- * - <base href> 로 CSS/JS/이미지 상대경로를 원본 사이트 기준으로 로드
- * - 본문은 원본 HTML 그대로 (iframe 없음)
- */
+/** Next.js 클라이언트 스크립트 제거 — 타 도메인 URL에서 hydration 오류 방지 */
+function stripScripts(html: string): string {
+  return html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
+}
+
+/** 상대 경로 → 아가펫스토리 절대 URL (CSS·이미지·링크) */
+function rewriteRelativeUrls(html: string, origin: string): string {
+  const toAbs = (path: string): string => {
+    const trimmed = path.trim();
+    if (/^(https?:|\/\/|#|mailto:|tel:|javascript:|data:)/i.test(trimmed)) {
+      return trimmed;
+    }
+    return resolveAbsoluteUrl(trimmed, origin);
+  };
+
+  html = html.replace(
+    /\s(href|src|poster|action)=(["'])([^"']+)\2/gi,
+    (_match, attr: string, quote: string, path: string) =>
+      ` ${attr}=${quote}${toAbs(path)}${quote}`
+  );
+
+  html = html.replace(
+    /\ssrcset=(["'])([^"']+)\1/gi,
+    (_match, quote: string, srcset: string) => {
+      const rewritten = srcset
+        .split(",")
+        .map((part) => {
+          const pieces = part.trim().split(/\s+/);
+          pieces[0] = toAbs(pieces[0]);
+          return pieces.join(" ");
+        })
+        .join(", ");
+      return ` srcset=${quote}${rewritten}${quote}`;
+    }
+  );
+
+  return html;
+}
+
 export async function fetchProxiedPage(
   seo: SeoMeta,
   targetPath = "/"
@@ -78,6 +112,7 @@ export async function fetchProxiedPage(
   const base = PROXY_TARGET.replace(/\/$/, "");
   const targetUrl = `${base}${targetPath.startsWith("/") ? targetPath : `/${targetPath}`}`;
   const origin = new URL(base).origin;
+  const pageOrigin = new URL(seo.canonical).origin;
 
   const response = await fetch(targetUrl, {
     headers: {
@@ -86,7 +121,7 @@ export async function fetchProxiedPage(
       Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
       "Accept-Language": "ko-KR,ko;q=0.9,en;q=0.8",
     },
-    next: { revalidate: 60 },
+    cache: "no-store",
   });
 
   if (!response.ok) {
@@ -95,23 +130,28 @@ export async function fetchProxiedPage(
 
   let html = await response.text();
   html = stripSeoTags(html);
+  html = stripScripts(html);
+  html = rewriteRelativeUrls(html, origin);
 
-  const seoBlock = buildSeoHeadBlock(seo, origin);
-  const baseTag = `<base href="${origin}/">`;
+  const seoBlock = buildSeoHeadBlock(seo, pageOrigin);
   const marker = "<!-- agapet-seo-proxy -->";
 
   if (/<head[^>]*>/i.test(html)) {
     html = html.replace(
       /<head([^>]*)>/i,
-      `<head$1>${marker}\n${baseTag}\n${seoBlock}`
+      `<head$1>${marker}\n${seoBlock}`
     );
   } else if (/<html[^>]*>/i.test(html)) {
     html = html.replace(
       /<html([^>]*)>/i,
-      `<html$1><head>${marker}${baseTag}${seoBlock}</head>`
+      `<html$1><head>${marker}${seoBlock}</head>`
     );
   } else {
-    html = `<!DOCTYPE html><html><head>${marker}${baseTag}${seoBlock}</head><body>${html}</body></html>`;
+    html = `<!DOCTYPE html><html lang="ko"><head>${marker}${seoBlock}</head><body>${html}</body></html>`;
+  }
+
+  if (!/<meta[^>]+charset/i.test(html)) {
+    html = html.replace(/<head([^>]*)>/i, `<head$1><meta charset="utf-8"/>`);
   }
 
   return html;

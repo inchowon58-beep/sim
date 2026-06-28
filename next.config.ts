@@ -1,4 +1,8 @@
 import type { NextConfig } from "next";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const PROXY_TARGET =
   process.env.MAIN_PROXY_TARGET ?? "https://www.agapetstory.co.kr";
@@ -9,6 +13,7 @@ function isMainProxyEnabled(): boolean {
 }
 
 const nextConfig: NextConfig = {
+  outputFileTracingRoot: path.join(__dirname),
   async rewrites() {
     if (!isMainProxyEnabled()) {
       return { beforeFiles: [], afterFiles: [], fallback: [] };

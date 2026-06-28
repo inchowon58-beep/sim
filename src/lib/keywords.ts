@@ -5,6 +5,7 @@ import type {
   KeywordEntry,
   KeywordStore,
 } from "@/types/keyword";
+import keywordsSeed from "../../data/keywords.json";
 import { generateUniqueSlug } from "./slug";
 import { mixContent } from "./content-mixer";
 import { pickRandomImage } from "./image-picker";
@@ -13,13 +14,25 @@ import { submitIndexNowForSlug } from "./indexnow";
 const DATA_PATH = path.join(process.cwd(), "data", "keywords.json");
 
 async function readStore(): Promise<KeywordStore> {
-  const raw = await fs.readFile(DATA_PATH, "utf-8");
-  const keywords = JSON.parse(raw) as KeywordEntry[];
-  return { keywords };
+  try {
+    const raw = await fs.readFile(DATA_PATH, "utf-8");
+    const keywords = JSON.parse(raw) as KeywordEntry[];
+    return { keywords };
+  } catch {
+    return { keywords: [...(keywordsSeed as KeywordEntry[])] };
+  }
 }
 
 async function writeStore(store: KeywordStore): Promise<void> {
-  await fs.writeFile(DATA_PATH, JSON.stringify(store.keywords, null, 2), "utf-8");
+  try {
+    await fs.writeFile(
+      DATA_PATH,
+      JSON.stringify(store.keywords, null, 2),
+      "utf-8"
+    );
+  } catch (error) {
+    console.warn("[keywords] write skipped (read-only env):", error);
+  }
 }
 
 function createId(): string {

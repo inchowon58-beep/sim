@@ -3,7 +3,9 @@ import { getKeywordBySlug } from "@/lib/keywords";
 import { fetchProxiedPage } from "@/lib/html-proxy";
 import { buildSeoMeta, resolveCanonicalBase } from "@/lib/seo";
 
-export const revalidate = 60;
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
 /**
  * SEO 서브페이지 — 서버 프록시
