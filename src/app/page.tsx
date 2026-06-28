@@ -21,8 +21,8 @@ export default async function AdminHomePage() {
         <h1>SEO 서브페이지 관리</h1>
         <p>
           이 페이지는 <strong>설정·키워드 등록</strong> 전용입니다.
-          생성된 서브페이지에서 아가펫스토리가 표시되며, 각 URL마다
-          키워드별 SEO가 적용됩니다.
+          생성된 서브페이지는 서버가 아가펫스토리 HTML을 프록시하며, 각
+          URL마다 키워드별 SEO가 head에 주입됩니다.
         </p>
       </header>
 

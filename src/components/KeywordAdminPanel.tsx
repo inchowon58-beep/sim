@@ -66,8 +66,8 @@ export function KeywordAdminPanel({ initialKeywords }: KeywordAdminPanelProps) {
         <h2>키워드 등록</h2>
         <p className="admin-desc">
           등록하면 서브페이지가 생성됩니다. 방문자에게는{" "}
-          <strong>아가펫스토리</strong>가 보이고, 검색엔진에는 입력한
-          키워드 SEO가 적용됩니다.
+          <strong>아가펫스토리(서버 프록시)</strong>가 보이고, 검색엔진에는
+          입력한 키워드 SEO가 적용됩니다.
         </p>
 
         <form className="admin-form" onSubmit={handleSubmit}>
