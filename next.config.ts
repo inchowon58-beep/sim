@@ -3,15 +3,11 @@ import type { NextConfig } from "next";
 const PROXY_TARGET =
   process.env.MAIN_PROXY_TARGET ?? "https://www.agapetstory.co.kr";
 
-/** false 로 명시하지 않는 한 앱 레벨 프록시 활성 (Vercel 등 Nginx 없는 환경) */
+/** 메인(/) 프록시 — 기본 OFF. 서브페이지는 iframe으로 agapetstory 표시 */
 function isMainProxyEnabled(): boolean {
-  return process.env.ENABLE_APP_LEVEL_MAIN_PROXY !== "false";
+  return process.env.ENABLE_APP_LEVEL_MAIN_PROXY === "true";
 }
 
-/**
- * 메인 및 비-키워드 경로 → agapetstory.co.kr 역방향 프록시
- * 키워드 서브페이지는 middleware가 x-seo-subpage 헤더를 붙여 제외
- */
 const nextConfig: NextConfig = {
   async rewrites() {
     if (!isMainProxyEnabled()) {

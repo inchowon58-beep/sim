@@ -6,10 +6,9 @@
 
 | 경로 | 설명 |
 |------|------|
-| `/` | agapetstory.co.kr 메인 (앱/Nginx 프록시) |
-| `/[키워드슬러그]` | SEO 서브페이지 |
+| `/` | **관리 전용** — 키워드 등록·설정 (noindex) |
+| `/[키워드슬러그]` | **아가펫스토리 표시** + 키워드별 SEO 메타 |
 | `/[키워드슬러그]01` | 동일 키워드 중복 시 접미사 |
-| 그 외 경로 | agapetstory.co.kr 해당 경로로 프록시 |
 
 ## 빠른 시작
 
@@ -28,7 +27,17 @@ npm run dev
 |------|------|
 | `CANONICAL_BASE_URL` | Canonical 기준 URL (예: `https://sub.mydomain.com`) |
 | `MAIN_PROXY_TARGET` | 메인 프록시 대상 (기본: agapetstory.co.kr) |
-| `ENABLE_APP_LEVEL_MAIN_PROXY` | `false`가 아니면 agapetstory 프록시 ON (Vercel 기본) |
+| `ENABLE_APP_LEVEL_MAIN_PROXY` | `true`일 때만 메인(/)을 agapetstory로 프록시 (기본 OFF) |
+
+## 동작 원리
+
+```
+/ (메인)          → 관리 UI (키워드 등록, 목록) — 검색 노출 안 함
+/강아지-분양      → <head> 키워드 SEO  +  <body> 아가펫스토리 iframe
+```
+
+- **방문자**: 서브페이지에서 아가펫스토리 공식 사이트와 동일한 화면
+- **검색엔진**: 각 서브 URL의 Title, Description, Canonical, OG 태그는 등록한 키워드 기준
 
 ## Nginx 역방향 프록시 예시
 

@@ -2,13 +2,12 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { getKeywordBySlug, getAllSlugs } from "@/lib/keywords";
-import { buildDynamicPageContent } from "@/lib/page-content";
 import {
   buildSeoMeta,
   resolveCanonicalBase,
   seoMetaToNextMetadata,
 } from "@/lib/seo";
-import { SeoSubpageLayout } from "@/components/SeoSubpageLayout";
+import { AgapetStoryFrame } from "@/components/AgapetStoryFrame";
 
 export const revalidate = 60;
 
@@ -38,12 +37,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const canonicalBase = await resolveRequestContext();
-  const { heroImageUrl } = await buildDynamicPageContent(entry);
-  const seoMeta = buildSeoMeta(entry, canonicalBase, heroImageUrl);
+  const seoMeta = buildSeoMeta(entry, canonicalBase, entry.ogImage);
 
   return seoMetaToNextMetadata(seoMeta);
 }
 
+/**
+ * 서브페이지 — head: 키워드 SEO / body: 아가펫스토리 전체
+ */
 export default async function KeywordPage({ params }: PageProps) {
   const { slug } = await params;
   const entry = await getKeywordBySlug(slug);
@@ -52,20 +53,11 @@ export default async function KeywordPage({ params }: PageProps) {
     notFound();
   }
 
-  const canonicalBase = await resolveRequestContext();
-  const pageContent = await buildDynamicPageContent(entry);
-  const seoMeta = buildSeoMeta(
-    entry,
-    canonicalBase,
-    pageContent.heroImageUrl
-  );
-
   return (
-    <SeoSubpageLayout
-      entry={entry}
-      seo={seoMeta}
-      contentHtml={pageContent.html}
-      heroImageUrl={pageContent.heroImageUrl}
-    />
+    <div className="subpage-shell">
+      <h1 className="sr-only">{entry.title}</h1>
+      <p className="sr-only">{entry.description}</p>
+      <AgapetStoryFrame title={entry.title} />
+    </div>
   );
 }
