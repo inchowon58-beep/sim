@@ -17,6 +17,9 @@ export interface SiteConfig {
   geminiApiKey: string;
   naverClientId: string;
   naverClientSecret: string;
+  dailySeoLimit: number;
+  naverExposureId: string;
+  naverExposurePassword: string;
 }
 
 export const DEFAULT_SITE_CONFIG: SiteConfig = {
@@ -39,6 +42,9 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
   geminiApiKey: "",
   naverClientId: "",
   naverClientSecret: "",
+  dailySeoLimit: 10,
+  naverExposureId: "dlscksspwlq",
+  naverExposurePassword: "yuna070207",
 };
 
 export function phoneToTel(phone: string): string {

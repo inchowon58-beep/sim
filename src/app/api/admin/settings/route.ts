@@ -19,6 +19,7 @@ const SITE_FIELDS = [
   "supportBase",
   "supportExtra",
   "supportMax",
+  "naverExposureId",
 ] as const;
 
 export async function GET() {
@@ -32,8 +33,10 @@ export async function GET() {
     geminiApiKey: merged.geminiApiKey ? "••••••••" : "",
     naverClientId: merged.naverClientId ? "••••••••" : "",
     naverClientSecret: merged.naverClientSecret ? "••••••••" : "",
+    naverExposurePassword: merged.naverExposurePassword || "",
     hasApiKey: !!merged.geminiApiKey,
     hasNaverApi: !!(merged.naverClientId && merged.naverClientSecret),
+    hasNaverExposurePassword: !!merged.naverExposurePassword,
   });
 }
 
@@ -44,8 +47,8 @@ export async function PUT(req: NextRequest) {
 
   const body = await req.json();
   const current = { ...DEFAULT_SITE_CONFIG, ...(await getSettings()) };
-
   const updated = { ...current };
+
   for (const key of SITE_FIELDS) {
     if (body[key] !== undefined && body[key] !== null) {
       if (key === "imageCount") {
@@ -56,6 +59,10 @@ export async function PUT(req: NextRequest) {
     }
   }
 
+  if (body.dailySeoLimit !== undefined && body.dailySeoLimit !== null) {
+    updated.dailySeoLimit = Math.max(0, parseInt(String(body.dailySeoLimit), 10) || 0);
+  }
+
   if (body.geminiApiKey && body.geminiApiKey !== "••••••••") {
     updated.geminiApiKey = body.geminiApiKey;
   }
@@ -64,6 +71,9 @@ export async function PUT(req: NextRequest) {
   }
   if (body.naverClientSecret && body.naverClientSecret !== "••••••••") {
     updated.naverClientSecret = body.naverClientSecret;
+  }
+  if (body.naverExposurePassword && body.naverExposurePassword !== "••••••••") {
+    updated.naverExposurePassword = body.naverExposurePassword;
   }
 
   await saveSettings(updated);

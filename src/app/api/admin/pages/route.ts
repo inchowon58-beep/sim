@@ -6,6 +6,7 @@ import { generateSeoContent } from "@/lib/gemini";
 import { getSiteConfig } from "@/lib/site-config";
 import { getImageIndexFromSeed } from "@/lib/site-images";
 import { resolveLocalPartnersForKeyword } from "@/lib/local-business";
+import { consumeSeoQuota, getSeoQuotaStatus } from "@/lib/seo-quota";
 
 function getNaverCredentials(site: Awaited<ReturnType<typeof getSiteConfig>>) {
   return {
@@ -15,7 +16,7 @@ function getNaverCredentials(site: Awaited<ReturnType<typeof getSiteConfig>>) {
 }
 
 export async function GET() {
-  if (!(await isAuthenticated()) || !(await isMasterAuthenticated())) {
+  if (!(await isAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const pages = await getPages();
@@ -23,7 +24,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  if (!(await isAuthenticated()) || !(await isMasterAuthenticated())) {
+  if (!(await isAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -31,6 +32,16 @@ export async function POST(req: NextRequest) {
 
   if (!keyword?.trim()) {
     return NextResponse.json({ error: "키워드를 입력해주세요" }, { status: 400 });
+  }
+
+  const quota = await getSeoQuotaStatus();
+  if (quota.remaining <= 0) {
+    return NextResponse.json(
+      {
+        error: `오늘 SEO 페이지 생성 한도(${quota.limit}개)를 모두 사용했습니다. 내일 다시 시도하거나 마스터 설정에서 한도를 조정하세요.`,
+      },
+      { status: 429 }
+    );
   }
 
   try {
@@ -73,6 +84,7 @@ export async function POST(req: NextRequest) {
     };
 
     await savePage(page);
+    await consumeSeoQuota();
     return NextResponse.json(page);
   } catch (error) {
     if (error instanceof DataStorageError) {
@@ -87,7 +99,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  if (!(await isAuthenticated()) || !(await isMasterAuthenticated())) {
+  if (!(await isAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

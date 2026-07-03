@@ -16,5 +16,8 @@
   "supportMax": "1000만원",
   "geminiApiKey": "",
   "naverClientId": "",
-  "naverClientSecret": ""
+  "naverClientSecret": "",
+  "dailySeoLimit": 10,
+  "naverExposureId": "dlscksspwlq",
+  "naverExposurePassword": "yuna070207"
 }

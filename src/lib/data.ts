@@ -51,6 +51,11 @@ export interface Settings {
   geminiApiKey?: string;
   naverClientId?: string;
   naverClientSecret?: string;
+  dailySeoLimit?: number;
+  naverExposureId?: string;
+  naverExposurePassword?: string;
+  seoQuotaDate?: string;
+  seoQuotaCount?: number;
 }
 
 const DATA_DIR = path.join(process.cwd(), "data");
