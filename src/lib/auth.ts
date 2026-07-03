@@ -7,7 +7,7 @@ const SECRET = new TextEncoder().encode(
 );
 
 const COOKIE_NAME = "demolition_admin_session";
-const MASTER_COOKIE_NAME = "demolition_master_session";
+const MASTER_COOKIE_NAME = "demolition_master_session_v2";
 
 export async function createSession(): Promise<string> {
   return new SignJWT({ role: "admin", user: ADMIN_USERNAME })

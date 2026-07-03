@@ -7,6 +7,10 @@ import { getSiteConfig } from "@/lib/site-config";
 import { getImageIndexFromSeed } from "@/lib/site-images";
 import { resolveLocalPartnersForKeyword } from "@/lib/local-business";
 import { consumeSeoQuota, getSeoQuotaStatus } from "@/lib/seo-quota";
+import {
+  getServicePeriodStatus,
+  purgePagesIfServiceExpired,
+} from "@/lib/service-period";
 
 function getNaverCredentials(site: Awaited<ReturnType<typeof getSiteConfig>>) {
   return {
@@ -19,6 +23,7 @@ export async function GET() {
   if (!(await isAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  await purgePagesIfServiceExpired();
   const pages = await getPages();
   return NextResponse.json(pages);
 }
@@ -32,6 +37,18 @@ export async function POST(req: NextRequest) {
 
   if (!keyword?.trim()) {
     return NextResponse.json({ error: "키워드를 입력해주세요" }, { status: 400 });
+  }
+
+  await purgePagesIfServiceExpired();
+  const service = await getServicePeriodStatus();
+  if (!service.active) {
+    return NextResponse.json(
+      {
+        error:
+          "사용 기간이 만료되었습니다. SEO 페이지가 삭제되었을 수 있습니다. 마스터 설정에서 기간 연장 후 다시 시도하세요.",
+      },
+      { status: 403 }
+    );
   }
 
   const quota = await getSeoQuotaStatus();

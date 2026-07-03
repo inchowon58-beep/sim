@@ -54,6 +54,8 @@ export interface Settings {
   dailySeoLimit?: number;
   naverExposureId?: string;
   naverExposurePassword?: string;
+  serviceAvailableDays?: number;
+  serviceExpiresAt?: string;
   seoQuotaDate?: string;
   seoQuotaCount?: number;
 }
@@ -183,6 +185,10 @@ export async function deletePage(id: string): Promise<void> {
     "pages.json",
     pages.filter((p) => p.id !== id)
   );
+}
+
+export async function clearAllPages(): Promise<void> {
+  await writeJson("pages.json", []);
 }
 
 export async function getSettings(): Promise<Settings> {

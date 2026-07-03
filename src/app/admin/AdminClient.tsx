@@ -17,6 +17,13 @@ interface SeoQuota {
   used: number;
   remaining: number;
   today: string;
+  service?: {
+    daysRemaining: number;
+    expiresAt: string | null;
+    active: boolean;
+    expired: boolean;
+  };
+  purged?: boolean;
 }
 
 export default function AdminClient() {
@@ -64,6 +71,10 @@ export default function AdminClient() {
       setMessage("오늘 생성 가능한 SEO 페이지 수량을 모두 사용했습니다.");
       return;
     }
+    if (quota?.service && !quota.service.active) {
+      setMessage("사용 기간이 만료되어 SEO 페이지를 생성할 수 없습니다.");
+      return;
+    }
     setGenerating(true);
     setMessage("Gemini AI로 SEO 문서 생성 중...");
     try {
@@ -109,7 +120,8 @@ export default function AdminClient() {
     }
   };
 
-  const canGenerate = !quota || quota.remaining > 0;
+  const serviceActive = !quota?.service || quota.service.active;
+  const canGenerate = serviceActive && (!quota || quota.remaining > 0);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -126,6 +138,33 @@ export default function AdminClient() {
             <Link href="/" className="text-gray-400 hover:underline">← 메인</Link>
           </div>
         </div>
+
+        {quota?.service && (
+          <div
+            className={`mb-6 rounded-2xl p-5 border ${
+              quota.service.active
+                ? "bg-blue-50 border-blue-200 text-blue-950"
+                : "bg-red-50 border-red-300 text-red-950"
+            }`}
+          >
+            <p className="font-semibold text-base">
+              앞으로 사용가능일은 총 {quota.service.daysRemaining}일 입니다.
+            </p>
+            {quota.service.expiresAt && (
+              <p className="text-sm mt-1 opacity-80">만료 예정일: {quota.service.expiresAt} (KST)</p>
+            )}
+            <p className="text-sm mt-3 leading-relaxed opacity-90">
+              기간만료 이후에는 해당페이지들이 모두 삭제처리 될수 있습니다.
+              <br />
+              삭제처리 이후에는 복구가 불가능하니 기간만료 이전 연장을 진행하시기 바랍니다.
+            </p>
+            {quota.purged && (
+              <p className="text-sm mt-2 font-medium text-red-700">
+                만료된 SEO 페이지가 삭제되었습니다. 마스터 설정에서 기간을 연장하세요.
+              </p>
+            )}
+          </div>
+        )}
 
         {quota && (
           <div
@@ -170,7 +209,12 @@ export default function AdminClient() {
             >
               {generating ? "AI 생성 중..." : "SEO 페이지 생성"}
             </button>
-            {!canGenerate && (
+            {!canGenerate && quota.service && !quota.service.active && (
+              <p className="text-xs text-red-500">
+                사용 기간이 만료되었습니다. 마스터 설정에서 기간 연장 후 이용하세요.
+              </p>
+            )}
+            {!canGenerate && serviceActive && quota.remaining <= 0 && (
               <p className="text-xs text-red-500">
                 오늘 생성 한도에 도달했습니다. 마스터 설정에서 한도를 조정하거나 내일 다시 시도하세요.
               </p>

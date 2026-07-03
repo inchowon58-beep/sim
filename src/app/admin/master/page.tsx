@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { isAuthenticated } from "@/lib/auth";
-import MasterClient from "./MasterClient";
+import { isAuthenticated, isMasterAuthenticated } from "@/lib/auth";
+import MasterLoginClient from "./MasterLoginClient";
+import MasterSettingsClient from "./MasterSettingsClient";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -13,5 +14,9 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function MasterPage() {
   const authed = await isAuthenticated();
   if (!authed) redirect("/");
-  return <MasterClient />;
+
+  const master = await isMasterAuthenticated();
+  if (!master) return <MasterLoginClient />;
+
+  return <MasterSettingsClient />;
 }

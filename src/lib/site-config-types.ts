@@ -20,6 +20,8 @@ export interface SiteConfig {
   dailySeoLimit: number;
   naverExposureId: string;
   naverExposurePassword: string;
+  serviceAvailableDays: number;
+  serviceExpiresAt: string;
 }
 
 export const DEFAULT_SITE_CONFIG: SiteConfig = {
@@ -45,6 +47,8 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
   dailySeoLimit: 10,
   naverExposureId: "dlscksspwlq",
   naverExposurePassword: "yuna070207",
+  serviceAvailableDays: 30,
+  serviceExpiresAt: "",
 };
 
 export function phoneToTel(phone: string): string {

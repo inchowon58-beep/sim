@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { isAuthenticated, isMasterAuthenticated } from "@/lib/auth";
 import { getSettings, saveSettings } from "@/lib/data";
 import { DEFAULT_SITE_CONFIG } from "@/lib/site-config-types";
+import {
+  computeExpiresAtFromDays,
+  daysRemainingFromExpiresAt,
+} from "@/lib/service-period";
 
 const SITE_FIELDS = [
   "brandName",
@@ -37,6 +41,8 @@ export async function GET() {
     hasApiKey: !!merged.geminiApiKey,
     hasNaverApi: !!(merged.naverClientId && merged.naverClientSecret),
     hasNaverExposurePassword: !!merged.naverExposurePassword,
+    serviceExpiresAt: merged.serviceExpiresAt || "",
+    serviceDaysRemaining: daysRemainingFromExpiresAt(merged.serviceExpiresAt),
   });
 }
 
@@ -63,6 +69,12 @@ export async function PUT(req: NextRequest) {
     updated.dailySeoLimit = Math.max(0, parseInt(String(body.dailySeoLimit), 10) || 0);
   }
 
+  if (body.serviceAvailableDays !== undefined && body.serviceAvailableDays !== null) {
+    const days = Math.max(0, parseInt(String(body.serviceAvailableDays), 10) || 0);
+    updated.serviceAvailableDays = days;
+    updated.serviceExpiresAt = computeExpiresAtFromDays(days);
+  }
+
   if (body.geminiApiKey && body.geminiApiKey !== "••••••••") {
     updated.geminiApiKey = body.geminiApiKey;
   }
@@ -77,5 +89,8 @@ export async function PUT(req: NextRequest) {
   }
 
   await saveSettings(updated);
-  return NextResponse.json({ success: true });
+  return NextResponse.json({
+    success: true,
+    serviceExpiresAt: updated.serviceExpiresAt,
+  });
 }

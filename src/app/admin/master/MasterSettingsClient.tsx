@@ -22,6 +22,7 @@ interface SiteForm {
   supportExtra: string;
   supportMax: string;
   dailySeoLimit: number;
+  serviceAvailableDays: number;
   naverExposureId: string;
 }
 
@@ -42,45 +43,37 @@ const emptySiteForm: SiteForm = {
   supportExtra: "",
   supportMax: "",
   dailySeoLimit: 10,
+  serviceAvailableDays: 30,
   naverExposureId: "",
 };
 
-export default function MasterClient() {
-  const [masterUnlocked, setMasterUnlocked] = useState(false);
-  const [password, setPassword] = useState("");
-  const [loginError, setLoginError] = useState("");
-  const [loginLoading, setLoginLoading] = useState(false);
+export default function MasterSettingsClient() {
   const [siteForm, setSiteForm] = useState<SiteForm>(emptySiteForm);
+  const [serviceExpiresAt, setServiceExpiresAt] = useState("");
   const [naverExposurePassword, setNaverExposurePassword] = useState("");
   const [apiKey, setApiKey] = useState("");
   const [naverClientId, setNaverClientId] = useState("");
   const [naverClientSecret, setNaverClientSecret] = useState("");
   const [hasApiKey, setHasApiKey] = useState(false);
   const [hasNaverApi, setHasNaverApi] = useState(false);
-  const [hasNaverExposurePassword, setHasNaverExposurePassword] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    initMaster();
+    loadSettings();
   }, []);
-
-  const initMaster = async () => {
-    const res = await fetch("/api/auth/master/status");
-    const data = await res.json();
-    if (data.authenticated) {
-      setMasterUnlocked(true);
-      await loadSettings();
-    }
-  };
 
   const loadSettings = async () => {
     const res = await fetch("/api/admin/settings");
+    if (res.status === 401) {
+      window.location.href = "/admin/master";
+      return;
+    }
     if (!res.ok) return;
     const settings = await res.json();
     setHasApiKey(settings.hasApiKey);
     setHasNaverApi(settings.hasNaverApi);
-    setHasNaverExposurePassword(settings.hasNaverExposurePassword);
+    setServiceExpiresAt(settings.serviceExpiresAt || "");
     setSiteForm({
       brandName: settings.brandName || "",
       companyName: settings.companyName || "",
@@ -98,28 +91,10 @@ export default function MasterClient() {
       supportExtra: settings.supportExtra || "",
       supportMax: settings.supportMax || "",
       dailySeoLimit: settings.dailySeoLimit ?? 10,
+      serviceAvailableDays: settings.serviceAvailableDays ?? 30,
       naverExposureId: settings.naverExposureId || "",
     });
     setNaverExposurePassword(settings.naverExposurePassword || "");
-  };
-
-  const handleMasterLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoginLoading(true);
-    setLoginError("");
-    const res = await fetch("/api/auth/master/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password }),
-    });
-    if (res.ok) {
-      setMasterUnlocked(true);
-      setPassword("");
-      await loadSettings();
-    } else {
-      setLoginError("마스터 비밀번호가 올바르지 않습니다.");
-    }
-    setLoginLoading(false);
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -139,16 +114,13 @@ export default function MasterClient() {
         }),
       });
       if (res.ok) {
+        const data = await res.json();
         setMessage("마스터 설정이 저장되었습니다.");
+        if (data.serviceExpiresAt) setServiceExpiresAt(data.serviceExpiresAt);
         setApiKey("");
         setNaverClientId("");
         setNaverClientSecret("");
-        setNaverExposurePassword("");
-        setHasApiKey(true);
-        setHasNaverApi(true);
-        if (hasNaverExposurePassword || naverExposurePassword) {
-          setHasNaverExposurePassword(true);
-        }
+        await loadSettings();
       } else {
         setMessage("설정 저장 실패.");
       }
@@ -176,12 +148,18 @@ export default function MasterClient() {
       ) : (
         <input
           type={opts?.type || "text"}
-          value={key === "imageCount" || key === "dailySeoLimit" ? siteForm[key] : (siteForm[key] as string)}
+          value={
+            key === "imageCount" || key === "dailySeoLimit" || key === "serviceAvailableDays"
+              ? siteForm[key]
+              : (siteForm[key] as string)
+          }
           onChange={(e) =>
             setSiteForm({
               ...siteForm,
               [key]:
-                key === "imageCount" || key === "dailySeoLimit"
+                key === "imageCount" ||
+                key === "dailySeoLimit" ||
+                key === "serviceAvailableDays"
                   ? parseInt(e.target.value, 10) || 0
                   : e.target.value,
             })
@@ -193,46 +171,13 @@ export default function MasterClient() {
     </div>
   );
 
-  if (!masterUnlocked) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-8">
-          <h1 className="text-2xl font-bold text-dark mb-2">마스터 로그인</h1>
-          <p className="text-sm text-gray-500 mb-6">사이트 전체 설정 및 SEO 일일 한도 관리</p>
-          <form onSubmit={handleMasterLogin} className="space-y-4">
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="마스터 비밀번호"
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl outline-none focus:border-orange"
-              required
-              autoFocus
-            />
-            {loginError && <p className="text-red-500 text-sm">{loginError}</p>}
-            <button
-              type="submit"
-              disabled={loginLoading}
-              className="w-full bg-dark text-white py-3 rounded-xl font-medium hover:bg-dark-light transition disabled:opacity-50"
-            >
-              {loginLoading ? "확인 중..." : "마스터 로그인"}
-            </button>
-          </form>
-          <Link href="/admin" className="block text-center text-sm text-gray-400 mt-4 hover:text-orange">
-            ← 관리자 페이지로
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-5xl mx-auto px-4">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-dark">마스터 설정</h1>
-            <p className="text-sm text-gray-500">사이트 전체 설정 · SEO 일일 한도 · 네이버 노출작업</p>
+            <p className="text-sm text-gray-500">사이트 전체 설정 · 사용기간 · SEO 일일 한도</p>
           </div>
           <div className="flex gap-3 text-sm">
             <Link href="/admin" className="text-orange hover:underline">← 관리자</Link>
@@ -253,10 +198,27 @@ export default function MasterClient() {
         )}
 
         <form onSubmit={handleSave} className="space-y-6">
+          <div className="bg-white rounded-2xl shadow-sm p-6 border-2 border-red-200">
+            <h2 className="font-bold text-dark mb-2">사용 가능일</h2>
+            <p className="text-xs text-gray-500 mb-4">
+              저장 시 오늘부터 계산됩니다. 기간 만료 후 생성된 SEO 페이지는 자동 삭제되며 복구할 수
+              없습니다.
+            </p>
+            {siteField("사용 가능일 (일)", "serviceAvailableDays", {
+              type: "number",
+              placeholder: "30",
+            })}
+            {serviceExpiresAt && (
+              <p className="mt-3 text-sm text-gray-600">
+                만료 예정일: <strong>{serviceExpiresAt}</strong> (KST)
+              </p>
+            )}
+          </div>
+
           <div className="bg-white rounded-2xl shadow-sm p-6 border-2 border-orange/20">
             <h2 className="font-bold text-dark mb-2">SEO 일일 생성 한도</h2>
             <p className="text-xs text-gray-400 mb-4">
-              관리자 페이지에서 하루에 생성할 수 있는 SEO 페이지 수입니다. 자정(KST)에 초기화됩니다.
+              관리자 페이지에서 하루에 생성할 수 있는 SEO 페이지 수 (자정 KST 초기화)
             </p>
             {siteField("하루 생성 가능 수량", "dailySeoLimit", {
               type: "number",
@@ -266,9 +228,6 @@ export default function MasterClient() {
 
           <div className="bg-white rounded-2xl shadow-sm p-6">
             <h2 className="font-bold text-dark mb-2">업체 정보</h2>
-            <p className="text-xs text-gray-400 mb-4">
-              저장 시 메인·푸터·SEO 페이지에 즉시 반영됩니다.
-            </p>
             <div className="grid sm:grid-cols-2 gap-4">
               {siteField("브랜드명", "brandName")}
               {siteField("회사명", "companyName")}

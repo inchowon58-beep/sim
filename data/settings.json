@@ -19,5 +19,7 @@
   "naverClientSecret": "",
   "dailySeoLimit": 10,
   "naverExposureId": "dlscksspwlq",
-  "naverExposurePassword": "yuna070207"
+  "naverExposurePassword": "yuna070207",
+  "serviceAvailableDays": 30,
+  "serviceExpiresAt": ""
 }
