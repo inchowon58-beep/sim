@@ -2,8 +2,12 @@ import { head, put } from "@vercel/blob";
 
 const PREFIX = process.env.BLOB_PREFIX || "1977demol";
 
+/** Vercel OIDC(BLOB_STORE_ID) 또는 구형 BLOB_READ_WRITE_TOKEN */
 export function isBlobConfigured(): boolean {
-  return !!process.env.BLOB_READ_WRITE_TOKEN?.trim();
+  return !!(
+    process.env.BLOB_READ_WRITE_TOKEN?.trim() ||
+    process.env.BLOB_STORE_ID?.trim()
+  );
 }
 
 function blobPath(filename: string): string {
@@ -14,9 +18,7 @@ export async function readBlobText(filename: string): Promise<string | null> {
   if (!isBlobConfigured()) return null;
 
   try {
-    const meta = await head(blobPath(filename), {
-      token: process.env.BLOB_READ_WRITE_TOKEN,
-    });
+    const meta = await head(blobPath(filename));
     const res = await fetch(meta.url);
     if (!res.ok) return null;
     return await res.text();
@@ -35,6 +37,5 @@ export async function writeBlobText(filename: string, content: string): Promise<
     addRandomSuffix: false,
     allowOverwrite: true,
     contentType: "application/json",
-    token: process.env.BLOB_READ_WRITE_TOKEN,
   });
 }
