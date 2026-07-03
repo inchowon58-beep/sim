@@ -122,8 +122,14 @@ async function writeJson<T>(filename: string, data: T): Promise<void> {
   }
 
   if (isBlobConfigured()) {
-    await writeBlobText(filename, content);
-    return;
+    try {
+      await writeBlobText(filename, content);
+      return;
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Blob 저장 중 알 수 없는 오류";
+      throw new DataStorageError(message);
+    }
   }
 
   if (process.env.VERCEL === "1") {

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { guidePageUrl } from "@/lib/constants";
 import MasterPasswordModal from "@/components/MasterPasswordModal";
 import ExternalLink from "@/components/ExternalLink";
+import NaverExposureCard from "@/components/NaverExposureCard";
 
 interface SeoPage {
   id: string;
@@ -276,6 +277,8 @@ export default function AdminClient() {
           </div>
           <Link href="/" className="text-sm text-orange hover:underline">← 메인으로</Link>
         </div>
+
+        <NaverExposureCard />
 
         <div className="flex gap-2 mb-6">
           {(["seo", "settings"] as Tab[]).map((t) => (
