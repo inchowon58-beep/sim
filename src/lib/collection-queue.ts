@@ -3,6 +3,7 @@ import {
   saveCollectionQueue,
   type CollectionJob,
   type CollectionJobStatus,
+  type CollectionQueueData,
 } from "./data";
 import { getSettings } from "./data";
 import { getSiteConfig } from "./site-config";
@@ -41,9 +42,77 @@ function latestJobForPage(jobs: CollectionJob[], pageId: string): CollectionJob 
     .sort((a, b) => b.requestedAt.localeCompare(a.requestedAt))[0];
 }
 
-function isDuplicateJob(job: CollectionJob | undefined): boolean {
-  if (!job) return false;
-  return job.status === "pending" || job.status === "submitted";
+function hasPendingForPage(jobs: CollectionJob[], pageId: string): boolean {
+  return jobs.some((j) => j.pageId === pageId && j.status === "pending");
+}
+
+/** 페이지당 pending 1건만 유지 — 오래된 중복 pending 제거 */
+function dedupePendingJobsInQueue(jobs: CollectionJob[]): {
+  jobs: CollectionJob[];
+  removed: number;
+} {
+  const pendingByPage = new Map<string, CollectionJob[]>();
+
+  for (const job of jobs) {
+    if (job.status !== "pending") continue;
+    const list = pendingByPage.get(job.pageId) || [];
+    list.push(job);
+    pendingByPage.set(job.pageId, list);
+  }
+
+  const removeIds = new Set<string>();
+
+  for (const pendings of pendingByPage.values()) {
+    if (pendings.length <= 1) continue;
+    pendings.sort((a, b) => b.requestedAt.localeCompare(a.requestedAt));
+    for (const duplicate of pendings.slice(1)) {
+      removeIds.add(duplicate.id);
+    }
+  }
+
+  if (removeIds.size === 0) {
+    return { jobs, removed: 0 };
+  }
+
+  return {
+    jobs: jobs.filter((j) => !removeIds.has(j.id)),
+    removed: removeIds.size,
+  };
+}
+
+async function loadNormalizedQueue(): Promise<CollectionQueueData> {
+  const queue = await getCollectionQueue();
+  const { jobs, removed } = dedupePendingJobsInQueue(queue.jobs);
+  if (removed === 0) return queue;
+
+  queue.jobs = jobs;
+  queue.updatedAt = new Date().toISOString();
+  await saveCollectionQueue(queue);
+  return queue;
+}
+
+/** VM에 내려줄 pending — 페이지·URL당 최신 1건만 */
+function uniquePendingJobsForWorker(jobs: CollectionJob[]): CollectionJob[] {
+  const byPageId = new Map<string, CollectionJob>();
+  for (const job of jobs) {
+    const existing = byPageId.get(job.pageId);
+    if (!existing || job.requestedAt > existing.requestedAt) {
+      byPageId.set(job.pageId, job);
+    }
+  }
+
+  const byPageUrl = new Map<string, CollectionJob>();
+  for (const job of byPageId.values()) {
+    const url = normalizeUrl(job.pageUrl);
+    const existing = byPageUrl.get(url);
+    if (!existing || job.requestedAt > existing.requestedAt) {
+      byPageUrl.set(url, job);
+    }
+  }
+
+  return Array.from(byPageUrl.values()).sort((a, b) =>
+    a.requestedAt.localeCompare(b.requestedAt)
+  );
 }
 
 export async function getCollectionStatusMap(): Promise<Map<string, CollectionPageStatus>> {
@@ -82,12 +151,15 @@ export async function enqueueCollectionRequest(pageId: string): Promise<{
 
   const siteUrl = await getCollectionSiteUrl();
   const pageUrl = buildPageAbsoluteUrl(siteUrl, page.slug);
-  const queue = await getCollectionQueue();
+  const queue = await loadNormalizedQueue();
   const latest = latestJobForPage(queue.jobs, pageId);
 
-  if (isDuplicateJob(latest)) {
-    const label = latest!.status === "submitted" ? "이미 수집요청 완료" : "이미 대기 중";
-    return { ok: false, message: `${label}된 URL입니다.` };
+  if (hasPendingForPage(queue.jobs, pageId)) {
+    return { ok: false, message: "이미 대기 중인 URL입니다." };
+  }
+
+  if (latest?.status === "submitted") {
+    return { ok: false, message: "이미 수집요청 완료된 URL입니다." };
   }
 
   const now = new Date().toISOString();
@@ -129,10 +201,11 @@ export async function enqueueAllPendingPages(): Promise<{
 
 export async function getPendingJobsForWorker(siteUrl: string): Promise<CollectionJob[]> {
   const normalized = normalizeUrl(siteUrl);
-  const queue = await getCollectionQueue();
-  return queue.jobs.filter(
+  const queue = await loadNormalizedQueue();
+  const pending = queue.jobs.filter(
     (j) => normalizeUrl(j.siteUrl) === normalized && j.status === "pending"
   );
+  return uniquePendingJobsForWorker(pending);
 }
 
 export async function reportCollectionResults(
