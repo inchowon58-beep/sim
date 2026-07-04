@@ -48,6 +48,11 @@ export default function AdminClient() {
   const [hasNaverApi, setHasNaverApi] = useState(false);
   const [rankModal, setRankModal] = useState<{ pageId: string; keyword: string } | null>(null);
   const [checkingRanks, setCheckingRanks] = useState(false);
+  const [collectionSiteUrl, setCollectionSiteUrl] = useState("");
+  const [collectionStatuses, setCollectionStatuses] = useState<
+    Map<string, { status: string; pageUrl: string }>
+  >(new Map());
+  const [requestingCollection, setRequestingCollection] = useState<string | null>(null);
 
   function formatRank(rank: number | null): string {
     if (rank === null) return "-";
@@ -62,11 +67,12 @@ export default function AdminClient() {
   async function loadData() {
     setLoading(true);
     try {
-      const [pagesRes, quotaRes, configRes, rankingsRes] = await Promise.all([
+      const [pagesRes, quotaRes, configRes, rankingsRes, collectionRes] = await Promise.all([
         fetch("/api/admin/pages"),
         fetch("/api/admin/seo-quota"),
         fetch("/api/site-config"),
         fetch("/api/admin/seo-rankings"),
+        fetch("/api/admin/collection-request"),
       ]);
       if (pagesRes.status === 401) {
         window.location.href = "/";
@@ -85,6 +91,18 @@ export default function AdminClient() {
         setHasNaverApi(!!data.hasNaverApi);
       } else if (rankingsRes.status === 404) {
         setMessage("배포가 아직 반영되지 않았습니다. Vercel 재배포 후 새로고침하세요.");
+      }
+      if (collectionRes.ok) {
+        const col = await collectionRes.json();
+        setCollectionSiteUrl(col.siteUrl || "");
+        setCollectionStatuses(
+          new Map(
+            Object.entries(col.statuses || {}).map(([id, s]) => [
+              id,
+              s as { status: string; pageUrl: string },
+            ])
+          )
+        );
       }
     } catch {
       setMessage("데이터 로드 실패");
@@ -173,6 +191,54 @@ export default function AdminClient() {
     }
     setCheckingRanks(false);
   };
+
+  const handleCollectionRequest = async (pageId: string) => {
+    setRequestingCollection(pageId);
+    try {
+      const res = await fetch("/api/admin/collection-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pageId }),
+      });
+      const data = await res.json().catch(() => ({}));
+      setMessage(data.message || data.error || (res.ok ? "등록 완료" : "등록 실패"));
+      if (res.ok) await loadData();
+    } catch {
+      setMessage("순위반영요청 중 오류가 발생했습니다.");
+    }
+    setRequestingCollection(null);
+  };
+
+  const handleCollectionRequestAll = async () => {
+    if (!confirm("아직 요청하지 않은 SEO 페이지를 전부 수집 대기열에 등록할까요?")) return;
+    setRequestingCollection("all");
+    try {
+      const res = await fetch("/api/admin/collection-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ all: true }),
+      });
+      const data = await res.json().catch(() => ({}));
+      setMessage(data.message || data.error || "처리 완료");
+      if (res.ok) await loadData();
+    } catch {
+      setMessage("일괄 등록 중 오류가 발생했습니다.");
+    }
+    setRequestingCollection(null);
+  };
+
+  function collectionLabel(pageId: string): string {
+    const s = collectionStatuses.get(pageId)?.status;
+    if (s === "pending") return "수집 대기";
+    if (s === "submitted") return "수집요청 완료";
+    if (s === "failed") return "수집 실패";
+    return "";
+  }
+
+  function canRequestCollection(pageId: string): boolean {
+    const s = collectionStatuses.get(pageId)?.status;
+    return !s || s === "failed";
+  }
 
   const serviceActive = !quota?.service || quota.service.active;
   const canGenerate = serviceActive && (!quota || quota.remaining > 0);
@@ -275,12 +341,32 @@ export default function AdminClient() {
         <div className="bg-white rounded-2xl shadow-sm p-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
             <h2 className="font-bold text-dark">생성된 SEO 페이지 ({pages.length})</h2>
-            {rankingsUpdated && (
-              <p className="text-xs text-gray-400">
-                순위 갱신: {new Date(rankingsUpdated).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" })} · 자동 1회/일(21:00) · 「순위 지금 확인」으로 수동 가능
-              </p>
-            )}
+            <div className="flex flex-wrap items-center gap-2">
+              {collectionSiteUrl && (
+                <p className="text-xs text-gray-400">수집 사이트: {collectionSiteUrl}</p>
+              )}
+              {pages.length > 0 && (
+                <button
+                  type="button"
+                  onClick={handleCollectionRequestAll}
+                  disabled={requestingCollection === "all"}
+                  className="text-xs px-3 py-1.5 border border-emerald-300 text-emerald-700 rounded-lg hover:bg-emerald-50 disabled:opacity-50"
+                >
+                  {requestingCollection === "all" ? "등록 중..." : "전체 순위반영요청"}
+                </button>
+              )}
+            </div>
           </div>
+          <p className="text-xs text-gray-500 mb-4">
+            「순위반영요청」 클릭 시 VM 수집 프로그램이 가져갈 URL이 대기열에 저장됩니다. 이미
+            요청·완료된 URL은 중복 등록되지 않습니다.
+            {rankingsUpdated && (
+              <span className="text-gray-400">
+                {" "}
+                · 순위 갱신 {new Date(rankingsUpdated).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" })}
+              </span>
+            )}
+          </p>
           {!hasNaverApi && (
             <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-4">
               Naver 검색 API(Client ID/Secret)가 없어 순위 확인이 불가합니다. 마스터 설정 또는 Vercel
@@ -295,6 +381,7 @@ export default function AdminClient() {
             <div className="space-y-3">
               {pages.map((page) => {
                 const rankInfo = rankings.get(page.id);
+                const colLabel = collectionLabel(page.id);
                 return (
                 <div
                   key={page.id}
@@ -323,8 +410,26 @@ export default function AdminClient() {
                         <span className="text-gray-400"> · 상단 「순위 지금 확인」 클릭</span>
                       )}
                     </p>
+                    {colLabel && (
+                      <p className="text-xs mt-1 text-emerald-700">웹문서 수집: {colLabel}</p>
+                    )}
                   </div>
                   <div className="flex flex-wrap gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleCollectionRequest(page.id)}
+                      disabled={
+                        !canRequestCollection(page.id) || requestingCollection === page.id
+                      }
+                      className="text-xs px-3 py-1.5 border border-emerald-400 text-emerald-700 rounded-lg hover:bg-emerald-50 disabled:opacity-40"
+                      title={
+                        canRequestCollection(page.id)
+                          ? "VM 프로그램 수집 대기열에 등록"
+                          : "이미 대기 중이거나 수집요청 완료"
+                      }
+                    >
+                      {requestingCollection === page.id ? "등록 중..." : "순위반영요청"}
+                    </button>
                     <button
                       type="button"
                       onClick={() => setRankModal({ pageId: page.id, keyword: page.keyword })}

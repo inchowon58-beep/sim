@@ -56,6 +56,9 @@ export default function MasterSettingsClient() {
   const [naverClientSecret, setNaverClientSecret] = useState("");
   const [hasApiKey, setHasApiKey] = useState(false);
   const [hasNaverApi, setHasNaverApi] = useState(false);
+  const [collectionSiteUrl, setCollectionSiteUrl] = useState("");
+  const [collectionWorkerSecret, setCollectionWorkerSecret] = useState("");
+  const [hasCollectionWorkerSecret, setHasCollectionWorkerSecret] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -69,6 +72,8 @@ export default function MasterSettingsClient() {
     const settings = await res.json();
     setHasApiKey(settings.hasApiKey);
     setHasNaverApi(settings.hasNaverApi);
+    setCollectionSiteUrl(settings.collectionSiteUrl || settings.url || "");
+    setHasCollectionWorkerSecret(!!settings.hasCollectionWorkerSecret);
     setServiceExpiresAt(settings.serviceExpiresAt || "");
     setSiteForm({
       brandName: settings.brandName || "",
@@ -111,6 +116,8 @@ export default function MasterSettingsClient() {
           naverClientId: naverClientId || undefined,
           naverClientSecret: naverClientSecret || undefined,
           naverExposurePassword: naverExposurePassword || undefined,
+          collectionSiteUrl: collectionSiteUrl || undefined,
+          collectionWorkerSecret: collectionWorkerSecret || undefined,
         }),
       });
       if (res.ok) {
@@ -120,6 +127,7 @@ export default function MasterSettingsClient() {
         setApiKey("");
         setNaverClientId("");
         setNaverClientSecret("");
+        setCollectionWorkerSecret("");
         await loadSettings();
       } else {
         setMessage("설정 저장 실패.");
@@ -250,6 +258,47 @@ export default function MasterSettingsClient() {
             <div className="grid sm:grid-cols-2 gap-4">
               {siteField("이미지 CDN URL", "imageCdn")}
               {siteField("이미지 개수", "imageCount", { type: "number" })}
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-sm p-6 border-2 border-emerald-200">
+            <h2 className="font-bold text-dark mb-2">네이버 웹문서 수집 (VM 연동)</h2>
+            <p className="text-xs text-gray-500 mb-4">
+              서치어드바이저에 등록된 사이트 URL과 VM 프로그램 인증 토큰입니다. VM은{" "}
+              <code className="text-orange">/api/collection-worker/jobs</code> API로 대기 URL을
+              가져갑니다.
+            </p>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  수집요청 사이트 URL
+                </label>
+                <input
+                  type="url"
+                  value={collectionSiteUrl}
+                  onChange={(e) => setCollectionSiteUrl(e.target.value)}
+                  placeholder="https://demolishzone.yourdogzone.co.kr"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl outline-none focus:border-orange"
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                  서치어드바이저 사이트 선택 시 사용하는 주소와 동일하게 입력
+                </p>
+              </div>
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  VM Worker API 토큰
+                </label>
+                <input
+                  type="password"
+                  placeholder={hasCollectionWorkerSecret ? "설정됨 (변경 시 입력)" : "임의의 긴 문자열"}
+                  value={collectionWorkerSecret}
+                  onChange={(e) => setCollectionWorkerSecret(e.target.value)}
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl outline-none focus:border-orange"
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                  VM 프로그램 Authorization: Bearer {"{토큰}"} — docs/COLLECTION_WORKER.md 참고
+                </p>
+              </div>
             </div>
           </div>
 

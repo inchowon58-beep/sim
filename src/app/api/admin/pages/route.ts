@@ -7,6 +7,7 @@ import { getSiteConfig } from "@/lib/site-config";
 import { getImageIndexFromSeed } from "@/lib/site-images";
 import { resolveLocalPartnersForKeyword } from "@/lib/local-business";
 import { consumeSeoQuota, getSeoQuotaStatus } from "@/lib/seo-quota";
+import { removeCollectionJobsForPage } from "@/lib/collection-queue";
 import { removeRankingForPage } from "@/lib/seo-ranking";
 import {
   getServicePeriodStatus,
@@ -125,5 +126,6 @@ export async function DELETE(req: NextRequest) {
 
   await deletePage(id);
   await removeRankingForPage(id);
+  await removeCollectionJobsForPage(id);
   return NextResponse.json({ success: true });
 }

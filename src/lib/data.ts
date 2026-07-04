@@ -58,6 +58,10 @@ export interface Settings {
   serviceExpiresAt?: string;
   seoQuotaDate?: string;
   seoQuotaCount?: number;
+  /** 서치어드바이저에 등록된 사이트 URL (미설정 시 config.url) */
+  collectionSiteUrl?: string;
+  /** VM 수집 프로그램 API 인증 토큰 */
+  collectionWorkerSecret?: string;
 }
 
 const DATA_DIR = path.join(process.cwd(), "data");
@@ -222,4 +226,35 @@ export async function getRankings(): Promise<RankingsData> {
 
 export async function saveRankings(data: RankingsData): Promise<void> {
   await writeJson("rankings.json", data);
+}
+
+export type CollectionJobStatus = "pending" | "submitted" | "failed";
+
+export interface CollectionJob {
+  id: string;
+  siteUrl: string;
+  pageUrl: string;
+  pageId: string;
+  keyword: string;
+  slug: string;
+  status: CollectionJobStatus;
+  requestedAt: string;
+  submittedAt?: string;
+  error?: string;
+}
+
+export interface CollectionQueueData {
+  updatedAt: string;
+  jobs: CollectionJob[];
+}
+
+export async function getCollectionQueue(): Promise<CollectionQueueData> {
+  return readJson<CollectionQueueData>("collection-queue.json", {
+    updatedAt: "",
+    jobs: [],
+  });
+}
+
+export async function saveCollectionQueue(data: CollectionQueueData): Promise<void> {
+  await writeJson("collection-queue.json", data);
 }

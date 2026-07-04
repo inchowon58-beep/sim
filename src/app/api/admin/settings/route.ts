@@ -43,6 +43,10 @@ export async function GET() {
     hasNaverExposurePassword: !!merged.naverExposurePassword,
     serviceExpiresAt: merged.serviceExpiresAt || "",
     serviceDaysRemaining: daysRemainingFromExpiresAt(merged.serviceExpiresAt),
+    collectionSiteUrl: settings.collectionSiteUrl?.trim() || merged.url || "",
+    hasCollectionWorkerSecret: !!(
+      settings.collectionWorkerSecret || process.env.COLLECTION_WORKER_SECRET
+    ),
   });
 }
 
@@ -86,6 +90,12 @@ export async function PUT(req: NextRequest) {
   }
   if (body.naverExposurePassword && body.naverExposurePassword !== "••••••••") {
     updated.naverExposurePassword = body.naverExposurePassword;
+  }
+  if (body.collectionSiteUrl !== undefined && body.collectionSiteUrl !== null) {
+    updated.collectionSiteUrl = String(body.collectionSiteUrl).trim();
+  }
+  if (body.collectionWorkerSecret && body.collectionWorkerSecret !== "••••••••") {
+    updated.collectionWorkerSecret = body.collectionWorkerSecret;
   }
 
   await saveSettings(updated);
