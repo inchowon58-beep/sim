@@ -12,7 +12,7 @@ import { removeRankingForPage } from "@/lib/seo-ranking";
 import {
   getServicePeriodStatus,
 } from "@/lib/service-period";
-import { normalizeSeoKeyword } from "@/lib/seo-keyword";
+import { normalizeSeoKeyword, finalizeSeoTitle } from "@/lib/seo-keyword";
 
 function getNaverCredentials(site: Awaited<ReturnType<typeof getSiteConfig>>) {
   return {
@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
       slug,
       keyword: trimmedKeyword,
       regionName: region || undefined,
-      title: generated.title,
+      title: finalizeSeoTitle(generated.title, trimmedKeyword),
       description: generated.description,
       content: generated.content,
       faqs: generated.faqs,

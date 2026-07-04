@@ -3,6 +3,7 @@ import type { SeoFaq } from "./data";
 import { extractRegionFromKeyword } from "./region-parse";
 import {
   buildSeoCorePhrase,
+  extractServicePhrase,
   generateVariedSeoTitle,
   normalizeSeoKeyword,
   polishSeoText,
@@ -386,16 +387,21 @@ function generateFallbackContent(
   const titleVariants = [
     (k: string, r: string | null) => generateVariedSeoTitle(k, r),
     (k: string, r: string | null) =>
-      `${r ? `${r} ` : ""}${buildSeoCorePhrase(k)} 무료 방문 견적 | {{brandName}}`,
-    (k: string) => `{{brandName}} · ${buildSeoCorePhrase(k)} 현장 맞춤`,
+      generateVariedSeoTitle(k, r, `${extractServicePhrase(k, r)} 무료 방문 견적 | {{brandName}}`),
     (k: string, r: string | null) =>
-      `${buildSeoCorePhrase(k)}${r ? ` (${r})` : ""} — {{brandName}}`,
+      generateVariedSeoTitle(k, r, `{{brandName}} · ${extractServicePhrase(k, r)} 현장 맞춤`),
+    (k: string, r: string | null) =>
+      generateVariedSeoTitle(k, r, `${extractServicePhrase(k, r)} — {{brandName}}`),
   ];
   const descVariants = [
-    `${keyword} 무료 방문 견적, 폐업지원금 신청 대행. {{brandName}}이 철거부터 원상복구까지 원스톱으로 해결해 드립니다.`,
-    `${region ? region + " " : ""}${keyword} 현장 맞춤 견적. 폐업지원금 최대 {{supportMax}}, {{brandName}} 전문 시공.`,
-    `{{brandName}} ${keyword} — 철거·원상복구·폐기물 반출. 전화 {{phone}} 무료 상담.`,
-    `${keyword} 비용·일정·지원금 한번에. {{brandName}} 폐업철거 전문.`,
+    (k: string, r: string | null) =>
+      `${buildSeoCorePhrase(k)} 무료 방문 견적, 폐업지원금 신청 대행. {{brandName}}이 철거부터 원상복구까지 원스톱으로 해결해 드립니다.`,
+    (k: string, r: string | null) =>
+      `${r ? `${r} ` : ""}${extractServicePhrase(k, r)} 현장 맞춤 견적. 폐업지원금 최대 {{supportMax}}, {{brandName}} 전문 시공.`,
+    (k: string) =>
+      `{{brandName}} ${buildSeoCorePhrase(k)} — 철거·원상복구·폐기물 반출. 전화 {{phone}} 무료 상담.`,
+    (k: string) =>
+      `${buildSeoCorePhrase(k)} 비용·일정·지원금 한번에. {{brandName}} 폐업철거 전문.`,
   ];
 
   const tIdx = hashKeyword(keyword + "t") % titleVariants.length;
@@ -403,7 +409,7 @@ function generateFallbackContent(
 
   return {
     title: titleVariants[tIdx](keyword, region),
-    description: polishSeoText(descVariants[dIdx], region),
+    description: polishSeoText(descVariants[dIdx](keyword, region), region),
     content,
     faqs: buildDefaultFaqs(keyword, site),
   };
