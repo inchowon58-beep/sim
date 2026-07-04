@@ -153,8 +153,9 @@ export default function AdminClient() {
               <p className="text-sm mt-1 opacity-80">만료 예정일: {quota.service.expiresAt} (KST)</p>
             )}
             <p className="text-sm mt-3 leading-relaxed opacity-90">
-              기간 만료 후에는 새 SEO 페이지 생성만 제한됩니다. 기존 페이지는 그대로 유지되며,
-              삭제는 관리자가 수동으로 진행해야 합니다.
+              기간 만료 후에는 새 SEO 페이지 생성이 제한됩니다.
+              <br />
+              기존페이지는 삭제 또는 변경될수 있습니다.
             </p>
           </div>
         )}

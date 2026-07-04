@@ -201,8 +201,8 @@ export default function MasterSettingsClient() {
           <div className="bg-white rounded-2xl shadow-sm p-6 border-2 border-red-200">
             <h2 className="font-bold text-dark mb-2">사용 가능일</h2>
             <p className="text-xs text-gray-500 mb-4">
-              저장 시 오늘부터 계산됩니다. 기간 만료 후에는 새 페이지 생성만 제한되며, 기존 페이지는
-              관리자가 직접 삭제할 때까지 유지됩니다.
+              저장 시 오늘부터 계산됩니다. 기간 만료 후에는 새 SEO 페이지 생성이 제한됩니다.
+              기존페이지는 삭제 또는 변경될수 있습니다.
             </p>
             {siteField("사용 가능일 (일)", "serviceAvailableDays", {
               type: "number",
