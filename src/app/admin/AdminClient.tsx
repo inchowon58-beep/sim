@@ -48,7 +48,6 @@ export default function AdminClient() {
   const [hasNaverApi, setHasNaverApi] = useState(false);
   const [rankModal, setRankModal] = useState<{ pageId: string; keyword: string } | null>(null);
   const [checkingRanks, setCheckingRanks] = useState(false);
-  const [collectionSiteUrl, setCollectionSiteUrl] = useState("");
   const [collectionStatuses, setCollectionStatuses] = useState<
     Map<string, { status: string; pageUrl: string }>
   >(new Map());
@@ -94,7 +93,6 @@ export default function AdminClient() {
       }
       if (collectionRes.ok) {
         const col = await collectionRes.json();
-        setCollectionSiteUrl(col.siteUrl || "");
         setCollectionStatuses(
           new Map(
             Object.entries(col.statuses || {}).map(([id, s]) => [
@@ -227,17 +225,8 @@ export default function AdminClient() {
     setRequestingCollection(null);
   };
 
-  function collectionLabel(pageId: string): string {
-    const s = collectionStatuses.get(pageId)?.status;
-    if (s === "pending") return "수집 대기";
-    if (s === "submitted") return "수집요청 완료";
-    if (s === "failed") return "수집 실패";
-    return "";
-  }
-
-  function canRequestCollection(pageId: string): boolean {
-    const s = collectionStatuses.get(pageId)?.status;
-    return !s || s === "failed";
+  function isCollectionSubmitted(pageId: string): boolean {
+    return collectionStatuses.get(pageId)?.status === "submitted";
   }
 
   const serviceActive = !quota?.service || quota.service.active;
@@ -342,9 +331,6 @@ export default function AdminClient() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
             <h2 className="font-bold text-dark">생성된 SEO 페이지 ({pages.length})</h2>
             <div className="flex flex-wrap items-center gap-2">
-              {collectionSiteUrl && (
-                <p className="text-xs text-gray-400">수집 사이트: {collectionSiteUrl}</p>
-              )}
               {pages.length > 0 && (
                 <button
                   type="button"
@@ -357,16 +343,11 @@ export default function AdminClient() {
               )}
             </div>
           </div>
-          <p className="text-xs text-gray-500 mb-4">
-            「순위반영요청」 클릭 시 VM 수집 프로그램이 가져갈 URL이 대기열에 저장됩니다. 이미
-            요청·완료된 URL은 중복 등록되지 않습니다.
-            {rankingsUpdated && (
-              <span className="text-gray-400">
-                {" "}
-                · 순위 갱신 {new Date(rankingsUpdated).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" })}
-              </span>
-            )}
-          </p>
+          {rankingsUpdated && (
+            <p className="text-xs text-gray-400 mb-4">
+              순위 갱신 {new Date(rankingsUpdated).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" })}
+            </p>
+          )}
           {!hasNaverApi && (
             <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-4">
               Naver 검색 API(Client ID/Secret)가 없어 순위 확인이 불가합니다. 마스터 설정 또는 Vercel
@@ -381,7 +362,7 @@ export default function AdminClient() {
             <div className="space-y-3">
               {pages.map((page) => {
                 const rankInfo = rankings.get(page.id);
-                const colLabel = collectionLabel(page.id);
+                const collectionDone = isCollectionSubmitted(page.id);
                 return (
                 <div
                   key={page.id}
@@ -410,25 +391,23 @@ export default function AdminClient() {
                         <span className="text-gray-400"> · 상단 「순위 지금 확인」 클릭</span>
                       )}
                     </p>
-                    {colLabel && (
-                      <p className="text-xs mt-1 text-emerald-700">웹문서 수집: {colLabel}</p>
-                    )}
                   </div>
                   <div className="flex flex-wrap gap-2 shrink-0">
                     <button
                       type="button"
                       onClick={() => handleCollectionRequest(page.id)}
-                      disabled={
-                        !canRequestCollection(page.id) || requestingCollection === page.id
-                      }
-                      className="text-xs px-3 py-1.5 border border-emerald-400 text-emerald-700 rounded-lg hover:bg-emerald-50 disabled:opacity-40"
-                      title={
-                        canRequestCollection(page.id)
-                          ? "VM 프로그램 수집 대기열에 등록"
-                          : "이미 대기 중이거나 수집요청 완료"
-                      }
+                      disabled={collectionDone || requestingCollection === page.id}
+                      className={`text-xs px-3 py-1.5 border rounded-lg disabled:opacity-50 ${
+                        collectionDone
+                          ? "border-gray-200 text-gray-400 bg-gray-50 cursor-default"
+                          : "border-emerald-400 text-emerald-700 hover:bg-emerald-50"
+                      }`}
                     >
-                      {requestingCollection === page.id ? "등록 중..." : "순위반영요청"}
+                      {requestingCollection === page.id
+                        ? "등록 중..."
+                        : collectionDone
+                          ? "순위반영요청완료"
+                          : "순위반영요청"}
                     </button>
                     <button
                       type="button"

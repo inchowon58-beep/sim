@@ -7,7 +7,7 @@ import { getSiteConfig } from "@/lib/site-config";
 import { getImageIndexFromSeed } from "@/lib/site-images";
 import { resolveLocalPartnersForKeyword } from "@/lib/local-business";
 import { consumeSeoQuota, getSeoQuotaStatus } from "@/lib/seo-quota";
-import { removeCollectionJobsForPage } from "@/lib/collection-queue";
+import { removeCollectionJobsForPage, enqueueCollectionRequest } from "@/lib/collection-queue";
 import { removeRankingForPage } from "@/lib/seo-ranking";
 import {
   getServicePeriodStatus,
@@ -101,6 +101,11 @@ export async function POST(req: NextRequest) {
 
     await savePage(page);
     await consumeSeoQuota();
+    try {
+      await enqueueCollectionRequest(pageId);
+    } catch (enqueueError) {
+      console.error("Auto collection enqueue failed:", enqueueError);
+    }
     return NextResponse.json(page);
   } catch (error) {
     if (error instanceof DataStorageError) {
