@@ -1,0 +1,147 @@
+import { NextRequest, NextResponse } from "next/server";
+import { isAuthenticated, isMasterAuthenticated } from "@/lib/auth";
+import { insertTenantSiteConfig, isSubdomainTaken, normalizeHostname } from "@/lib/supabase/tenant-db";
+import { pickThemeColor } from "@/lib/tenant-theme";
+import type { CreateSiteInput, TenantContentData } from "@/types/tenant";
+
+const DOMAIN_RE = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/i;
+
+async function registerVercelDomain(domain: string): Promise<{
+  ok: boolean;
+  data?: { name: string; verified?: boolean };
+  error?: string;
+}> {
+  const token = process.env.VERCEL_TOKEN?.trim();
+  const projectId = process.env.VERCEL_PROJECT_ID?.trim();
+  const teamId = process.env.VERCEL_TEAM_ID?.trim();
+
+  if (!token || !projectId) {
+    return {
+      ok: false,
+      error: "VERCEL_TOKEN 또는 VERCEL_PROJECT_ID 환경변수가 설정되지 않았습니다.",
+    };
+  }
+
+  const url = new URL(
+    `https://api.vercel.com/v10/projects/${encodeURIComponent(projectId)}/domains`
+  );
+  if (teamId) url.searchParams.set("teamId", teamId);
+
+  try {
+    const res = await fetch(url.toString(), {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name: domain }),
+    });
+
+    const body = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      const msg =
+        (body as { error?: { message?: string } }).error?.message ||
+        (body as { message?: string }).message ||
+        `Vercel 도메인 등록 실패 (HTTP ${res.status})`;
+      return { ok: false, error: msg };
+    }
+
+    return {
+      ok: true,
+      data: {
+        name: (body as { name?: string }).name || domain,
+        verified: (body as { verified?: boolean }).verified,
+      },
+    };
+  } catch (e) {
+    return {
+      ok: false,
+      error: e instanceof Error ? e.message : "Vercel API 호출 중 오류",
+    };
+  }
+}
+
+export async function POST(req: NextRequest) {
+  if (!(await isAuthenticated()) || !(await isMasterAuthenticated())) {
+    return NextResponse.json({ error: "마스터 권한이 필요합니다." }, { status: 401 });
+  }
+
+  let body: CreateSiteInput;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "요청 본문을 읽을 수 없습니다." }, { status: 400 });
+  }
+
+  const siteName = String(body.siteName || "").trim();
+  const subdomain = normalizeHostname(String(body.subdomain || "").trim());
+  const keywords = String(body.keywords || "").trim();
+  const bodyContent = String(body.bodyContent || "").trim();
+  const slackWebhook = String(body.slackWebhook || "").trim();
+  const naverVerification = String(body.naverVerification || "").trim();
+
+  if (!siteName || siteName.length < 2) {
+    return NextResponse.json({ error: "사이트 이름을 입력해 주세요." }, { status: 400 });
+  }
+
+  if (!subdomain || !DOMAIN_RE.test(subdomain)) {
+    return NextResponse.json(
+      { error: "올바른 서브도메인을 입력해 주세요. (예: abc.eanimal.kr)" },
+      { status: 400 }
+    );
+  }
+
+  if (slackWebhook && !slackWebhook.startsWith("https://hooks.slack.com/")) {
+    return NextResponse.json({ error: "Slack Webhook URL 형식이 올바르지 않습니다." }, { status: 400 });
+  }
+
+  try {
+    if (await isSubdomainTaken(subdomain)) {
+      return NextResponse.json(
+        { error: "이미 등록된 서브도메인입니다." },
+        { status: 409 }
+      );
+    }
+
+    const vercel = await registerVercelDomain(subdomain);
+    if (!vercel.ok) {
+      return NextResponse.json(
+        { error: vercel.error || "Vercel 도메인 등록에 실패했습니다." },
+        { status: 502 }
+      );
+    }
+
+    const themeColor = pickThemeColor(subdomain);
+    const contentData: TenantContentData = {
+      keywords,
+      body: bodyContent,
+      description: bodyContent.slice(0, 160) || `${siteName} 공식 사이트`,
+      tagline: keywords.split(/[,\n]/)[0]?.trim() || siteName,
+    };
+
+    const row = await insertTenantSiteConfig({
+      site_name: siteName,
+      subdomain,
+      theme_color: themeColor,
+      content_data: contentData,
+      naver_verification: naverVerification || null,
+      slack_webhook: slackWebhook || null,
+    });
+
+    const siteUrl = `https://${subdomain}`;
+
+    return NextResponse.json({
+      success: true,
+      siteId: row.id,
+      subdomain,
+      siteUrl,
+      themeColor,
+      vercelDomain: vercel.data,
+      message: `사이트가 생성되었습니다. DNS 전파 후 ${siteUrl} 에서 확인하세요.`,
+    });
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "사이트 생성 중 알 수 없는 오류";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}

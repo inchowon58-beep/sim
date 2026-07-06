@@ -3,15 +3,26 @@ import "./globals.css";
 import Header from "@/components/Header";
 import FooterWrapper from "@/components/FooterWrapper";
 import FixedContactBar from "@/components/FixedContactBar";
+import TenantThemeStyles from "@/components/TenantThemeStyles";
 import { SiteConfigProvider } from "@/components/SiteConfigProvider";
-import { getSiteConfig } from "@/lib/site-config";
+import { getResolvedSiteConfig } from "@/utils/siteConfig";
 import { buildSiteMetadata } from "@/lib/metadata";
 import { NAVER_SITE_VERIFICATION } from "@/lib/constants";
 import { showCompanyContact } from "@/lib/exposure-mode";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const config = await getSiteConfig();
-  return buildSiteMetadata(config);
+  const { config, tenant } = await getResolvedSiteConfig();
+  const meta = buildSiteMetadata(config);
+  if (tenant?.naver_verification) {
+    return {
+      ...meta,
+      other: {
+        ...(meta.other || {}),
+        "naver-site-verification": tenant.naver_verification,
+      },
+    };
+  }
+  return meta;
 }
 
 export const viewport: Viewport = {
@@ -23,8 +34,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const config = await getSiteConfig();
+  const { config, tenant, theme } = await getResolvedSiteConfig();
   const showCompany = showCompanyContact(config.exposureMode);
+  const naverVerification =
+    tenant?.naver_verification?.trim() || NAVER_SITE_VERIFICATION;
 
   const businessJsonLd = showCompany
     ? {
@@ -60,9 +73,10 @@ export default async function RootLayout({
   return (
     <html lang="ko">
       <head>
+        <TenantThemeStyles theme={theme} />
         <meta
           name="naver-site-verification"
-          content={NAVER_SITE_VERIFICATION}
+          content={naverVerification}
         />
         <link
           rel="alternate"
