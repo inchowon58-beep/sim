@@ -6,6 +6,7 @@ import {
   computeExpiresAtFromDays,
   daysRemainingFromExpiresAt,
 } from "@/lib/service-period";
+import { resolveExposureMode } from "@/lib/exposure-mode";
 import { resolveDailySeoLimit } from "@/lib/seo-quota";
 import { resolveSlackWebhookUrl } from "@/lib/slack-notify";
 
@@ -110,6 +111,10 @@ export async function PUT(req: NextRequest) {
     } else if (url !== "••••••••" && url.startsWith("https://hooks.slack.com/")) {
       updated.slackWebhookUrl = url;
     }
+  }
+
+  if (body.exposureMode !== undefined && body.exposureMode !== null) {
+    updated.exposureMode = resolveExposureMode(body.exposureMode);
   }
 
   await saveSettings(updated);

@@ -1,3 +1,6 @@
+import type { ExposureMode } from "./exposure-mode";
+export type { ExposureMode } from "./exposure-mode";
+
 export interface SiteConfig {
   brandName: string;
   companyName: string;
@@ -22,6 +25,8 @@ export interface SiteConfig {
   naverExposurePassword: string;
   serviceAvailableDays: number;
   serviceExpiresAt: string;
+  /** cpa: 견적폼만·업체정보 미노출 / company: 업체정보+견적문의 동시 */
+  exposureMode: ExposureMode;
 }
 
 export const DEFAULT_SITE_CONFIG: SiteConfig = {
@@ -49,6 +54,7 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
   naverExposurePassword: "yuna070207",
   serviceAvailableDays: 30,
   serviceExpiresAt: "",
+  exposureMode: "company",
 };
 
 export function phoneToTel(phone: string): string {

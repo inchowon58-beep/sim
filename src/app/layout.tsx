@@ -7,6 +7,7 @@ import { SiteConfigProvider } from "@/components/SiteConfigProvider";
 import { getSiteConfig } from "@/lib/site-config";
 import { buildSiteMetadata } from "@/lib/metadata";
 import { NAVER_SITE_VERIFICATION } from "@/lib/constants";
+import { showCompanyContact } from "@/lib/exposure-mode";
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getSiteConfig();
@@ -23,6 +24,38 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const config = await getSiteConfig();
+  const showCompany = showCompanyContact(config.exposureMode);
+
+  const businessJsonLd = showCompany
+    ? {
+        "@context": "https://schema.org",
+        "@type": "HomeAndConstructionBusiness",
+        name: config.brandName,
+        legalName: config.companyName,
+        description: config.description,
+        telephone: config.phone,
+        email: config.email,
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: config.address,
+          addressCountry: "KR",
+        },
+        founder: {
+          "@type": "Person",
+          name: config.representative,
+        },
+        areaServed: {
+          "@type": "Country",
+          name: "대한민국",
+        },
+      }
+    : {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: config.brandName,
+        description: config.description,
+        url: config.url,
+      };
 
   return (
     <html lang="ko">
@@ -45,28 +78,7 @@ export default async function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "HomeAndConstructionBusiness",
-              name: config.brandName,
-              legalName: config.companyName,
-              description: config.description,
-              telephone: config.phone,
-              email: config.email,
-              address: {
-                "@type": "PostalAddress",
-                streetAddress: config.address,
-                addressCountry: "KR",
-              },
-              founder: {
-                "@type": "Person",
-                name: config.representative,
-              },
-              areaServed: {
-                "@type": "Country",
-                name: "대한민국",
-              },
-            }),
+            __html: JSON.stringify(businessJsonLd),
           }}
         />
       </head>

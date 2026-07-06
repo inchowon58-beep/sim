@@ -3,18 +3,21 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSiteConfig } from "@/components/SiteConfigProvider";
+import InquiryLinkButton from "@/components/InquiryLinkButton";
+import { showCompanyContact } from "@/lib/exposure-mode";
 
 const NAV_ITEMS = [
   { href: "/#about", label: "소개" },
   { href: "/#cases", label: "시공사례" },
   { href: "/#process", label: "진행절차" },
   { href: "/#reviews", label: "고객후기" },
-  { href: "/#contact", label: "견적문의" },
+  { href: "/#quick-inquiry", label: "견적문의" },
 ] as const;
 
 export default function Header() {
   const site = useSiteConfig();
   const [menuOpen, setMenuOpen] = useState(false);
+  const showCompany = showCompanyContact(site.exposureMode);
 
   const closeMenu = () => setMenuOpen(false);
 
@@ -44,12 +47,15 @@ export default function Header() {
           </nav>
 
           <div className="hidden lg:flex items-center gap-3 shrink-0">
-            <a
-              href={`tel:${site.phoneTel}`}
-              className="px-5 py-2.5 bg-orange text-white text-sm font-bold rounded-full hover:bg-orange-light transition"
-            >
-              전화 상담 {site.phone}
-            </a>
+            {showCompany && (
+              <a
+                href={`tel:${site.phoneTel}`}
+                className="px-5 py-2.5 bg-orange text-white text-sm font-bold rounded-full hover:bg-orange-light transition"
+              >
+                전화 상담 {site.phone}
+              </a>
+            )}
+            <InquiryLinkButton context="header" />
           </div>
 
           <div className="flex items-center shrink-0 lg:hidden">
@@ -87,13 +93,22 @@ export default function Header() {
                 {item.label}
               </Link>
             ))}
-            <a
-              href={`tel:${site.phoneTel}`}
-              onClick={closeMenu}
-              className="mx-4 mt-2 py-3 text-center bg-orange text-white font-bold rounded-xl"
-            >
-              전화연결 {site.phone}
-            </a>
+            <div className="mx-4 mt-2 flex flex-col gap-2">
+              {showCompany && (
+                <a
+                  href={`tel:${site.phoneTel}`}
+                  onClick={closeMenu}
+                  className="py-3 text-center bg-orange text-white font-bold rounded-xl"
+                >
+                  전화연결 {site.phone}
+                </a>
+              )}
+              <InquiryLinkButton
+                context="header"
+                onClick={closeMenu}
+                className="w-full text-center rounded-xl"
+              />
+            </div>
           </nav>
         </div>
       )}

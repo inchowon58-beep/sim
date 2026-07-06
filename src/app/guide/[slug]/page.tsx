@@ -17,6 +17,8 @@ import LocalPartnersSection from "@/components/LocalPartnersSection";
 import QuickInquiryForm from "@/components/QuickInquiryForm";
 import { buildSeoBrowserTitle } from "@/lib/seo-keyword";
 import { ensureLocalPartners } from "@/lib/seo-local-partners";
+import { INQUIRY_SECTION_ID, showCompanyContact } from "@/lib/exposure-mode";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -68,6 +70,7 @@ export default async function GuidePage({ params }: Props) {
         }));
 
   const brandShort = config.brandName.replace(/철거$/, "") || "19";
+  const showCompany = showCompanyContact(config.exposureMode);
 
   return (
     <article className="bg-cream min-h-screen">
@@ -78,7 +81,9 @@ export default async function GuidePage({ params }: Props) {
           </div>
           <div>
             <p className="font-bold">{config.brandName}</p>
-            <p className="text-sm text-gray-300">{config.companyName}</p>
+            {showCompany && (
+              <p className="text-sm text-gray-300">{config.companyName}</p>
+            )}
             <p className="text-sm text-orange">폐업철거 전문 · 폐업지원금 원스톱</p>
           </div>
         </div>
@@ -111,6 +116,7 @@ export default async function GuidePage({ params }: Props) {
           pageSlug={page.slug}
           pageTitle={resolved.title}
           brandName={config.brandName}
+          exposureMode={config.exposureMode}
         />
 
         <div
@@ -151,12 +157,22 @@ export default async function GuidePage({ params }: Props) {
           <p className="text-gray-300 mb-6 text-sm">
             {config.brandName} · 무료 방문 견적 · 폐업지원금 최대 {config.supportMax}
           </p>
-          <a
-            href={`tel:${phoneToTel(config.phone)}`}
-            className="inline-flex items-center gap-2 bg-orange text-white font-bold px-6 py-3 rounded-full hover:bg-orange-light transition"
-          >
-            무료 상담 신청 {config.phone}
-          </a>
+          <div className="flex flex-wrap justify-center gap-3">
+            {showCompany && (
+              <a
+                href={`tel:${phoneToTel(config.phone)}`}
+                className="inline-flex items-center gap-2 bg-orange text-white font-bold px-6 py-3 rounded-full hover:bg-orange-light transition"
+              >
+                무료 상담 신청 {config.phone}
+              </a>
+            )}
+            <Link
+              href={`#${INQUIRY_SECTION_ID}`}
+              className="inline-flex items-center gap-2 bg-white text-dark font-bold px-6 py-3 rounded-full hover:bg-gray-100 transition"
+            >
+              {showCompany ? "3초 견적문의" : "3초 견적신청 문의하기"}
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -171,7 +187,7 @@ export default async function GuidePage({ params }: Props) {
             image: getOgImageAbsoluteUrl(config, `/guide/${page.slug}/opengraph-image`),
             author: {
               "@type": "Organization",
-              name: config.companyName,
+              name: showCompany ? config.companyName : config.brandName,
             },
             publisher: {
               "@type": "Organization",

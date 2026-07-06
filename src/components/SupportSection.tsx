@@ -1,9 +1,12 @@
 import Image from "next/image";
+import Link from "next/link";
 import { getSiteConfig, phoneToTel } from "@/lib/site-config";
 import { getImageUrl } from "@/lib/site-images";
+import { INQUIRY_SECTION_ID, showCompanyContact } from "@/lib/exposure-mode";
 
 export default async function SupportSection() {
   const site = await getSiteConfig();
+  const showCompany = showCompanyContact(site.exposureMode);
 
   return (
     <section className="py-16 lg:py-24 bg-white">
@@ -25,13 +28,21 @@ export default async function SupportSection() {
             <p className="text-sm text-gray-400">
               *지역·업종·평수에 따라 지원 금액이 달라질 수 있습니다. 시공 전 상담을 권장합니다.
             </p>
-            <div className="mt-8">
-              <a
-                href={`tel:${phoneToTel(site.phone)}`}
-                className="inline-flex items-center gap-2 bg-orange text-white font-bold px-6 py-3 rounded-full hover:bg-orange-light transition"
+            <div className="mt-8 flex flex-wrap gap-3">
+              {showCompany && (
+                <a
+                  href={`tel:${phoneToTel(site.phone)}`}
+                  className="inline-flex items-center gap-2 bg-orange text-white font-bold px-6 py-3 rounded-full hover:bg-orange-light transition"
+                >
+                  지원금·견적 상담
+                </a>
+              )}
+              <Link
+                href={`/#${INQUIRY_SECTION_ID}`}
+                className="inline-flex items-center gap-2 bg-dark text-white font-bold px-6 py-3 rounded-full hover:bg-dark-light transition"
               >
-                지원금·견적 상담
-              </a>
+                {showCompany ? "3초 견적문의" : "3초 견적신청 문의하기"}
+              </Link>
             </div>
           </div>
 

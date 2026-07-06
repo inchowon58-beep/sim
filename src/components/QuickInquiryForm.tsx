@@ -5,12 +5,14 @@ import {
   INQUIRY_PRIVACY_SECTIONS,
   INQUIRY_PRIVACY_SUMMARY,
 } from "@/lib/inquiry-privacy";
+import { inquiryFormTitle, INQUIRY_SECTION_ID, type ExposureMode } from "@/lib/exposure-mode";
 
 interface QuickInquiryFormProps {
   keyword: string;
   pageSlug: string;
   pageTitle: string;
   brandName: string;
+  exposureMode?: ExposureMode;
 }
 
 const inputClass =
@@ -21,7 +23,9 @@ export default function QuickInquiryForm({
   pageSlug,
   pageTitle,
   brandName,
+  exposureMode = "company",
 }: QuickInquiryFormProps) {
+  const formTitle = inquiryFormTitle(exposureMode);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
@@ -83,7 +87,7 @@ export default function QuickInquiryForm({
   if (success) {
     return (
       <section
-        id="quick-inquiry"
+        id={INQUIRY_SECTION_ID}
         className="mb-8 rounded-2xl border-2 border-[#03C75A]/30 bg-gradient-to-br from-[#e8f9ef] via-white to-white p-6 lg:p-8 shadow-sm"
       >
         <div className="text-center py-4">
@@ -108,7 +112,7 @@ export default function QuickInquiryForm({
 
   return (
     <section
-      id="quick-inquiry"
+      id={INQUIRY_SECTION_ID}
       className="mb-8 rounded-2xl overflow-hidden border border-orange/20 shadow-lg"
     >
       <div className="bg-gradient-to-r from-orange to-orange-light px-6 py-5 lg:px-8 text-white">
@@ -116,7 +120,7 @@ export default function QuickInquiryForm({
           <span className="inline-flex items-center justify-center bg-white/20 text-xs font-bold px-3 py-1 rounded-full">
             3초 견적
           </span>
-          <h2 className="text-xl lg:text-2xl font-bold">3초 견적신청 문의하기</h2>
+          <h2 className="text-xl lg:text-2xl font-bold">{formTitle}</h2>
         </div>
         <p className="text-sm text-white/90 mt-2">
           {keyword} · 무료 방문 견적 · 폐업지원금 상담

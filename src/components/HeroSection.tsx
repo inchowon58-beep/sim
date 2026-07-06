@@ -1,10 +1,12 @@
 import Image from "next/image";
-import { getSiteConfig } from "@/lib/site-config";
+import Link from "next/link";
+import { getSiteConfig, phoneToTel } from "@/lib/site-config";
 import { getImageUrl } from "@/lib/site-images";
-import { phoneToTel } from "@/lib/site-config";
+import { INQUIRY_SECTION_ID, showCompanyContact } from "@/lib/exposure-mode";
 
 export default async function HeroSection() {
   const site = await getSiteConfig();
+  const showCompany = showCompanyContact(site.exposureMode);
 
   return (
     <section id="about" className="relative min-h-[85vh] flex items-center overflow-hidden">
@@ -31,12 +33,22 @@ export default async function HeroSection() {
             <strong className="text-orange">{site.brandName}</strong>가 한 번에 해결합니다
           </p>
 
-          <a
-            href={`tel:${phoneToTel(site.phone)}`}
-            className="inline-flex items-center gap-2 bg-orange text-white font-bold px-8 py-4 rounded-full hover:bg-orange-light transition shadow-lg text-lg"
-          >
-            무료 상담 전화하기
-          </a>
+          <div className="flex flex-wrap gap-3">
+            {showCompany && (
+              <a
+                href={`tel:${phoneToTel(site.phone)}`}
+                className="inline-flex items-center gap-2 bg-orange text-white font-bold px-8 py-4 rounded-full hover:bg-orange-light transition shadow-lg text-lg"
+              >
+                무료 상담 전화하기
+              </a>
+            )}
+            <Link
+              href={`/#${INQUIRY_SECTION_ID}`}
+              className="inline-flex items-center gap-2 bg-dark text-white font-bold px-8 py-4 rounded-full hover:bg-dark-light transition shadow-lg text-lg border border-white/20"
+            >
+              {showCompany ? "3초 견적문의" : "3초 빠른문의 신청하기"}
+            </Link>
+          </div>
         </div>
       </div>
     </section>

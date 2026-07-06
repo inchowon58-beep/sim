@@ -7,6 +7,7 @@ import ProcessSection from "@/components/ProcessSection";
 import ReviewsSection from "@/components/ReviewsSection";
 import PartnerSection from "@/components/PartnerSection";
 import CtaSection from "@/components/CtaSection";
+import HomeInquirySection from "@/components/HomeInquirySection";
 import { getSiteConfig } from "@/lib/site-config";
 import type { Metadata } from "next";
 import { buildPageMetadata } from "@/lib/metadata";
@@ -31,6 +32,7 @@ export default function HomePage() {
       <WhyUsSection />
       <ProcessSection />
       <ReviewsSection />
+      <HomeInquirySection />
       <PartnerSection />
       <CtaSection />
     </>

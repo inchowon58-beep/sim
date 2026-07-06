@@ -6,6 +6,11 @@ import {
   type PublicSiteConfig,
   type SiteConfig,
 } from "./site-config-types";
+import {
+  DEFAULT_EXPOSURE_MODE,
+  resolveExposureMode,
+  type ExposureMode,
+} from "./exposure-mode";
 import { getImageIndexFromSeed, getImageUrl } from "./site-images";
 import { enrichSeoContentWithImages } from "./seo-content-images";
 import {
@@ -16,8 +21,8 @@ import {
   extractRegionForKeyword,
 } from "./seo-keyword";
 
-export type { SiteConfig, PublicSiteConfig };
-export { DEFAULT_SITE_CONFIG, phoneToTel, toPublicConfig };
+export type { SiteConfig, PublicSiteConfig, ExposureMode };
+export { DEFAULT_SITE_CONFIG, phoneToTel, toPublicConfig, DEFAULT_EXPOSURE_MODE };
 
 /** 과거 저장 콘텐츠 치환용 (설정 변경 시 자동 반영) */
 const LEGACY_BRANDS = ["123철거", "1977철거"];
@@ -26,7 +31,11 @@ const LEGACY_COMPANIES = ["주식회사베룸", "주식회사 베룸"];
 
 export async function getSiteConfig(): Promise<SiteConfig> {
   const stored = await getSettings();
-  return { ...DEFAULT_SITE_CONFIG, ...stored };
+  const merged = { ...DEFAULT_SITE_CONFIG, ...stored };
+  return {
+    ...merged,
+    exposureMode: resolveExposureMode(merged.exposureMode),
+  };
 }
 
 export function getPageImageUrl(page: SeoPage, config: SiteConfig): string {

@@ -64,6 +64,8 @@ export interface Settings {
   collectionWorkerSecret?: string;
   /** Slack Incoming Webhook — 견적 문의 실시간 알림 */
   slackWebhookUrl?: string;
+  /** cpa | company — 업체 정보 노출 방식 */
+  exposureMode?: "cpa" | "company";
 }
 
 const DATA_DIR = path.join(process.cwd(), "data");

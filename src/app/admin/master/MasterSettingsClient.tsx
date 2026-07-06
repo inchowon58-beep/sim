@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import ExternalLink from "@/components/ExternalLink";
 import NaverExposureCard from "@/components/NaverExposureCard";
+import type { ExposureMode } from "@/lib/exposure-mode";
 
 interface SiteForm {
   brandName: string;
@@ -24,6 +25,7 @@ interface SiteForm {
   dailySeoLimit: number;
   serviceAvailableDays: number;
   naverExposureId: string;
+  exposureMode: ExposureMode;
 }
 
 const emptySiteForm: SiteForm = {
@@ -45,6 +47,7 @@ const emptySiteForm: SiteForm = {
   dailySeoLimit: 10,
   serviceAvailableDays: 30,
   naverExposureId: "",
+  exposureMode: "company",
 };
 
 interface SeoQuotaPreview {
@@ -134,6 +137,7 @@ export default function MasterSettingsClient() {
       dailySeoLimit: settings.dailySeoLimit ?? 10,
       serviceAvailableDays: settings.serviceAvailableDays ?? 30,
       naverExposureId: settings.naverExposureId || "",
+      exposureMode: settings.exposureMode === "cpa" ? "cpa" : "company",
     });
     setNaverExposurePassword(settings.naverExposurePassword || "");
   }
@@ -319,6 +323,49 @@ export default function MasterSettingsClient() {
               type: "number",
               placeholder: "10",
             })}
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-sm p-6 border-2 border-indigo-200">
+            <h2 className="font-bold text-dark mb-2">업체 노출 방식</h2>
+            <p className="text-xs text-gray-500 mb-4">
+              사이트에 업체 연락처·주소를 노출할지, 견적 문의 폼(CPA)만 사용할지 선택합니다.
+            </p>
+            <div className="space-y-3">
+              <label className="flex items-start gap-3 p-4 rounded-xl border border-gray-200 cursor-pointer hover:border-orange/40 has-[:checked]:border-orange has-[:checked]:bg-orange/5">
+                <input
+                  type="radio"
+                  name="exposureMode"
+                  value="cpa"
+                  checked={siteForm.exposureMode === "cpa"}
+                  onChange={() => setSiteForm({ ...siteForm, exposureMode: "cpa" })}
+                  className="mt-1"
+                />
+                <div>
+                  <p className="font-semibold text-dark">CPA 방식 (견적 문의만)</p>
+                  <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+                    「3초 견적신청 문의하기」 폼으로 DB 수집. 업체 전화번호·회사명·주소는 사이트에
+                    노출하지 않고 브랜드·사이트 주소만 표시합니다.
+                  </p>
+                </div>
+              </label>
+              <label className="flex items-start gap-3 p-4 rounded-xl border border-gray-200 cursor-pointer hover:border-orange/40 has-[:checked]:border-orange has-[:checked]:bg-orange/5">
+                <input
+                  type="radio"
+                  name="exposureMode"
+                  value="company"
+                  checked={siteForm.exposureMode === "company"}
+                  onChange={() => setSiteForm({ ...siteForm, exposureMode: "company" })}
+                  className="mt-1"
+                />
+                <div>
+                  <p className="font-semibold text-dark">업체정보 등록 방식</p>
+                  <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+                    업체 전화·주소·사업자 정보와 「3초 견적문의」 버튼을 함께 노출합니다. 상단·하단
+                    플로팅 바에 전화 + 견적문의가 같이 표시됩니다.
+                  </p>
+                </div>
+              </label>
+            </div>
           </div>
 
           <div className="bg-white rounded-2xl shadow-sm p-6">
