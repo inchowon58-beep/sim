@@ -11,6 +11,7 @@ export default function RegisterSiteClient() {
   const [bodyContent, setBodyContent] = useState("");
   const [slackWebhook, setSlackWebhook] = useState("");
   const [naverVerification, setNaverVerification] = useState("");
+  const [dailySeoLimit, setDailySeoLimit] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState<CreateSiteResult | null>(null);
@@ -32,6 +33,7 @@ export default function RegisterSiteClient() {
           bodyContent,
           slackWebhook,
           naverVerification,
+          ...(dailySeoLimit.trim() ? { dailySeoLimit: dailySeoLimit.trim() } : {}),
         }),
       });
 
@@ -109,6 +111,7 @@ export default function RegisterSiteClient() {
                 setBodyContent("");
                 setSlackWebhook("");
                 setNaverVerification("");
+                setDailySeoLimit("");
               }}
               className="mt-6 text-sm text-gray-500 hover:text-orange"
             >
@@ -167,6 +170,23 @@ export default function RegisterSiteClient() {
                 rows={6}
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl outline-none focus:border-orange resize-y text-sm"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                일일 SEO 생성 한도 (선택)
+              </label>
+              <input
+                type="number"
+                min={0}
+                value={dailySeoLimit}
+                onChange={(e) => setDailySeoLimit(e.target.value)}
+                placeholder="비우면 마스터 전역 설정과 동일"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl outline-none focus:border-orange"
+              />
+              <p className="text-xs text-gray-400 mt-1">
+                테넌트마다 독립 카운트됩니다. 예: 메인 30개 + gangnam11 30개 각각 생성 가능.
+              </p>
             </div>
 
             <div>

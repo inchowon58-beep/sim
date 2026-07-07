@@ -4,7 +4,7 @@ import { generateSeoContent } from "./gemini";
 import { getSiteConfig } from "./site-config";
 import { getImageIndexFromSeed } from "./site-images";
 import { resolveLocalPartnersForKeyword } from "./local-business";
-import { consumeSeoQuota, getSeoQuotaStatus } from "./seo-quota";
+import { consumeSeoQuota, getSeoQuotaStatus, getSeoQuotaStatusForTenant } from "./seo-quota";
 import { enqueueCollectionRequest } from "./collection-queue";
 import { getServicePeriodStatus } from "./service-period";
 import { normalizeSeoKeyword, finalizeSeoTitle } from "./seo-keyword";
@@ -47,14 +47,6 @@ export async function createSeoPageFromKeyword(
     );
   }
 
-  const quota = await getSeoQuotaStatus();
-  if (quota.remaining <= 0) {
-    throw new SeoCreateError(
-      `오늘 SEO 페이지 생성 한도(${quota.limit}개)를 모두 사용했습니다.`,
-      "QUOTA"
-    );
-  }
-
   const trimmedKeyword = normalizeSeoKeyword(rawKeyword.trim());
 
   const resolved = options?.siteConfigId
@@ -66,6 +58,19 @@ export async function createSeoPageFromKeyword(
   }
 
   const { tenant, isTenant, config: site } = resolved!;
+
+  const quota =
+    isTenant && tenant
+      ? await getSeoQuotaStatusForTenant(tenant.id)
+      : await getSeoQuotaStatus();
+
+  if (quota.remaining <= 0) {
+    const label = quota.subdomain ? ` (${quota.subdomain})` : "";
+    throw new SeoCreateError(
+      `오늘 SEO 페이지 생성 한도${label}(${quota.limit}개)를 모두 사용했습니다.`,
+      "QUOTA"
+    );
+  }
 
   const existingPages =
     isTenant && tenant ? await getTenantPages(tenant.id) : await getPages();
@@ -126,7 +131,7 @@ export async function createSeoPageFromKeyword(
     } else {
       await savePage(page);
     }
-    await consumeSeoQuota();
+    await consumeSeoQuota(isTenant && tenant ? tenant.id : undefined);
   } catch (error) {
     if (error instanceof DataStorageError) {
       throw new SeoCreateError(error.message, "STORAGE");

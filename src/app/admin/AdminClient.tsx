@@ -27,6 +27,8 @@ interface SeoQuota {
   limit: number;
   used: number;
   remaining: number;
+  isTenant?: boolean;
+  subdomain?: string | null;
   today: string;
   service?: {
     daysRemaining: number;
@@ -566,6 +568,11 @@ export default function AdminClient() {
                   )}
                   <span className="text-gray-300 mx-2">|</span>
                   오늘 생성 가능{" "}
+                  {quota.isTenant && quota.subdomain && (
+                    <span className="text-gray-500 font-normal text-xs mr-1">
+                      ({quota.subdomain})
+                    </span>
+                  )}
                   <span className="text-orange">{quota.remaining}개</span>
                   <span className="text-gray-500 font-normal"> / {quota.limit}개</span>
                 </p>

@@ -36,6 +36,9 @@ export interface TenantSiteConfigRow {
   content_data: TenantContentData;
   naver_verification: string | null;
   slack_webhook: string | null;
+  daily_seo_limit: number | null;
+  seo_quota_date: string | null;
+  seo_quota_count: number;
   created_at: string;
 }
 
@@ -46,6 +49,8 @@ export interface CreateSiteInput {
   bodyContent?: string;
   slackWebhook?: string;
   naverVerification?: string;
+  /** 미입력 시 마스터 전역 dailySeoLimit 복사 */
+  dailySeoLimit?: number | string;
 }
 
 export interface CreateSiteResult {

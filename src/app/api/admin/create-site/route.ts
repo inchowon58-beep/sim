@@ -10,6 +10,8 @@ import {
 } from "@/lib/supabase/tenant-db";
 import { pickThemeColor } from "@/lib/tenant-theme";
 import { pickTenantContentPackage } from "@/lib/tenant-content";
+import { getSettings } from "@/lib/data";
+import { resolveDailySeoLimit } from "@/lib/seo-quota";
 import type { CreateSiteInput, TenantContentData } from "@/types/tenant";
 
 const DOMAIN_RE = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/i;
@@ -270,6 +272,14 @@ export async function POST(req: NextRequest) {
       bodyContent
     );
 
+    const settings = await getSettings();
+    const defaultLimit = resolveDailySeoLimit(settings);
+    const dailySeoLimitRaw = body.dailySeoLimit;
+    const dailySeoLimit =
+      dailySeoLimitRaw !== undefined && dailySeoLimitRaw !== null && String(dailySeoLimitRaw).trim() !== ""
+        ? Math.max(0, Number.parseInt(String(dailySeoLimitRaw), 10) || defaultLimit)
+        : defaultLimit;
+
     const row = await insertTenantSiteConfig({
       site_name: siteName,
       subdomain,
@@ -277,6 +287,9 @@ export async function POST(req: NextRequest) {
       content_data: contentData,
       naver_verification: naverVerification || null,
       slack_webhook: slackWebhook || null,
+      daily_seo_limit: dailySeoLimit,
+      seo_quota_date: null,
+      seo_quota_count: 0,
     });
 
     const vercel = await registerVercelDomain(subdomain);

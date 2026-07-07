@@ -261,6 +261,6 @@ while True:
 
 - 한 번에 **최대 2000개** 키워드 대량 등록
 - **동시 생성 1개** (processing 중이면 VM은 busy)
-- **일일 생성 한도** (`dailySeoLimit`) — 사이트 공통 한도 (테넌트별 분리 아님)
+- **일일 생성 한도** (`dailySeoLimit`) — **사이트(테넌트)마다 독립** (gangnam11 30개 + 메인 30개 각각)
 - Gemini 생성 **30초~2분** — VM `timeout` 180초 권장
 - **gangnam11 대기열 → gangnam11 VM URL** / **메인 대기열 → 메인 VM URL** (혼용 금지)

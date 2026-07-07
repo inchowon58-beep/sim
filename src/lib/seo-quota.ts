@@ -1,11 +1,19 @@
 import { getSettings, saveSettings, type Settings } from "./data";
 import { DEFAULT_SITE_CONFIG } from "./site-config-types";
+import { getResolvedSiteConfig } from "@/utils/siteConfig";
+import {
+  consumeTenantSeoQuota,
+  getTenantSeoQuotaStatus,
+} from "@/lib/supabase/tenant-quota";
 
 export interface SeoQuotaStatus {
   limit: number;
   used: number;
   remaining: number;
   today: string;
+  /** 테넌트일 때 서브도메인 */
+  subdomain?: string | null;
+  isTenant?: boolean;
 }
 
 /** VM Worker용 — 한도 초과 시 재시도 시각 안내 */
@@ -65,7 +73,7 @@ export function resolveDailySeoLimit(settings: Settings): number {
   return DEFAULT_SITE_CONFIG.dailySeoLimit;
 }
 
-export async function getSeoQuotaStatus(): Promise<SeoQuotaStatus> {
+async function getLegacySeoQuotaStatus(): Promise<SeoQuotaStatus> {
   const settings = await getSettings();
   const today = todayKst();
   const limit = resolveDailySeoLimit(settings);
@@ -77,11 +85,72 @@ export async function getSeoQuotaStatus(): Promise<SeoQuotaStatus> {
     used,
     remaining: Math.max(0, limit - used),
     today,
+    subdomain: null,
+    isTenant: false,
   };
 }
 
-export async function consumeSeoQuota(): Promise<boolean> {
-  const status = await getSeoQuotaStatus();
+export async function getSeoQuotaStatus(): Promise<SeoQuotaStatus> {
+  const { tenant, isTenant } = await getResolvedSiteConfig();
+
+  if (isTenant && tenant) {
+    const status = await getTenantSeoQuotaStatus(tenant.id);
+    return {
+      limit: status.limit,
+      used: status.used,
+      remaining: status.remaining,
+      today: status.today,
+      subdomain: status.subdomain,
+      isTenant: true,
+    };
+  }
+
+  return getLegacySeoQuotaStatus();
+}
+
+/** VM·백그라운드 — hostname 없을 때 siteConfigId로 테넌트 한도 조회 */
+export async function getSeoQuotaStatusForTenant(
+  siteConfigId: string
+): Promise<SeoQuotaStatus> {
+  const status = await getTenantSeoQuotaStatus(siteConfigId);
+  return {
+    limit: status.limit,
+    used: status.used,
+    remaining: status.remaining,
+    today: status.today,
+    subdomain: status.subdomain,
+    isTenant: true,
+  };
+}
+
+export async function getSeoQuotaWorkerInfoForTenant(
+  siteConfigId: string,
+  pendingJobCount = 0
+): Promise<SeoQuotaWorkerInfo> {
+  const base = await getSeoQuotaStatusForTenant(siteConfigId);
+  const retryAfterSec = getKstSecondsUntilMidnight();
+  const exhausted = base.remaining <= 0;
+  return {
+    ...base,
+    exhausted,
+    canGenerate: !exhausted,
+    retryAfterSec,
+    nextEligibleAt: getNextKstMidnightIso(),
+    shouldPause: exhausted && pendingJobCount > 0,
+  };
+}
+
+export async function consumeSeoQuota(siteConfigId?: string): Promise<boolean> {
+  if (siteConfigId) {
+    return consumeTenantSeoQuota(siteConfigId);
+  }
+
+  const { tenant, isTenant } = await getResolvedSiteConfig();
+  if (isTenant && tenant) {
+    return consumeTenantSeoQuota(tenant.id);
+  }
+
+  const status = await getLegacySeoQuotaStatus();
   if (status.remaining <= 0) return false;
 
   const settings = await getSettings();

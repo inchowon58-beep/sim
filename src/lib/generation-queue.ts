@@ -9,7 +9,7 @@ import {
 import { normalizeSeoKeyword } from "./seo-keyword";
 import { createSeoPageFromKeyword, SeoCreateError } from "./seo-page-create";
 import { verifyWorkerRequest } from "./collection-queue";
-import { getSeoQuotaWorkerInfo, type SeoQuotaWorkerInfo } from "./seo-quota";
+import { getSeoQuotaWorkerInfo, getSeoQuotaWorkerInfoForTenant, type SeoQuotaWorkerInfo } from "./seo-quota";
 import { getResolvedSiteConfig } from "@/utils/siteConfig";
 import { getTenantPages } from "@/lib/supabase/tenant-pages";
 import {
@@ -93,6 +93,16 @@ async function getExistingKeywordKeys(scope: QueueScope): Promise<Set<string>> {
   }
   const pages = await getTenantPages(scope.siteConfigId);
   return new Set(pages.map((p) => normalizeKeywordKey(p.keyword)));
+}
+
+async function getWorkerQuota(
+  scope: QueueScope,
+  pendingCount: number
+): Promise<SeoQuotaWorkerInfo> {
+  if (scope.type === "tenant") {
+    return getSeoQuotaWorkerInfoForTenant(scope.siteConfigId, pendingCount);
+  }
+  return getSeoQuotaWorkerInfo(pendingCount);
 }
 
 function buildQuotaResponse(
@@ -263,7 +273,7 @@ export async function getWorkerGenerationStatus(): Promise<{
 }> {
   const { jobs: pendingJobs, scope } = await getPendingGenerationJobsForWorker();
   const queue = await loadQueue(scope);
-  const [quota] = await Promise.all([getSeoQuotaWorkerInfo(pendingJobs.length)]);
+  const [quota] = await Promise.all([getWorkerQuota(scope, pendingJobs.length)]);
   return {
     summary: summarizeQueue(queue),
     pendingJobs,
@@ -286,7 +296,7 @@ export async function processNextGenerationJob(): Promise<GenerationWorkerRespon
   const pendingCount = queue.jobs.filter((j) => j.status === "pending").length;
 
   if (processing) {
-    const quota = await getSeoQuotaWorkerInfo(pendingCount);
+    const quota = await getWorkerQuota(scope, pendingCount);
     return {
       ok: false,
       status: "busy",
@@ -299,7 +309,7 @@ export async function processNextGenerationJob(): Promise<GenerationWorkerRespon
   }
 
   if (pendingCount === 0) {
-    const quota = await getSeoQuotaWorkerInfo(0);
+    const quota = await getWorkerQuota(scope, 0);
     return {
       ok: true,
       status: "empty",
@@ -314,10 +324,11 @@ export async function processNextGenerationJob(): Promise<GenerationWorkerRespon
     };
   }
 
-  const quota = await getSeoQuotaWorkerInfo(pendingCount);
+  const quota = await getWorkerQuota(scope, pendingCount);
   if (!quota.canGenerate) {
+    const siteLabel = scope.type === "tenant" ? ` [${scope.subdomain}]` : "";
     return buildQuotaResponse(
-      `오늘 SEO 페이지 생성 한도(${quota.limit}개)를 모두 사용했습니다. ${quota.nextEligibleAt} (KST 자정) 이후 VM이 다시 시도하세요.`,
+      `오늘 SEO 페이지 생성 한도${siteLabel}(${quota.limit}개)를 모두 사용했습니다. ${quota.nextEligibleAt} (KST 자정) 이후 VM이 다시 시도하세요.`,
       quota,
       pendingCount,
       scope
@@ -363,7 +374,7 @@ export async function processNextGenerationJob(): Promise<GenerationWorkerRespon
     await saveQueue(scope, queue);
 
     const remaining = queue.jobs.filter((j) => j.status === "pending").length;
-    const quotaAfter = await getSeoQuotaWorkerInfo(remaining);
+    const quotaAfter = await getWorkerQuota(scope, remaining);
     return {
       ok: true,
       status: "created",
@@ -393,7 +404,8 @@ export async function processNextGenerationJob(): Promise<GenerationWorkerRespon
         next.startedAt = undefined;
         queue.updatedAt = completedAt;
         await saveQueue(scope, queue);
-        const quotaBlocked = await getSeoQuotaWorkerInfo(
+        const quotaBlocked = await getWorkerQuota(
+          scope,
           queue.jobs.filter((j) => j.status === "pending").length
         );
         return {
