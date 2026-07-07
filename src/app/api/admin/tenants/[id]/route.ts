@@ -107,6 +107,12 @@ export async function PATCH(req: NextRequest, context: RouteContext) {
     }
   }
 
+  if (body.naverSiteRegistered === true) {
+    patch.naver_site_registered_at = new Date().toISOString();
+  } else if (body.naverSiteRegistered === false) {
+    patch.naver_site_registered_at = null;
+  }
+
   if (Object.keys(patch).length === 0) {
     return NextResponse.json({ error: "변경할 항목이 없습니다." }, { status: 400 });
   }

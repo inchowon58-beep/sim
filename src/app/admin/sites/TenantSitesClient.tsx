@@ -29,11 +29,17 @@ function StatusBadge({ ok, label }: { ok: boolean; label: string }) {
 }
 
 function NaverIntegrationBadges({
+  siteId,
   hasNaverAccount,
   naverSiteRegistered,
+  marking,
+  onMarkRegistered,
 }: {
+  siteId: string;
   hasNaverAccount: boolean;
   naverSiteRegistered: boolean;
+  marking: boolean;
+  onMarkRegistered: (siteId: string) => void;
 }) {
   if (!hasNaverAccount && !naverSiteRegistered) {
     return <span className="text-xs text-gray-300">—</span>;
@@ -49,9 +55,15 @@ function NaverIntegrationBadges({
           등록완료
         </span>
       ) : (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700">
-          등록 대기
-        </span>
+        <button
+          type="button"
+          onClick={() => onMarkRegistered(siteId)}
+          disabled={marking}
+          title="클릭하면 등록완료로 표시"
+          className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 hover:border-amber-300 transition disabled:opacity-50"
+        >
+          {marking ? "처리 중…" : "등록 대기"}
+        </button>
       )}
     </div>
   );
@@ -63,6 +75,7 @@ export default function TenantSitesClient() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [markingNaverId, setMarkingNaverId] = useState<string | null>(null);
 
   async function loadSites() {
     setLoading(true);
@@ -116,6 +129,33 @@ export default function TenantSitesClient() {
       setError("네트워크 오류가 발생했습니다.");
     } finally {
       setDeletingId(null);
+    }
+  }
+
+  async function handleMarkNaverRegistered(siteId: string) {
+    setMarkingNaverId(siteId);
+    setError("");
+    setMessage("");
+
+    try {
+      const res = await fetch(`/api/admin/tenants/${siteId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ naverSiteRegistered: true }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(data.error || "등록완료 처리에 실패했습니다.");
+        return;
+      }
+      setSites((prev) =>
+        prev.map((s) => (s.id === siteId ? { ...s, naverSiteRegistered: true } : s))
+      );
+      setMessage("네이버 등록완료로 표시했습니다.");
+    } catch {
+      setError("네트워크 오류가 발생했습니다.");
+    } finally {
+      setMarkingNaverId(null);
     }
   }
 
@@ -217,8 +257,11 @@ export default function TenantSitesClient() {
                         <div className="flex flex-wrap gap-1.5">
                           <StatusBadge ok={site.hasSlackWebhook} label="Slack" />
                           <NaverIntegrationBadges
+                            siteId={site.id}
                             hasNaverAccount={site.hasNaverAccount}
                             naverSiteRegistered={site.naverSiteRegistered}
+                            marking={markingNaverId === site.id}
+                            onMarkRegistered={handleMarkNaverRegistered}
                           />
                         </div>
                       </td>
@@ -261,7 +304,7 @@ export default function TenantSitesClient() {
 
         {!loading && sites.length > 0 && (
           <p className="text-center text-xs text-gray-400 mt-6">
-            총 {sites.length}개 사이트 · 네이버 「등록완료」는 VM 소유확인 후 표시됩니다.
+            총 {sites.length}개 사이트 · 네이버 「등록 대기」를 클릭하면 등록완료로 표시됩니다.
           </p>
         )}
       </div>

@@ -145,4 +145,6 @@ export interface UpdateTenantSiteInput {
   slackWebhook?: string;
   naverVerification?: string;
   dailySeoLimit?: number | string | null;
+  /** true 시 네이버 서치어드바이저 등록완료 수동 표시 */
+  naverSiteRegistered?: boolean;
 }
