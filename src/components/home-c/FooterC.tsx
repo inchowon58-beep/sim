@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import FooterAdminLinks from "@/components/FooterAdminLinks";
 import { useSiteConfig } from "@/components/SiteConfigProvider";
 import { showCompanyContact } from "@/lib/exposure-mode";
 
@@ -38,9 +39,12 @@ export default function FooterC() {
           </div>
         </div>
 
-        <p className="text-center text-xs text-stone-600 pt-8 border-t border-stone-800">
-          © {new Date().getFullYear()} <span className="text-stone-500">{site.brandName}</span>
-        </p>
+        <div className="pt-8 border-t border-stone-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-stone-600">
+            © {new Date().getFullYear()} <span className="text-stone-500">{site.brandName}</span>
+          </p>
+          <FooterAdminLinks />
+        </div>
       </div>
     </footer>
   );

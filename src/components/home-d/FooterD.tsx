@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import FooterAdminLinks from "@/components/FooterAdminLinks";
 import { useSiteConfig, useTenantUi } from "@/components/SiteConfigProvider";
 import { showCompanyContact } from "@/lib/exposure-mode";
 
@@ -58,9 +59,12 @@ export default function FooterD() {
           )}
         </div>
 
-        <p className="text-center text-[10px] tracking-[0.2em] uppercase text-gray-600 pt-8 border-t border-gray-800">
-          © {site.brandName.toUpperCase()} ALL RIGHTS RESERVED.
-        </p>
+        <div className="pt-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-[10px] tracking-[0.2em] uppercase text-gray-600">
+            © {site.brandName.toUpperCase()} ALL RIGHTS RESERVED.
+          </p>
+          <FooterAdminLinks />
+        </div>
       </div>
     </footer>
   );

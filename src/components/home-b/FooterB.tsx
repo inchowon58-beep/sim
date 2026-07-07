@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSiteConfig } from "@/components/SiteConfigProvider";
 import InquiryLinkButton from "@/components/InquiryLinkButton";
+import FooterAdminLinks from "@/components/FooterAdminLinks";
 import { showCompanyContact } from "@/lib/exposure-mode";
 
 export default function FooterB() {
@@ -44,9 +45,12 @@ export default function FooterB() {
             <InquiryLinkButton context="cta" className="!rounded-lg" />
           </div>
         </div>
-        <p className="text-center text-xs text-gray-600 mt-10 pt-6 border-t border-white/10">
-          © {new Date().getFullYear()} {site.brandName}. All Rights Reserved.
-        </p>
+        <div className="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-gray-600">
+            © {new Date().getFullYear()} {site.brandName}. All Rights Reserved.
+          </p>
+          <FooterAdminLinks />
+        </div>
       </div>
     </footer>
   );
