@@ -1,7 +1,7 @@
 "use client";
 
 import type { CreateSiteResult, NaverAccountSummary } from "@/types/tenant";
-import { SiteDesignSelector } from "@/components/admin/SiteDesignPreview";
+import { SITE_DESIGN_OPTIONS } from "@/lib/site-designs";
 import type { SiteDesignId } from "@/lib/site-designs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -78,7 +78,7 @@ export default function RegisterSiteClient() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-orange/5 py-10 px-4">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-2xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
             <p className="text-xs font-semibold text-orange uppercase tracking-wider mb-1">
@@ -219,11 +219,29 @@ export default function RegisterSiteClient() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">사이트 디자인</label>
-              <SiteDesignSelector
-                value={siteDesign}
-                onChange={setSiteDesign}
-                brandName={siteName.trim() || undefined}
-              />
+              <div className="grid sm:grid-cols-2 gap-3">
+                {SITE_DESIGN_OPTIONS.map((option) => {
+                  const selected = siteDesign === option.id;
+                  return (
+                    <button
+                      key={option.id}
+                      type="button"
+                      onClick={() => setSiteDesign(option.id)}
+                      className={`text-left p-4 rounded-xl border-2 transition ${
+                        selected
+                          ? "border-orange bg-orange/5 shadow-sm"
+                          : "border-gray-200 hover:border-orange/40"
+                      }`}
+                    >
+                      <p className="font-bold text-dark text-sm">{option.label}</p>
+                      <p className="text-xs text-gray-500 mt-1 leading-relaxed">{option.description}</p>
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="text-xs text-gray-400 mt-2">
+                선택한 디자인 기준으로 레이아웃·섹션 순서·문구 변형이 생성됩니다.
+              </p>
             </div>
 
             <div>
