@@ -9,4 +9,4 @@ export const ADMIN_PASSWORD = "infocs070207";
 export const MASTER_PASSWORD = "ybijour80";
 export const NAVER_EXPOSURE_ID = "dlscksspwlq";
 export const NAVER_EXPOSURE_PASSWORD = "yuna070207";
-export const NAVER_SITE_VERIFICATION = "a0b8a3dad23182338d1fee26f0ff08e048acc8f6";
+export const NAVER_SITE_VERIFICATION = "b6dfca0cbe0557955eebddc842d00f71d644477d";
