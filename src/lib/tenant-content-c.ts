@@ -16,17 +16,47 @@ function shuffle<T>(items: T[], rng: Rng): T[] {
 }
 
 const HERO_LINE_POOLS: string[][] = [
-  ["함께할 수 없을 때,", "버리지 말고", "파양 상담을."],
+  ["함께할 수 없을 때,", "버리지 말고", "안전하게 맡기세요."],
   ["이민·이사·군입대,", "아이의 다음 가족을", "함께 찾습니다."],
   ["가정견·가정묘", "파양·무료분양", "전문 상담."],
   ["버리지 않고,", "안전하게", "맡기는 방법."],
 ];
 
 const HERO_SUBTITLES = [
-  "더 이상 함께하기 어려운 상황이라도, 길에 내버리지 마세요. 아가펫보호소는 강아지·고양이 파양과 무료분양 매칭을 현실적인 입소 비용으로 진행합니다.",
+  "더 이상 함께하기 어려운 상황이라도, 파양견·파양묘를 안전하게 맡기실 수 있습니다. 아가펫보호소는 입소부터 새 가족 매칭까지 현실적인 입소 비용으로 진행합니다.",
   "이민, 유학, 군입대, 이사, 임신·출산, 알러지 발현 등 피치 못한 사정으로 케어가 어려울 때 전문 상담을 받으세요.",
-  "가정에서 사랑받던 아이들이 새 가족을 만날 수 있도록, 입소부터 분양·입양 매칭까지 책임지고 안내합니다.",
+  "가정에서 사랑받던 파양견·파양묘가 새 가족을 만날 수 있도록, 입소부터 분양·입양 매칭까지 책임지고 안내합니다.",
 ];
+
+function randomResponseMinutes(rng: Rng): number {
+  return 3 + Math.floor(rng() * 28);
+}
+
+function buildDesignCStats(rng: Rng) {
+  const responseMin = randomResponseMinutes(rng);
+  const matchingSets = [
+    [
+      { label: "분양·입양 매칭", value: "3,200", suffix: "+" },
+      { label: "새 가족을 만난 아이", value: "2,850", suffix: "+" },
+      { label: "입소 만족도", value: "97", suffix: "%" },
+    ],
+    [
+      { label: "무료분양·입양", value: "2,800", suffix: "+" },
+      { label: "새 가족 매칭", value: "3,150", suffix: "+" },
+      { label: "입소 만족도", value: "96", suffix: "%" },
+    ],
+    [
+      { label: "분양·입양 완료", value: "3,400", suffix: "+" },
+      { label: "행복한 새 가족", value: "2,720", suffix: "+" },
+      { label: "입소 만족도", value: "98", suffix: "%" },
+    ],
+  ];
+  const base = pickOne(matchingSets, rng);
+  return [
+    ...base,
+    { label: "평균 응답 시간", value: String(responseMin), suffix: "분" },
+  ];
+}
 
 const MISSION_TITLES = [
   ["가정견·가정묘", "파양·분양", "전문 센터."],
@@ -74,7 +104,7 @@ const PROMISES = [
 
 const PROCESS_C = [
   { step: "1", title: "전화·상담", desc: "파양·무료분양 사유와\n아이 정보를 알려주세요." },
-  { step: "2", title: "방문·견적", desc: "예약 후 센터를 방문해\n입소 비용과 일정을 안내받습니다." },
+  { step: "2", title: "방문·안내", desc: "예약 후 센터를 방문해\n입소 비용과 일정을 안내받습니다." },
   { step: "3", title: "입소·케어", desc: "건강 검진과 함께\n안전하게 케어를 시작합니다." },
   { step: "4", title: "분양·입양", desc: "적합한 가족을 찾아\n매칭 후 사후 상담을 지원합니다." },
 ];
@@ -135,20 +165,15 @@ export function pickDesignCExtras(
     heroLines: pickOne(HERO_LINE_POOLS, rng),
     heroSubline: pickOne(HERO_SUBTITLES, rng),
     missionLines,
-    missionBody: `${siteName}은 ${region} 및 전국에서 강아지·고양이 파양 입소와 무료분양·입양 매칭을 진행하는 프리미엄 요양보육 센터입니다. 가정에서 사랑받던 아이들이 새 가족을 만날 수 있도록 투명한 입소 비용과 책임 있는 상담으로 돕습니다.`,
+    missionBody: `${siteName}은 ${region} 및 전국에서 파양견·파양묘 입소와 무료분양·입양 매칭을 진행하는 프리미엄 요양보육 센터입니다. 가정에서 사랑받던 아이들이 새 가족을 만날 수 있도록 투명한 입소 비용과 책임 있는 매칭으로 돕습니다.`,
     storyTitle: ["작은 선택이", "아이의 남은", "평생을 바꿉니다."],
-    stats: [
-      { label: "누적 파양 상담", value: "8,400", suffix: "+" },
-      { label: "분양·입양 매칭", value: "3,200", suffix: "+" },
-      { label: "입소 만족도", value: "97", suffix: "%" },
-      { label: "평균 상담 응답", value: "2", suffix: "시간" },
-    ],
+    stats: buildDesignCStats(rng),
     businessAreas,
     casesItems: casesItems.slice(0, 6),
     promises: PROMISES,
     processSteps: PROCESS_C,
     supportBlurb:
-      "무료 입소를 내세우는 곳은 방문 후 과도한 비용을 요구하거나 관리가 미흡한 경우가 많습니다. 아가펫보호소는 입소 전 항목별 견적을 투명하게 안내하고, 아이 관리에 필요한 현실적인 비용만 받습니다.",
+      "무료 입소를 내세우는 곳은 방문 후 과도한 비용을 요구하거나 관리가 미흡한 경우가 많습니다. 아가펫보호소는 입소 전 항목별 비용을 투명하게 안내하고, 아이 관리에 필요한 현실적인 비용만 받습니다.",
     heroKeyword: firstKeyword || `${region}강아지파양`,
     scenarioItems: shuffle(SCENARIO_ITEMS, rng).slice(0, 4),
   };

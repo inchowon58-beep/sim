@@ -7,7 +7,7 @@ export default async function HeroC() {
   const site = await getSiteConfig();
   const { tenantUi } = await getResolvedSiteConfig();
 
-  const lines = tenantUi?.heroLines || ["함께할 수 없을 때,", "버리지 말고", "파양 상담을."];
+  const lines = tenantUi?.heroLines || ["함께할 수 없을 때,", "버리지 말고", "안전하게 맡기세요."];
   const subline =
     tenantUi?.heroSubline ||
     `${site.brandName}은 강아지·고양이 파양 입소와 무료분양·무료입양 매칭을 현실적인 입소 비용으로 진행합니다.`;

@@ -69,6 +69,6 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({
     success: true,
     id: lead.id,
-    message: "견적 신청이 접수되었습니다. 빠른 시일 내에 연락드리겠습니다.",
+    message: "문의가 접수되었습니다. 빠른 시일 내에 연락드리겠습니다.",
   });
 }

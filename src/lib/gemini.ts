@@ -30,6 +30,7 @@ const CONTENT_RULES = `
 - 업체명·전화번호는 반드시 {{brandName}}, {{phone}} 등 토큰으로만 표기 (직접 입력 금지)
 - 강아지파양, 고양이파양, 강아지무료분양, 고양이무료분양, 파양 입소, 무료입양 관점으로 작성
 - 후원, 봉사, 구조, 유기, 유실, 비영리 보호단체, 임시보호 표현 사용 금지
+- 견적이라는 단어 사용 금지 (입소 비용, 비용 안내 등으로 표현)
 - 파양 = 가정에서 키우던 아이를 더 이상 함께할 수 없을 때 맡기는 것 (이민, 이사, 군입대, 알러지 등)
 - 무료분양 = 가정견·가정묘가 새 가족을 찾는 것
 - 입소 비용은 사설 보호소 특성상 발생하며, 현실적·투명한 비용 안내 강조
@@ -190,7 +191,7 @@ export function buildDefaultFaqs(keyword: string, site: SiteConfig): SeoFaq[] {
     [
       {
         question: `${keyword} 파양 입소 절차는 어떻게 되나요?`,
-        answer: `전화·상담 후 센터 방문, 입소 견적 확인, 건강검진과 함께 입소가 진행됩니다. {{brandName}}은 입소 전·후 상담을 지원하며, {{phone}}로 예약할 수 있습니다.`,
+        answer: `전화·상담 후 센터 방문, 입소 비용 확인, 건강검진과 함께 입소가 진행됩니다. {{brandName}}은 입소 전·후 상담을 지원하며, {{phone}}로 예약할 수 있습니다.`,
       },
       {
         question: `${keyword} 입소 비용은 얼마인가요?`,
@@ -243,7 +244,7 @@ const FALLBACK_VARIANTS: FallbackBuilder[] = [
     return `
 <h2>${core} — {{brandName}} 안내</h2>
 <p>{{companyName}} {{brandName}}은 ${region ? `${region} 및 ` : ""}전국에서 강아지·고양이 파양 입소와 무료분양·무료입양 매칭을 진행합니다. ${core}에 관심 있으신 분들의 문의를 환영합니다.</p>
-<p>대표 {{representative}}와 전문 팀이 파양 상담·입소 케어·분양 매칭·사후 상담까지 함께합니다. {{phone}}로 파양·분양 상담을 예약해 주세요.</p>
+<p>대표 {{representative}}와 전문 팀이 파양견·파양묘 입소·케어·분양 매칭·사후 상담까지 함께합니다. {{phone}}로 분양·입양 상담을 예약해 주세요.</p>
 
 <h2>${keyword} 파양·입소 절차</h2>
 <ul>
@@ -290,7 +291,7 @@ function generateFallbackContent(
   const titleVariants = [
     (k: string, r: string | null) => generateVariedSeoTitle(k, r),
     (k: string, r: string | null) =>
-      generateVariedSeoTitle(k, r, `${extractServicePhrase(k, r)} 파양 상담`),
+      generateVariedSeoTitle(k, r, `${extractServicePhrase(k, r)} 입소 안내`),
     (k: string, r: string | null) =>
       generateVariedSeoTitle(k, r, `${extractServicePhrase(k, r)} 무료분양`),
     (k: string, r: string | null) =>

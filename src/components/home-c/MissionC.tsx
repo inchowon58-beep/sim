@@ -40,8 +40,8 @@ export default async function MissionC() {
 
         <div className="mt-16 grid grid-cols-3 gap-6 max-w-md">
           <div>
-            <p className="text-2xl sm:text-3xl font-light text-stone-900">8,400+</p>
-            <p className="text-xs text-stone-400 mt-1">누적 파양 상담</p>
+            <p className="text-2xl sm:text-3xl font-light text-stone-900">3,200+</p>
+            <p className="text-xs text-stone-400 mt-1">분양·입양 매칭</p>
           </div>
           <div className="col-span-2">
             <p className="text-xs tracking-[0.2em] uppercase text-stone-400">투명한 입소 · 책임 매칭</p>

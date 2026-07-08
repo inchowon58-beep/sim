@@ -46,14 +46,14 @@ export default async function SupportC() {
 
         <p className="text-xs text-stone-400 mb-8 max-w-2xl">
           * 무료 입소를 광고하는 곳은 방문 후 멤버십·용품 등 과도한 비용을 요구하거나 관리가 미흡한 경우가 많습니다.
-          입소 전 반드시 항목별 견적과 시설을 확인하세요.
+          입소 전 반드시 항목별 비용과 시설을 확인하세요.
         </p>
 
         <Link
           href={`/#${INQUIRY_SECTION_ID}`}
           className={`inline-flex items-center gap-2 font-medium px-7 py-3.5 rounded-full transition text-sm ${inquiryAccentButtonClass(site.exposureMode)}`}
         >
-          입소·파양 상담하기
+          입소·분양 문의하기
         </Link>
       </div>
     </section>

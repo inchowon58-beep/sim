@@ -51,7 +51,7 @@ export default async function PromisesC() {
           여섯 가지 특별함
         </h2>
         <p className="text-stone-500 text-sm mb-16">
-          8,400건 이상의 파양 상담, 3,200건 이상의 분양·입양 매칭 경험을 바탕으로 운영합니다.
+          3,200건 이상의 분양·입양 매칭, 97% 입소 만족도를 바탕으로 운영합니다.
         </p>
 
         <div className="space-y-16 lg:space-y-20">

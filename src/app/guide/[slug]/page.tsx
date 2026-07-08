@@ -176,7 +176,7 @@ export default async function GuidePage({ params }: Props) {
               href={`#${INQUIRY_SECTION_ID}`}
               className={`inline-flex items-center gap-2 font-bold px-6 py-3 rounded-full transition ${inquiryOnDarkBgClass(config.exposureMode)}`}
             >
-              {showCompany ? "3초 견적문의" : "3초 견적신청 문의하기"}
+              {showCompany ? "빠른 문의" : "빠른 문의 신청하기"}
             </Link>
           </div>
         </div>

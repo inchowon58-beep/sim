@@ -109,11 +109,43 @@ const DESIGN_VARIANTS_B: DesignVariant[] = ["modern", "bold"];
 const HEADER_STYLES: HeaderStyle[] = ["sticky", "overlay", "minimal", "hidden"];
 const HEADER_STYLES_B: HeaderStyle[] = ["minimal", "sticky"];
 
+function randomResponseMinutes(rng: () => number): number {
+  return 3 + Math.floor(rng() * 28);
+}
+
+function buildPetStats(rng: () => number): TenantStatItem[] {
+  const responseMin = randomResponseMinutes(rng);
+  const sets: TenantStatItem[][] = [
+    [
+      { label: "분양·입양 매칭", value: "3,200", suffix: "+" },
+      { label: "새 가족을 만난 아이", value: "2,850", suffix: "+" },
+      { label: "입소 만족도", value: "97", suffix: "%" },
+    ],
+    [
+      { label: "무료분양·입양", value: "2,800", suffix: "+" },
+      { label: "새 가족 매칭", value: "3,150", suffix: "+" },
+      { label: "입소 만족도", value: "96", suffix: "%" },
+    ],
+    [
+      { label: "분양·입양 완료", value: "3,400", suffix: "+" },
+      { label: "행복한 새 가족", value: "2,720", suffix: "+" },
+      { label: "입소 만족도", value: "98", suffix: "%" },
+    ],
+    [
+      { label: "평균 매칭 기간", value: "21", suffix: "일" },
+      { label: "새 가족을 만난 아이", value: "2,900", suffix: "+" },
+      { label: "입소 만족도", value: "97", suffix: "%" },
+    ],
+  ];
+  const base = pickOne(sets, rng);
+  return [...base, { label: "평균 응답 시간", value: String(responseMin), suffix: "분" }];
+}
+
 const HERO_BADGES = [
   "강아지·고양이 파양 전문",
   "책임 있는 무료분양 매칭",
   "투명한 입소 비용 안내",
-  "가정견·가정묘 파양 상담",
+  "가정견·가정묘 파양 입소",
   "믿을 수 있는 요양보육",
   "이민·이사·군입대 파양",
   "강아지·고양이 무료입양",
@@ -121,9 +153,9 @@ const HERO_BADGES = [
 ];
 
 const HERO_INTROS = [
-  "파양 상담부터 무료분양 매칭까지",
-  "입소 견적부터 새 가족 찾기까지",
-  "가정견·가정묘 파양 입소부터 분양까지",
+  "입소 상담부터 무료분양 매칭까지",
+  "입소 비용 안내부터 새 가족 찾기까지",
+  "파양견·파양묘 입소부터 분양까지",
   "투명한 입소 비용과 맞춤 케어까지",
   "상담부터 입양 후 관리까지",
   "현실적인 입소와 책임 매칭까지",
@@ -148,9 +180,9 @@ const ABOUT_SNIPPETS = [
 
 const SUPPORT_BLURBS = [
   "모든 사설 보호소에는 입소 관리 비용이 발생합니다. 무료 입소를 내세우는 곳은 방문 후 과도한 비용을 요구할 수 있으니 주의하세요.",
-  "아가펫보호소는 아이 관리에 필요한 현실적인 비용만 투명하게 안내합니다. 입소 전 항목별 견적을 받으실 수 있습니다.",
-  "강아지·고양이 파양 입소, 무료분양·무료입양 상담 — 전화 한 통으로 시작하세요.",
-  "입소 기간·케어 항목에 따라 비용이 달라집니다. 방문 상담 시 정확한 견적을 안내해 드립니다.",
+  "아가펫보호소는 아이 관리에 필요한 현실적인 비용만 투명하게 안내합니다. 입소 전 항목별 비용 안내를 받으실 수 있습니다.",
+  "파양견·파양묘 입소, 무료분양·무료입양 — 전화 한 통으로 시작하세요.",
+  "입소 기간·케어 항목에 따라 비용이 달라집니다. 방문 상담 시 정확한 입소 비용을 안내해 드립니다.",
 ];
 
 const WHY_US_TITLES = [
@@ -162,34 +194,30 @@ const WHY_US_TITLES = [
 
 const STATS_SETS: TenantStatItem[][] = [
   [
-    { label: "누적 파양 상담", value: "8,400", suffix: "+" },
     { label: "분양·입양 매칭", value: "3,200", suffix: "+" },
+    { label: "새 가족을 만난 아이", value: "2,850", suffix: "+" },
     { label: "입소 만족도", value: "97", suffix: "%" },
-    { label: "평균 상담 응답", value: "2", suffix: "시간" },
   ],
   [
-    { label: "연간 파양 입소", value: "1,850", suffix: "+" },
-    { label: "월 평균 분양", value: "68", suffix: "+" },
-    { label: "입소 투명 공개", value: "100", suffix: "%" },
-    { label: "재상담율", value: "42", suffix: "%" },
+    { label: "무료분양·입양", value: "2,800", suffix: "+" },
+    { label: "새 가족 매칭", value: "3,150", suffix: "+" },
+    { label: "입소 만족도", value: "96", suffix: "%" },
   ],
   [
-    { label: "강아지 파양", value: "5,100", suffix: "+" },
-    { label: "고양이 파양", value: "3,300", suffix: "+" },
-    { label: "무료분양 성공", value: "2,800", suffix: "+" },
-    { label: "사후 상담", value: "12", suffix: "개월" },
+    { label: "분양·입양 완료", value: "3,400", suffix: "+" },
+    { label: "행복한 새 가족", value: "2,720", suffix: "+" },
+    { label: "입소 만족도", value: "98", suffix: "%" },
   ],
   [
     { label: "평균 매칭 기간", value: "21", suffix: "일" },
-    { label: "입소 건강검진", value: "100", suffix: "%" },
-    { label: "고객 추천율", value: "94", suffix: "%" },
-    { label: "센터 운영", value: "365", suffix: "일" },
+    { label: "새 가족을 만난 아이", value: "2,900", suffix: "+" },
+    { label: "입소 만족도", value: "97", suffix: "%" },
   ],
 ];
 
 const WHY_US_SETS: TenantWhyUsItem[][] = [
   [
-    { num: "01", title: "투명한 입소", highlight: "항목별 견적", sub: "현실적 비용" },
+    { num: "01", title: "투명한 입소", highlight: "항목별 안내", sub: "현실적 비용" },
     { num: "02", title: "책임 매칭", highlight: "파양·분양", sub: "맞춤 상담" },
     { num: "03", title: "입소 후 공개", highlight: "생활 사진", sub: "방문 환영" },
   ],
@@ -208,12 +236,12 @@ const WHY_US_SETS: TenantWhyUsItem[][] = [
 const PROCESS_SETS: TenantProcessItem[][] = [
   [
     { step: "01", title: "전화·상담", desc: "파양·무료분양 사유와\n아이 정보를 알려주세요" },
-    { step: "02", title: "방문·견적", desc: "예약 후 센터 방문,\n입소 비용과 일정을 안내받습니다" },
+    { step: "02", title: "방문·안내", desc: "예약 후 센터 방문,\n입소 비용과 일정을 안내받습니다" },
     { step: "03", title: "입소·매칭", desc: "케어 후 적합한 가족에게\n무료분양·입양을 연결합니다" },
   ],
   [
     { step: "01", title: "온라인·전화 상담", desc: "파양 사유와 생활 환경을\n파악합니다" },
-    { step: "02", title: "센터 방문", desc: "아이와 직접 만나\n입소 견적을 확인합니다" },
+    { step: "02", title: "센터 방문", desc: "아이와 직접 만나\n입소 비용을 확인합니다" },
     { step: "03", title: "분양·사후 관리", desc: "매칭 후에도\n상담을 지원합니다" },
   ],
   [
@@ -312,7 +340,7 @@ const CASE_TEMPLATES = [
   { title: "{region} 맞춤 강아지 무료입양", type: "강아지무료입양" },
   { title: "{region} 입소 후 분양 완료", type: "무료분양 완료" },
   { title: "{region} 다견 갈등 분리 파양", type: "강아지파양" },
-  { title: "{region} 보호자 질병 파양 상담", type: "고양이파양" },
+  { title: "{region} 보호자 질병 파양 입소", type: "고양이파양" },
   { title: "{region} 고양이 무료입양", type: "고양이무료입양" },
   { title: "{region} 해외 발령 파양", type: "강아지파양" },
   { title: "{region} 입소 건강검진·케어", type: "입소·케어" },
@@ -407,7 +435,7 @@ export function pickTenantContentPackage(
     processSteps: pickOne(PROCESS_SETS, rng),
     reviews,
     reviewsSatisfaction: `${94 + Math.floor(rng() * 5)}%`,
-    stats: pickOne(STATS_SETS, rng),
+    stats: buildPetStats(rng),
     casesCount,
     casesItems: pickCases(rng, casesCount, region, maxImages),
     tagline: firstKeyword.includes("입양") || firstKeyword.includes("보호")
@@ -488,5 +516,5 @@ export function resolveTenantContentData(
 }
 
 export function getDefaultStats(): TenantStatItem[] {
-  return STATS_SETS[0];
+  return buildPetStats(createRng(1));
 }
