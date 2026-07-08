@@ -29,7 +29,7 @@ export default function HeaderD() {
               {site.brandName}
             </span>
             <span className="block text-[10px] text-gray-400 tracking-[0.15em] uppercase">
-              Demolition Expert
+              Pet Care Center
             </span>
           </Link>
 

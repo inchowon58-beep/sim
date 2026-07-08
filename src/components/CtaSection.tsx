@@ -12,19 +12,19 @@ export default async function CtaSection() {
     <section className="relative py-20 lg:py-28 overflow-hidden">
       <Image
         src={getImageUrl(5, site)}
-        alt="견적 및 지원금 상담"
+        alt="파양·분양 상담"
         fill
         className="object-cover"
       />
       <div className="absolute inset-0 bg-dark/80" />
       <div className="relative z-10 max-w-3xl mx-auto px-4 text-center text-white">
         <h2 className="text-2xl lg:text-4xl font-bold mb-4">
-          철거 견적 · 지원금 상담
+          강아지·고양이 파양·무료분양
           <br />
           지금 바로 문의하세요
         </h2>
         <p className="text-gray-300 mb-8">
-          폐업지원금 {site.supportBase} + 추가 지원 {site.supportExtra}
+          입소 비용 {site.supportBase} · 추가 케어 {site.supportExtra}
         </p>
         <div className="flex flex-wrap justify-center gap-3">
           {showCompany && (
@@ -39,7 +39,7 @@ export default async function CtaSection() {
             href={`/#${INQUIRY_SECTION_ID}`}
             className={`inline-flex items-center gap-2 font-bold px-8 py-4 rounded-full transition shadow-lg ${inquiryOnDarkBgClass(site.exposureMode)}`}
           >
-            {showCompany ? "3초 견적문의" : "3초 견적신청 문의하기"}
+            {showCompany ? "빠른 문의" : "빠른 문의 신청하기"}
           </Link>
         </div>
       </div>

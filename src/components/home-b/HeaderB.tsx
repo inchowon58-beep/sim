@@ -7,13 +7,13 @@ import InquiryLinkButton from "@/components/InquiryLinkButton";
 import { showCompanyContact } from "@/lib/exposure-mode";
 
 const NAV = [
-  { href: "/#about", label: "회사소개" },
-  { href: "/#business", label: "사업영역" },
-  { href: "/#process", label: "시공절차" },
+  { href: "/#about", label: "소개" },
+  { href: "/#business", label: "서비스" },
+  { href: "/#process", label: "상담절차" },
   { href: "/#whyUs", label: "선택이유" },
-  { href: "/#support", label: "폐업지원금" },
-  { href: "/#cases", label: "시공사례" },
-  { href: "/#reviews", label: "시공후기" },
+  { href: "/#support", label: "입소비용" },
+  { href: "/#cases", label: "파양·분양" },
+  { href: "/#reviews", label: "이용후기" },
 ] as const;
 
 export default function HeaderB() {

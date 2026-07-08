@@ -18,7 +18,7 @@ export default async function ServicesD() {
           Service <em className="italic text-orange font-normal">Overview</em>
         </h2>
         <p className="text-center text-gray-500 text-sm max-w-xl mx-auto mb-12">
-          당신에게 딱 맞는 프리미엄 {tenantUi?.heroKeyword || "철거"} 서비스를 경험해보세요.
+          당신에게 딱 맞는 {tenantUi?.heroKeyword || "파양·무료분양"} 서비스를 경험해 보세요.
         </p>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -11,9 +11,9 @@ export default function RelatedPagesSection({ pages, brandName }: Props) {
 
   return (
     <section className="mt-10 bg-white rounded-2xl p-6 lg:p-8 shadow-sm">
-      <h2 className="text-xl font-bold text-dark mb-2">함께 보면 좋은 철거 안내</h2>
+      <h2 className="text-xl font-bold text-dark mb-2">함께 보면 좋은 파양·분양 안내</h2>
       <p className="text-sm text-gray-500 mb-6">
-        {brandName}에서 제공하는 다른 폐업·철거 관련 정보입니다.
+        {brandName}에서 제공하는 다른 파양·무료분양·입양 관련 정보입니다.
       </p>
       <ul className="space-y-4">
         {pages.map((item) => (

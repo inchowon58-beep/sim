@@ -12,7 +12,7 @@ import FaqB from "@/components/home-b/FaqB";
 import CtaB from "@/components/home-b/CtaB";
 import { getResolvedSiteConfig } from "@/utils/siteConfig";
 
-/** B 디자인 홈 — cleneo.kr(여백철거) 스타일 레이아웃 */
+/** B 디자인 홈 — cleneo 스타일 레이아웃 */
 export default async function HomePageB() {
   const { tenantUi } = await getResolvedSiteConfig();
   const faqItems = tenantUi?.faqItems || [];

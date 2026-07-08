@@ -17,7 +17,7 @@ export default async function WhyUsB() {
           <h2 className="text-3xl lg:text-4xl font-black">
             왜 <span className="text-orange">{site.brandName}</span>인가요?
           </h2>
-          <p className="text-gray-400 mt-3">모든 철거업체가 비슷해 보여도, 차이는 현장에서 나타납니다.</p>
+          <p className="text-gray-400 mt-3">모든 보호소가 비슷해 보여도, 케어와 매칭의 차이는 현장에서 나타납니다.</p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">

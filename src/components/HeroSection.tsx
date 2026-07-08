@@ -11,9 +11,9 @@ export default async function HeroSection() {
   const { tenant, tenantUi } = await getResolvedSiteConfig();
   const ui = tenantUi ?? tenant?.content_data;
 
-  const badge = ui?.heroBadge || "폐업 철거, 부담 없이 마무리";
-  const intro = ui?.heroIntro || "폐업지원금 신청부터 철거·원상복구까지";
-  const closing = ui?.heroClosing || "가 한 번에 해결합니다";
+  const badge = ui?.heroBadge || "강아지·고양이 파양·무료분양 전문";
+  const intro = ui?.heroIntro || "파양견·파양묘 입소부터 새 가족 매칭까지";
+  const closing = ui?.heroClosing || "를 한곳에서 진행합니다";
   const variant = ui?.designVariant || "classic";
 
   return (
@@ -23,7 +23,7 @@ export default async function HeroSection() {
     >
       <Image
         src={getImageUrl(ui?.heroImageIndex || 1, site)}
-        alt={`${site.brandName} 폐업철거 전문`}
+        alt={`${site.brandName} 강아지·고양이 파양·무료분양`}
         fill
         className="object-cover"
         priority
@@ -62,7 +62,7 @@ export default async function HeroSection() {
                   : inquiryAccentButtonClass(site.exposureMode)
               }`}
             >
-              {showCompany ? "3초 견적문의" : "3초 빠른문의 신청하기"}
+              {showCompany ? "빠른 문의" : "빠른 문의 신청하기"}
             </Link>
           </div>
         </div>

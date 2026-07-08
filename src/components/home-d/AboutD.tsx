@@ -5,7 +5,7 @@ import { getResolvedSiteConfig } from "@/utils/siteConfig";
 export default async function AboutD() {
   const site = await getSiteConfig();
   const { tenantUi } = await getResolvedSiteConfig();
-  const keyword = tenantUi?.heroKeyword || "철거";
+  const keyword = tenantUi?.heroKeyword || "파양·무료분양";
   const bullets = tenantUi?.aboutFeatures?.map((f) => f.description) || [];
 
   return (
@@ -17,11 +17,11 @@ export default async function AboutD() {
             <h2 className="home-d-display text-2xl sm:text-3xl lg:text-4xl text-gray-900 leading-snug mb-6">
               {site.brandName}
               <br />
-              <em className="italic text-orange font-normal">프리미엄 {keyword}의 기준</em>
+              <em className="italic text-orange font-normal">프리미엄 {keyword} 센터</em>
             </h2>
             <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
               {tenantUi?.aboutText ||
-                `${site.brandName}는 단순한 철거를 넘어, 안전하고 깔끔한 현장 마무리와 고객과의 신뢰를 이어주는 프리미엄 파트너입니다.`}
+                `${site.brandName}는 파양견·파양묘 입소부터 무료분양·입양 매칭, 입소 후 케어까지 책임지고 진행하는 보호소입니다.`}
             </p>
           </div>
 

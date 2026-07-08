@@ -6,7 +6,7 @@ import { getResolvedSiteConfig } from "@/utils/siteConfig";
 export default async function BusinessAreasB() {
   const site = await getSiteConfig();
   const { tenantUi } = await getResolvedSiteConfig();
-  const keyword = tenantUi?.heroKeyword || "철거";
+  const keyword = tenantUi?.heroKeyword || "파양·무료분양";
   const areas = tenantUi?.businessAreas || [];
 
   return (
@@ -15,10 +15,10 @@ export default async function BusinessAreasB() {
         <div className="text-center mb-12">
           <p className="text-sm font-semibold text-orange mb-2">사업 영역</p>
           <h2 className="text-3xl lg:text-4xl font-black text-dark">
-            {keyword}, <span className="text-orange">한 번에</span> 해결합니다
+            {keyword}, <span className="text-orange">한곳에서</span> 진행합니다
           </h2>
           <p className="text-gray-600 mt-3 max-w-2xl mx-auto">
-            건물 철거부터 가정집 정리까지, 전문 장비와 숙련된 팀으로 깔끔하게 마무리합니다.
+            강아지·고양이 파양 입소부터 무료분양·입양 매칭, 입소 후 케어까지 전문적으로 안내합니다.
           </p>
         </div>
 

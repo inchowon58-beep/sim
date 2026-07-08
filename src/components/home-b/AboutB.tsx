@@ -4,7 +4,7 @@ import { getResolvedSiteConfig } from "@/utils/siteConfig";
 export default async function AboutB() {
   const site = await getSiteConfig();
   const { tenantUi } = await getResolvedSiteConfig();
-  const keyword = tenantUi?.heroKeyword || "철거";
+  const keyword = tenantUi?.heroKeyword || "파양·무료분양";
   const features = tenantUi?.aboutFeatures || [];
 
   return (
@@ -14,13 +14,13 @@ export default async function AboutB() {
           <div>
             <p className="text-sm font-semibold text-orange mb-2">회사소개</p>
             <h2 className="text-3xl lg:text-4xl font-black text-dark leading-tight mb-6">
-              믿을 수 있는 <span className="text-orange">{keyword}</span> 파트너
+              믿을 수 있는 <span className="text-orange">{keyword}</span> 센터
             </h2>
             <p className="text-gray-600 leading-relaxed">
               <strong className="text-dark">{site.brandName}</strong>
               {tenantUi?.aboutText
                 ? ` — ${tenantUi.aboutText}`
-                : `는 서울·경기·인천 전 지역을 거점으로, 전문 팀이 직접 시공합니다. ${keyword}부터 건물 철거, 폐기물 처리까지 원스톱으로 처리합니다.`}
+                : `는 파양견·파양묘 입소부터 무료분양·입양 매칭, 입소 후 케어까지 책임지고 진행합니다.`}
             </p>
           </div>
           <div className="grid sm:grid-cols-1 gap-4">

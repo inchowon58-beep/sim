@@ -14,7 +14,7 @@ export default async function ReviewsB() {
           <h2 className="text-3xl lg:text-4xl font-black text-dark">
             직접 경험한 <span className="text-orange">실제 후기</span>
           </h2>
-          <p className="text-gray-600 mt-3">시공 완료 후 작성된 솔직한 후기입니다.</p>
+          <p className="text-gray-600 mt-3">입소·분양 후 작성된 솔직한 후기입니다.</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-5">
@@ -27,7 +27,7 @@ export default async function ReviewsB() {
                 <span className="text-2xl">{REVIEW_ICONS[i % REVIEW_ICONS.length]}</span>
                 <div>
                   <p className="text-orange text-sm tracking-wider">★★★★★</p>
-                  <p className="text-xs text-gray-500 mt-1">철거 공사</p>
+                  <p className="text-xs text-gray-500 mt-1">파양·분양</p>
                 </div>
               </div>
               <h3 className="font-bold text-dark mb-2">&ldquo;{review.text.slice(0, 40)}…&rdquo;</h3>

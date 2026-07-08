@@ -15,12 +15,12 @@ export default async function ContactD() {
               {site.brandName}
             </p>
             <h2 className="home-d-display text-2xl sm:text-3xl lg:text-4xl mb-6 leading-snug">
-              Demolition Expert
+              Pet Care Expert
             </h2>
             <p className="text-gray-400 text-sm leading-relaxed mb-8">
-              프리미엄 철거·폐기물 처리·원상복구 전문 업체입니다.
+              강아지·고양이 파양·무료분양 전문 보호소입니다.
               <br />
-              폐업지원금, 견적, 시공 절차 등 모든 정보를 책임감 있게 안내합니다.
+              입소 비용, 파양·분양 절차 등 모든 정보를 책임감 있게 안내합니다.
             </p>
 
             <dl className="space-y-5 text-sm">
@@ -49,7 +49,9 @@ export default async function ContactD() {
                 <dt className="text-[10px] tracking-[0.2em] uppercase text-gray-500 mb-1">
                   Service
                 </dt>
-                <dd className="text-gray-300">상가철거 · 폐업철거 · 원상복구 · 폐기물처리</dd>
+                <dd className="text-gray-300">
+                  강아지·고양이 파양 · 무료분양 · 입소 케어 · 입양 매칭
+                </dd>
               </div>
             </dl>
           </div>

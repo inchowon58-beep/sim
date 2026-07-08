@@ -33,116 +33,111 @@ function shuffle<T>(items: T[], rng: Rng): T[] {
   return arr;
 }
 
+function randomResponseMinutes(rng: Rng): number {
+  return 3 + Math.floor(rng() * 28);
+}
+
 const TRUST_BADGES = [
-  "🏆 10년+ 철거 전문",
-  "📋 증빙서류 100% 제공",
-  "⏱️ 시간 약속 100% 엄수",
-  "🛡️ 안전사고 0건",
-  "📞 24시간 상시 대기",
+  "🐾 파양·무료분양 전문",
+  "📋 투명한 입소 비용 안내",
+  "⏱️ 빠른 상담 응답",
+  "🏠 새 가족 매칭",
+  "📞 365일 상담 접수",
 ];
 
 const ABOUT_FEATURES: Omit<AboutFeature, "icon">[] = [
   {
-    title: "직접 시공 · 중간 마진 없음",
+    title: "파양견·파양묘 전문 입소",
     description:
-      "모든 작업을 자체 전문 인력이 직접 수행합니다. 외주 없이 처리하여 품질과 비용을 모두 잡습니다.",
+      "가정에서 사랑받던 아이들을 안전하게 입소받고, 쾌적한 환경에서 케어합니다.",
   },
   {
-    title: "투명한 견적 · 추가 비용 없음",
+    title: "투명한 입소 비용",
     description:
-      "처음 견적 그대로 진행합니다. 폐기물 처리비 등 숨겨진 비용이 일절 없습니다.",
+      "항목별로 입소 비용을 투명하게 안내합니다. 고객이 납득할 수 있는 현실적인 비용만 받습니다.",
   },
   {
-    title: "법적 허가 · 증빙서류 완비",
+    title: "책임 있는 분양·입양",
     description:
-      "지자체 승인 폐기물 처리 허가 보유. 세금계산서 및 모든 처리 증빙서류를 100% 제공합니다.",
+      "신원 확인과 심층 상담을 거쳐 아이를 사랑할 수 있는 새 가족에게 연결합니다.",
   },
 ];
 
-const ABOUT_ICONS = ["🎯", "🔒", "📄"];
+const ABOUT_ICONS = ["🐕", "💚", "🏡"];
 
 const BUSINESS_AREA_TEMPLATES: Omit<BusinessArea, "imageIndex">[] = [
   {
-    title: "상가철거",
-    description: "건물·상가 철거 및 부분철거를 완벽하게 진행하고 있습니다.",
-    tags: ["상가철거", "부분철거", "원상복구"],
+    title: "강아지 파양",
+    description: "가정견 파양 입소 — 이민·이사·군입대·건강 등 사유별 맞춤 상담.",
+    tags: ["강아지파양", "가정견"],
   },
   {
-    title: "아파트철거",
-    description: "인테리어 철거부터 부분철거까지 합리적인 가격으로 원스톱 서비스.",
-    tags: ["인테리어 철거", "부분철거", "욕실철거"],
+    title: "고양이 파양",
+    description: "가정묘 파양 입소 — 다묘 가정·알러지·환경 변화 등 상황별 안내.",
+    tags: ["고양이파양", "가정묘"],
   },
   {
-    title: "폐기물처리",
-    description: "혼합폐기물, 폐콘크리트, 산업폐기물, 인테리어 폐기물 등 처리합니다.",
-    tags: ["건설폐기물", "산업폐기물", "일반폐기물"],
+    title: "강아지 무료분양",
+    description: "입소 아이 중 새 가족을 기다리는 강아지 무료분양·무료입양 매칭.",
+    tags: ["강아지무료분양", "무료입양"],
   },
   {
-    title: "원상복구",
-    description: "폐업철거 및 폐업지원금 컨설팅까지 원스톱으로 서비스.",
-    tags: ["폐업지원금", "폐업철거", "업종변경"],
+    title: "고양이 무료분양",
+    description: "성향·생활 환경을 고려한 고양이 무료분양·입양 상담.",
+    tags: ["고양이무료분양", "무료입양"],
   },
 ];
 
 const PROCESS_STEPS_B = [
-  { step: "01", title: "무료 상담", desc: "전화 또는 온라인으로\n현장 상황을 상담합니다" },
-  { step: "02", title: "현장 방문", desc: "전문가가 직접 방문하여\n현장을 정밀 확인합니다" },
-  { step: "03", title: "견적 확정", desc: "추가 비용 없는\n투명한 견적을 제공합니다" },
-  { step: "04", title: "전문 시공", desc: "숙련된 전문 인력이\n안전하게 시공합니다" },
-  { step: "05", title: "완료 · 서류", desc: "마무리 정리 후\n증빙서류를 발행합니다" },
+  { step: "01", title: "전화·상담", desc: "파양·무료분양 사유와\n아이 정보를 알려주세요" },
+  { step: "02", title: "방문·안내", desc: "예약 후 센터 방문,\n입소 비용과 일정을 안내받습니다" },
+  { step: "03", title: "입소·케어", desc: "건강검진과 함께\n안전하게 케어를 시작합니다" },
+  { step: "04", title: "분양·입양", desc: "적합한 가족을 찾아\n매칭 후 사후 상담을 지원합니다" },
+  { step: "05", title: "사후 관리", desc: "입양·분양 후에도\n적응 상태를 함께 확인합니다" },
 ];
 
 const WHY_US_B = [
-  { icon: "🏆", title: "10년 이상 전문 경력", desc: "수백 건의 시공 경험으로 어떤 어려운 현장도 노하우로 해결합니다." },
-  { icon: "⚙️", title: "최신 전문 장비 직보유", desc: "업계 최신 중장비를 직접 보유하여 빠르고 정밀한 작업이 가능합니다." },
-  { icon: "⏰", title: "시간 약속 100% 엄수", desc: "고객님과 약속한 시간에 반드시 방문합니다." },
-  { icon: "🛡️", title: "안전사고 0건 · 민원 없는 시공", desc: "소음·분진 방지부터 안전 관리까지 철저히 준비합니다." },
-  { icon: "💰", title: "견적 그대로 · 추가 비용 없음", desc: "폐기물 처리비, 장비비 등 어떤 명목의 추가 청구도 없습니다." },
-];
-
-const STATS_GRID_B = [
-  { label: "철거 전문 경력", value: "10년+", suffix: "" },
-  { label: "누적 시공 건수", value: "4,200+", suffix: "" },
-  { label: "전문 인력", value: "50+", suffix: "" },
-  { label: "365일 상시 대기", value: "24/7", suffix: "" },
-  { label: "안전사고 기록", value: "0", suffix: "건" },
-  { label: "전국 폐기물 처리장", value: "17", suffix: "" },
+  { icon: "🏠", title: "넓고 쾌적한 시설", desc: "과밀 수용 없이 고양이·소형견·중대형견 각각에 맞는 공간을 제공합니다." },
+  { icon: "💚", title: "전문 케어팀", desc: "건강검진·목욕·산책·미용 등 아이 중심의 케어 프로그램을 운영합니다." },
+  { icon: "⏰", title: "빠른 상담 응답", desc: "전화·온라인 문의에 신속하게 응답하여 입소·분양 일정을 안내합니다." },
+  { icon: "📸", title: "입소 후 투명 공개", desc: "입소된 아이의 생활 사진과 건강 상태를 정기적으로 공유합니다." },
+  { icon: "🤝", title: "책임 있는 매칭", desc: "신원 확인·심층 상담을 거쳐 아이에게 맞는 새 가족을 연결합니다." },
 ];
 
 const FAQ_POOL: FaqItem[] = [
   {
-    question: "출장 견적은 정말 무료인가요?",
+    question: "입소 비용은 어떻게 되나요?",
     answer:
-      "네, 서울·경기·인천 전 지역 출장 견적은 완전 무료입니다. 현장을 직접 방문해 정확한 견적을 드리며, 견적 후 계약을 강요하지 않습니다.",
+      "모든 사설 보호소에는 관리 비용이 발생합니다. 입소 전 항목별 비용을 투명하게 안내하며, 아이 관리에 필요한 현실적인 비용만 받습니다.",
   },
   {
-    question: "폐기물 처리 증빙서류를 발급받을 수 있나요?",
+    question: "파양 입소 절차는 어떻게 되나요?",
     answer:
-      "네, 지자체 승인 폐기물 처리 허가를 보유하고 있습니다. 세금계산서, 폐기물 처리 확인서 등 모든 증빙서류를 100% 발행해드립니다.",
+      "전화·상담 후 센터 방문, 입소 비용 확인, 건강검진과 함께 입소가 진행됩니다. 방문은 사전 예약제입니다.",
   },
   {
-    question: "당일 또는 긴급 출장이 가능한가요?",
+    question: "무료분양·입양은 어떻게 진행되나요?",
     answer:
-      "24시간 상시 대기 중으로, 긴급 상황 시 당일 출장도 가능합니다. 먼저 전화로 현장 상황을 알려주시면 가장 빠른 방법을 안내해 드립니다.",
+      "가정에서 키우던 파양견·파양묘를 새 가족에게 연결합니다. 신원 확인과 심층 상담 후 매칭합니다.",
   },
   {
-    question: "처음 견적에서 추가 비용이 생기나요?",
+    question: "입소 후 아이 소식을 받을 수 있나요?",
     answer:
-      "절대 없습니다. 현장 방문 후 확정된 견적 그대로 진행합니다. 폐기물 처리비, 장비 사용비 등 어떤 명목으로도 추가 청구를 하지 않습니다.",
+      "입소된 아이의 생활 사진과 건강 상태를 정기적으로 공유합니다. 방문 미팅도 환영합니다.",
   },
   {
-    question: "폐업 지원금 컨설팅도 함께 받을 수 있나요?",
+    question: "이민·이사·군입대로 파양이 필요한데 가능한가요?",
     answer:
-      "네, 철거 의뢰 고객님께는 폐업지원금 컨설팅을 무료로 제공합니다. 정부지원금과 지자체 지원금을 합쳐 최대 700만원까지 받으실 수 있습니다.",
+      "네, 피치 못한 사정으로 더 이상 함께하기 어려운 경우 파양 입소 상담을 받으실 수 있습니다.",
   },
 ];
 
 const MARQUEE_LINES = [
-  "서울·경기·인천 전 지역 무료 출장 견적",
-  "24시간 365일 상시 대기중",
-  "안전사고 0건 · 시간 약속 100% 엄수",
-  "폐업지원금 최대 700만원 컨설팅 무료 제공",
-  "정산 및 증빙서류 100% 제공",
+  "강아지·고양이 파양·무료분양 전문",
+  "365일 상담 접수",
+  "투명한 입소 비용 · 책임 있는 매칭",
+  "새 가족을 만난 아이 3,200+",
+  "입소 만족도 97%",
 ];
 
 export function pickDesignBExtras(
@@ -156,6 +151,7 @@ export function pickDesignBExtras(
     Array.from({ length: maxImages }, (_, i) => i + 1),
     rng
   );
+  const responseMin = randomResponseMinutes(rng);
 
   const businessAreas: BusinessArea[] = BUSINESS_AREA_TEMPLATES.map((item, i) => ({
     ...item,
@@ -168,7 +164,7 @@ export function pickDesignBExtras(
   }));
 
   return {
-    heroKeyword: firstKeyword || `${region}철거`,
+    heroKeyword: firstKeyword || `${region}강아지파양`,
     trustBadges: TRUST_BADGES,
     marqueeLines: MARQUEE_LINES,
     aboutFeatures,
@@ -180,21 +176,22 @@ export function pickDesignBExtras(
       highlight: item.title,
       sub: item.desc,
     })),
-    stats: pickOne(
-      [
-        [
-          { label: "전문 인력 운영", value: "50", suffix: "+" },
-          { label: "전국 폐기물 처리장", value: "17", suffix: "" },
-          { label: "안전사고 무사고", value: "100", suffix: "%" },
-          { label: "누적 시공 건수", value: "4,200", suffix: "+" },
-        ],
-        STATS_GRID_B.slice(0, 4),
-      ],
-      rng
-    ),
-    statsGrid: STATS_GRID_B,
+    stats: [
+      { label: "분양·입양 매칭", value: "3,200", suffix: "+" },
+      { label: "새 가족을 만난 아이", value: "2,850", suffix: "+" },
+      { label: "입소 만족도", value: "97", suffix: "%" },
+      { label: "평균 응답 시간", value: String(responseMin), suffix: "분" },
+    ],
+    statsGrid: [
+      { label: "분양·입양 매칭", value: "3,200+", suffix: "" },
+      { label: "새 가족을 만난 아이", value: "2,850+", suffix: "" },
+      { label: "입소 만족도", value: "97", suffix: "%" },
+      { label: "평균 응답 시간", value: String(responseMin), suffix: "분" },
+      { label: "365일 운영", value: "365", suffix: "일" },
+      { label: "입소 건강검진", value: "100", suffix: "%" },
+    ],
     faqItems: shuffle(FAQ_POOL, rng).slice(0, 5),
-    heroSubline: `철거·폐기물처리 전문 · ${siteName}`,
+    heroSubline: `강아지·고양이 파양·무료분양 · ${siteName}`,
     sectionOrder: [
       "about",
       "business",

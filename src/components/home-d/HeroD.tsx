@@ -10,11 +10,11 @@ export default async function HeroD() {
   const showCompany = showCompanyContact(site.exposureMode);
   const { tenantUi } = await getResolvedSiteConfig();
 
-  const eyebrow = tenantUi?.heroEyebrow || "Premium Demolition Expert";
-  const keyword = tenantUi?.heroKeyword || site.tagline?.split(" ")[0] || "철거";
+  const eyebrow = tenantUi?.heroEyebrow || "Premium Pet Care Center";
+  const keyword = tenantUi?.heroKeyword || "강아지·고양이 파양";
   const subline =
     tenantUi?.heroSubline ||
-    `프리미엄 ${keyword}와 체계적인 시공 케어를 경험하세요`;
+    `파양·무료분양과 체계적인 입소 케어를 경험하세요`;
 
   return (
     <section className="home-d-hero relative min-h-[85vh] flex items-center overflow-hidden bg-gray-900">
@@ -38,7 +38,7 @@ export default async function HeroD() {
           <span className="font-light italic text-white/95">{site.brandName}</span>
           <br />
           <span className="text-xl sm:text-2xl lg:text-3xl font-light text-gray-300 tracking-wide">
-            Expert <em className="not-italic text-orange">Demolition</em>
+            Trusted <em className="not-italic text-orange">Pet Care</em>
           </span>
         </h1>
 
@@ -53,13 +53,13 @@ export default async function HeroD() {
             href={`/#${INQUIRY_SECTION_ID}`}
             className={`inline-flex items-center gap-2 font-medium px-8 py-3.5 text-sm tracking-wide transition ${inquiryAccentButtonClass(site.exposureMode)} !rounded-sm`}
           >
-            무료 견적 문의
+            빠른 문의 신청
           </Link>
           <Link
             href="/#about"
             className="inline-flex items-center gap-2 font-medium px-8 py-3.5 text-sm tracking-wide bg-white/10 text-white border border-white/25 hover:bg-white/20 transition rounded-sm"
           >
-            회사 소개
+            센터 소개
           </Link>
           {showCompany && (
             <a

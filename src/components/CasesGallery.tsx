@@ -18,10 +18,10 @@ export default async function CasesGallery() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold text-dark mb-3">
-            {site.brandName} 시공 사례
+            {site.brandName} 파양·분양 사례
           </h2>
           <p className="text-gray-600">
-            실제 현장 철거·원상복구 사례 {items.length}건을 확인해 보세요
+            파양 입소·무료분양·입양 매칭 사례 {items.length}건을 확인해 보세요
           </p>
         </div>
 

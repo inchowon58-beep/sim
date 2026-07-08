@@ -9,10 +9,10 @@ import type { HeaderStyle } from "@/lib/tenant-content";
 
 const NAV_ITEMS = [
   { href: "/#about", label: "소개" },
-  { href: "/#cases", label: "시공사례" },
-  { href: "/#process", label: "진행절차" },
-  { href: "/#reviews", label: "고객후기" },
-  { href: "/#quick-inquiry", label: "견적문의" },
+  { href: "/#cases", label: "파양·분양" },
+  { href: "/#process", label: "상담절차" },
+  { href: "/#reviews", label: "이용후기" },
+  { href: "/#quick-inquiry", label: "문의하기" },
 ] as const;
 
 interface HeaderProps {

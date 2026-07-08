@@ -37,7 +37,7 @@ export default function Footer({ isLoggedIn = false }: FooterProps) {
                 {site.description}
               </p>
               <p className="text-orange text-sm font-medium">
-                폐업지원금 최대 {site.supportMax}
+                입소 비용 {site.supportBase}부터 · 장기 위탁 {site.supportMax}
               </p>
               {!showCompany && site.url && (
                 <p className="mt-3 text-sm text-gray-400">
@@ -81,18 +81,18 @@ export default function Footer({ isLoggedIn = false }: FooterProps) {
                   </ul>
                   <h4 className="font-semibold mb-3 mt-6 text-orange">서비스</h4>
                   <ul className="space-y-2 text-sm text-gray-300">
-                    <li>폐업철거 · 상가철거</li>
-                    <li>원상복구 · 인테리어철거</li>
-                    <li>폐업지원금 신청 대행</li>
-                    <li>무료 방문 견적</li>
+                    <li>강아지·고양이 파양</li>
+                    <li>강아지·고양이 무료분양</li>
+                    <li>입소 비용 안내</li>
+                    <li>분양·입양 상담</li>
                   </ul>
                 </div>
               </>
             ) : (
               <div>
-                <h4 className="font-semibold mb-4 text-orange">견적 문의</h4>
+                <h4 className="font-semibold mb-4 text-orange">문의하기</h4>
                 <p className="text-sm text-gray-300 mb-4 leading-relaxed">
-                  전화 상담 없이 아래 견적 신청 폼으로 빠르게 문의해 주세요.
+                  전화 상담 없이 아래 문의 폼으로 빠르게 파양·분양 상담을 신청해 주세요.
                 </p>
                 <InquiryLinkButton context="header" />
               </div>

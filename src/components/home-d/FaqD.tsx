@@ -18,7 +18,7 @@ export default function FaqD({ items }: FaqDProps) {
   const tenantUi = useTenantUi();
   const showCompany = showCompanyContact(site.exposureMode);
   const [openIndex, setOpenIndex] = useState<number | null>(0);
-  const keyword = tenantUi?.heroKeyword || "철거";
+  const keyword = tenantUi?.heroKeyword || "파양·무료분양";
 
   return (
     <section id="faq" className="home-d-section py-16 lg:py-24 bg-white">

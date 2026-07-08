@@ -18,7 +18,7 @@ export default function FooterD() {
           <div>
             <h3 className="text-lg font-semibold text-white mb-1">{site.brandName}</h3>
             <p className="text-[10px] tracking-[0.2em] uppercase text-gray-600 mb-4">
-              Demolition Expert
+              Pet Care Center
             </p>
             <p className="text-sm leading-relaxed text-gray-500">{site.description}</p>
           </div>
@@ -28,7 +28,7 @@ export default function FooterD() {
             <ul className="space-y-2 text-sm">
               {showCompany && (
                 <li>
-                  <strong className="text-gray-300">견적문의</strong>{" "}
+                  <strong className="text-gray-300">문의하기</strong>{" "}
                   <a href={`tel:${site.phoneTel}`} className="hover:text-orange transition">
                     {site.phone}
                   </a>
@@ -44,7 +44,7 @@ export default function FooterD() {
           {regionLinks.length > 0 && (
             <div>
               <h4 className="text-xs tracking-[0.2em] uppercase text-gray-600 mb-4">
-                지역별 철거
+                지역별 파양·분양
               </h4>
               <ul className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
                 {regionLinks.slice(0, 12).map((label) => (

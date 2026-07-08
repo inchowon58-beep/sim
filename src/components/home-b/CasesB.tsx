@@ -14,11 +14,11 @@ export default async function CasesB() {
     <section id="cases" className="home-b-section py-16 lg:py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <p className="text-sm font-semibold text-orange mb-2">시공 사례</p>
+          <p className="text-sm font-semibold text-orange mb-2">파양·분양 사례</p>
           <h2 className="text-3xl lg:text-4xl font-black text-dark">
-            1,200건+ <span className="text-orange">시공 갤러리</span>
+            3,200건+ <span className="text-orange">매칭 사례</span>
           </h2>
-          <p className="text-gray-600 mt-3">베테랑이 직접 시공 — 하자 발생 NO, 완벽 시공 OK</p>
+          <p className="text-gray-600 mt-3">파양 입소·무료분양·입양 매칭 사례를 확인해 보세요</p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

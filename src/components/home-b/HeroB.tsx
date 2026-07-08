@@ -10,8 +10,8 @@ export default async function HeroB() {
   const site = await getSiteConfig();
   const showCompany = showCompanyContact(site.exposureMode);
   const { tenantUi } = await getResolvedSiteConfig();
-  const keyword = tenantUi?.heroKeyword || site.tagline?.split(" ")[0] || "철거";
-  const subline = tenantUi?.heroSubline || `철거·폐기물처리 전문 · ${site.brandName}`;
+  const keyword = tenantUi?.heroKeyword || "강아지·고양이 파양";
+  const subline = tenantUi?.heroSubline || `파양·무료분양 전문 · ${site.brandName}`;
   const stats = tenantUi?.stats?.length ? tenantUi.stats : getDefaultStats();
   const badges = tenantUi?.trustBadges || [];
 
@@ -19,7 +19,7 @@ export default async function HeroB() {
     <section className="home-b-hero relative min-h-[88vh] flex items-center overflow-hidden">
       <Image
         src={getImageUrl(tenantUi?.heroImageIndex || 1, site)}
-        alt={`${site.brandName} 철거 전문`}
+        alt={`${site.brandName} 파양·무료분양`}
         fill
         className="object-cover"
         priority
@@ -28,14 +28,14 @@ export default async function HeroB() {
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center w-full">
         <p className="text-sm text-orange font-semibold mb-4 tracking-wide">
-          서울 · 경기도 · 인천 무료 출장 견적
+          365일 파양·무료분양 상담 접수
         </p>
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-tight mb-4">
           {keyword}
           <br />
           <span className="text-orange">{site.brandName}</span>가
           <br />
-          완전히 해결합니다
+          함께합니다
         </h1>
         <p className="text-sm sm:text-base text-gray-200 font-medium mb-3">{subline}</p>
         <p className="text-sm text-gray-300 leading-relaxed max-w-2xl mx-auto mb-8">
@@ -47,7 +47,7 @@ export default async function HeroB() {
             href={`/#${INQUIRY_SECTION_ID}`}
             className={`inline-flex items-center gap-2 font-bold px-8 py-4 rounded-lg transition shadow-lg text-base ${inquiryAccentButtonClass(site.exposureMode)}`}
           >
-            무료 견적 신청
+            빠른 문의 신청
           </Link>
           {showCompany && (
             <a

@@ -17,7 +17,7 @@ export default function WhyUsSection() {
             {site.brandName}가
             <br />
             <span className="text-orange">
-              {ui?.whyUsTitle || "합리적인 견적을 제안할 수 있는 이유"}
+              {ui?.whyUsTitle || "파양·분양을 믿을 수 있는 이유"}
             </span>
           </h2>
         </div>

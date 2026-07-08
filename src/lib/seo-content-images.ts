@@ -83,7 +83,7 @@ function buildGalleryRow(urls: string[], keyword: string, startNum: number): str
   const cols = urls.length;
   const figures = urls
     .map((url, i) =>
-      buildSeoImageFigure(url, `${keyword} 시공 사례 ${startNum + i}`)
+      buildSeoImageFigure(url, `${keyword} 파양·분양 사례 ${startNum + i}`)
     )
     .join("");
   return `<div class="seo-image-row seo-image-row--${cols}">${figures}</div>`;

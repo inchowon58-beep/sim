@@ -8,7 +8,7 @@ export const SITE_DESIGN_OPTIONS = [
   {
     id: "b",
     label: "B 디자인",
-    description: "cleneo 스타일 · 상단 띠배너 · 센터 히어로 · 사업영역·FAQ·폐업지원금",
+    description: "cleneo 스타일 · 상단 띠배너 · 센터 히어로 · 서비스·FAQ·입소비용",
   },
   {
     id: "c",

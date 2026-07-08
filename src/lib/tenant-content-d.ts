@@ -15,124 +15,128 @@ function shuffle<T>(items: T[], rng: Rng): T[] {
   return arr;
 }
 
+function randomResponseMinutes(rng: Rng): number {
+  return 3 + Math.floor(rng() * 28);
+}
+
 const HERO_EYEBROWS = [
-  "Premium Demolition Expert",
-  "Expert Demolition Partner",
-  "Professional Demolition Service",
+  "Premium Pet Care Center",
+  "Pet Surrender & Adoption",
+  "Trusted Pet Care Partner",
 ];
 
 const ABOUT_BULLETS = [
-  "투명한 견적과 추가 비용 없는 프리미엄 철거 시스템",
-  "상가·아파트·폐업철거 등 업종별 맞춤 상담",
-  "폐기물 처리·원상복구·폐업지원금 체계적 안내",
-  "긴급 철거부터 대형 현장까지 책임 있는 시공 프로세스",
+  "투명한 입소 비용과 책임 있는 파양·분양 매칭",
+  "강아지·고양이 파양 입소부터 무료분양·입양까지",
+  "이민·이사·군입대 등 다양한 파양 사유 맞춤 상담",
+  "입소 후 생활 사진 공유와 사후 관리까지",
 ];
 
 const SERVICE_CARDS = [
   {
-    title: "상가철거",
-    englishLabel: "Commercial Demolition",
-    description: "건강 검증을 완료한 전문 인력이 상가·건물 철거를 책임감 있게 진행합니다.",
+    title: "강아지 파양",
+    englishLabel: "Dog Surrender",
+    description: "가정견 파양 입소 — 이민·이사·군입대·건강 등 사유별 맞춤 상담.",
   },
   {
-    title: "아파트철거",
-    englishLabel: "Apartment Demolition",
-    description: "인테리어 철거부터 부분철거까지 원스톱으로 처리합니다.",
+    title: "고양이 파양",
+    englishLabel: "Cat Surrender",
+    description: "가정묘 파양 입소 — 다묘 가정·알러지·환경 변화 등 상황별 안내.",
   },
   {
-    title: "폐기물처리",
-    englishLabel: "Waste Management",
-    description: "혼합폐기물, 산업폐기물, 건설폐기물 등 법적 허가 하에 처리합니다.",
+    title: "강아지 무료분양",
+    englishLabel: "Free Dog Adoption",
+    description: "입소 아이 중 새 가족을 기다리는 강아지 무료분양·무료입양 매칭.",
   },
   {
-    title: "원상복구",
-    englishLabel: "Restoration Service",
-    description: "임대차 계약 기준에 맞춘 원상복구를 완벽하게 시공합니다.",
+    title: "고양이 무료분양",
+    englishLabel: "Free Cat Adoption",
+    description: "성향·생활 환경을 고려한 고양이 무료분양·입양 상담.",
   },
   {
-    title: "폐업철거",
-    englishLabel: "Business Closure",
-    description: "폐업 철거와 정리를 한 번에. 빠르고 깔끔한 마무리를 약속합니다.",
+    title: "입소 케어",
+    englishLabel: "Intake Care",
+    description: "건강검진·목욕·산책·미용 등 아이 중심의 전문 케어 프로그램.",
   },
   {
-    title: "부분철거",
-    englishLabel: "Partial Demolition",
-    description: "필요한 구역만 정밀하게 철거. 주변 시설 보호에 최선을 다합니다.",
+    title: "장기 위탁",
+    englishLabel: "Long-term Care",
+    description: "노령견·노령묘 등 장기 입소 위탁 케어를 책임지고 진행합니다.",
   },
   {
-    title: "긴급철거",
-    englishLabel: "Emergency Service",
-    description: "24시간 긴급 출동. 당일 방문·견적이 가능한 신속 대응 시스템.",
+    title: "긴급 입소",
+    englishLabel: "Urgent Intake",
+    description: "이사·출국 등 급한 상황의 파양 입소도 신속하게 상담·안내합니다.",
   },
   {
-    title: "폐업지원금",
-    englishLabel: "Grant Consulting",
-    description: "철거 의뢰 고객 전원 무료. 최대 700만원 지원금 컨설팅 제공.",
+    title: "입소 비용 안내",
+    englishLabel: "Intake Fee Guide",
+    description: "항목별 입소 비용을 투명하게 안내합니다. 현실적인 관리비만 받습니다.",
   },
   {
-    title: "무료 견적",
+    title: "무료 상담",
     englishLabel: "Free Consultation",
-    description: "현장 방문 후 정확한 견적을 드립니다. 추가 비용 없이 투명하게 안내합니다.",
+    description: "전화·온라인으로 파양·무료분양·입양 상담을 받으실 수 있습니다.",
   },
 ];
 
 const GUIDE_ITEMS = [
   {
-    title: "철거 절차 안내",
-    subtitle: "Demolition Process Guide",
+    title: "파양·입소 절차 안내",
+    subtitle: "Intake Process Guide",
     description:
-      "상담부터 현장 방문, 견적 확정, 시공, 마무리까지 체계적인 철거 절차를 안내합니다.",
+      "상담부터 센터 방문, 입소 비용 확인, 건강검진·케어, 분양·입양 매칭까지 안내합니다.",
   },
   {
-    title: "폐기물 처리 가이드",
-    subtitle: "Waste Disposal Guide",
+    title: "입소 비용 안내",
+    subtitle: "Intake Fee Guide",
     description:
-      "건설폐기물, 혼합폐기물, 산업폐기물 등 종류별 처리 방법과 증빙서류 발급 안내.",
+      "모든 사설 보호소에는 관리 비용이 발생합니다. 항목별 입소 비용을 투명하게 안내합니다.",
   },
   {
-    title: "폐업지원금 안내",
-    subtitle: "Closure Grant Program",
+    title: "무료분양·입양 안내",
+    subtitle: "Adoption Guide",
     description:
-      "정부·지자체 폐업지원금 신청 자격과 절차. 최대 700만원까지 받을 수 있는 방법.",
+      "파양견·파양묘의 무료분양·무료입양 절차. 신원 확인과 심층 상담 후 매칭합니다.",
   },
   {
-    title: "원상복구 기준",
-    subtitle: "Restoration Standards",
+    title: "이럴 때 파양·분양",
+    subtitle: "When to Visit",
     description:
-      "임대차 계약상 원상복구 범위와 기준. 합리적인 비용으로 완벽한 복구를 약속합니다.",
+      "이민, 이사, 군입대, 임신·출산, 알러지 등 더 이상 함께하기 어려울 때 상담하세요.",
   },
 ];
 
 const FAQ_POOL = [
   {
-    question: "철거 견적은 어떻게 진행되나요?",
+    question: "입소 비용은 어떻게 되나요?",
     answer:
-      "전화 또는 온라인 문의 후 현장 방문 견적을 진행합니다. 서울·경기·인천 전 지역 출장 견적은 무료이며, 확정 견적 그대로 시공합니다.",
+      "모든 사설 보호소에는 관리 비용이 발생합니다. 입소 전 항목별 비용을 투명하게 안내하며, 현실적인 관리비만 받습니다.",
   },
   {
-    question: "폐기물 처리 증빙서류를 받을 수 있나요?",
+    question: "파양 입소 절차는 어떻게 되나요?",
     answer:
-      "네, 지자체 승인 폐기물 처리 허가를 보유하고 있습니다. 세금계산서, 폐기물 처리 확인서 등 모든 증빙서류를 100% 발행해드립니다.",
+      "전화·상담 후 센터 방문, 입소 비용 확인, 건강검진과 함께 입소가 진행됩니다. 방문은 사전 예약제입니다.",
   },
   {
-    question: "당일 또는 긴급 출장이 가능한가요?",
+    question: "무료분양·입양은 어떻게 진행되나요?",
     answer:
-      "24시간 상시 대기 중으로 긴급 상황 시 당일 출장도 가능합니다. 먼저 전화로 현장 상황을 알려주시면 가장 빠른 방법을 안내해 드립니다.",
+      "가정에서 키우던 파양견·파양묘를 새 가족에게 연결합니다. 신원 확인과 심층 상담 후 매칭합니다.",
   },
   {
-    question: "처음 견적에서 추가 비용이 생기나요?",
+    question: "입소 후 아이 소식을 받을 수 있나요?",
     answer:
-      "절대 없습니다. 현장 방문 후 확정된 견적 그대로 진행합니다. 폐기물 처리비, 장비 사용비 등 추가 청구를 하지 않습니다.",
+      "입소된 아이의 생활 사진과 건강 상태를 정기적으로 공유합니다. 방문 미팅도 환영합니다.",
   },
   {
-    question: "폐업 지원금 컨설팅도 함께 받을 수 있나요?",
+    question: "이민·이사·군입대로 파양이 필요한데 가능한가요?",
     answer:
-      "네, 철거 의뢰 고객님께는 폐업지원금 컨설팅을 무료로 제공합니다. 정부지원금과 지자체 지원금을 합쳐 최대 700만원까지 받으실 수 있습니다.",
+      "네, 피치 못한 사정으로 더 이상 함께하기 어려운 경우 파양 입소 상담을 받으실 수 있습니다.",
   },
   {
-    question: "원상복구도 함께 진행 가능한가요?",
+    question: "입양 후에도 상담을 받을 수 있나요?",
     answer:
-      "네, 철거와 원상복구를 원스톱으로 진행합니다. 임대차 계약 기준에 맞춰 완벽한 복구를 약속드립니다.",
+      "분양·입양 이후에도 아이의 적응 상태를 확인합니다. 사후 상담을 지원합니다.",
   },
 ];
 
@@ -153,6 +157,7 @@ export function pickDesignDExtras(
     Array.from({ length: maxImages }, (_, i) => i + 1),
     rng
   );
+  const responseMin = randomResponseMinutes(rng);
 
   const serviceCards = SERVICE_CARDS.map((item, i) => ({
     ...item,
@@ -166,14 +171,16 @@ export function pickDesignDExtras(
   }));
 
   const regionLinks = [
-    `${region}철거`,
-    ...shuffle(REGION_POOL.filter((r) => r !== region), rng).slice(0, 11).map((r) => `${r}철거`),
+    `${region}강아지파양`,
+    ...shuffle(REGION_POOL.filter((r) => r !== region), rng)
+      .slice(0, 11)
+      .map((r) => `${r}강아지파양`),
   ];
 
   return {
     heroEyebrow: pickOne(HERO_EYEBROWS, rng),
-    heroKeyword: firstKeyword || `${region}철거`,
-    heroSubline: `프리미엄 ${firstKeyword || "철거"}와 체계적인 시공 케어를 경험하세요`,
+    heroKeyword: firstKeyword || `${region}강아지파양`,
+    heroSubline: `프리미엄 파양·무료분양 · ${siteName}`,
     aboutFeatures,
     serviceCards,
     guideItems: GUIDE_ITEMS,
@@ -186,6 +193,12 @@ export function pickDesignDExtras(
     faqItems: shuffle(FAQ_POOL, rng).slice(0, 6),
     casesItems: casesItems.slice(0, 12),
     regionLinks,
-    trustBadges: ["10년+ 전문", "증빙서류 100%", "안전사고 0건", "24시간 대기"],
+    trustBadges: ["파양·분양 전문", "투명 입소", "책임 매칭", "365일 상담"],
+    stats: [
+      { label: "분양·입양 매칭", value: "3,200", suffix: "+" },
+      { label: "새 가족을 만난 아이", value: "2,850", suffix: "+" },
+      { label: "입소 만족도", value: "97", suffix: "%" },
+      { label: "평균 응답 시간", value: String(responseMin), suffix: "분" },
+    ],
   };
 }

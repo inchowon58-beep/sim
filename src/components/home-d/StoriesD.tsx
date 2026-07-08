@@ -17,11 +17,11 @@ export default async function StoriesD() {
           Project Stories
         </p>
         <h2 className="home-d-display text-2xl sm:text-3xl lg:text-4xl text-center text-gray-900 mb-4">
-          지난 시공 <em className="italic text-orange font-normal">완료 사례</em>
+          지난 파양·분양 <em className="italic text-orange font-normal">매칭 사례</em>
         </h2>
         <p className="text-center text-gray-500 text-sm max-w-2xl mx-auto mb-12 leading-relaxed">
-          {site.brandName}를 통해 깔끔하게 마무리된 현장들의 모습을 먼저 확인해 보세요.
-          전문적이고 신뢰할 수 있는 시공이 기다리고 있습니다.
+          {site.brandName}를 통해 새 가족을 만난 아이들의 사례를 먼저 확인해 보세요.
+          책임 있는 입소 케어와 매칭이 기다리고 있습니다.
         </p>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">

@@ -10,9 +10,9 @@ export default async function ProcessSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold mb-3">
-            빠르고 정확한 <span className="text-orange">철거과정</span>
+            파양·분양 <span className="text-orange">상담 절차</span>
           </h2>
-          <p className="text-gray-400">철거의 시작과 끝을 책임지고 도와드립니다</p>
+          <p className="text-gray-400">입소부터 새 가족 매칭까지 책임지고 안내합니다</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 relative">
@@ -25,7 +25,7 @@ export default async function ProcessSection() {
                 {step.step}
               </div>
               <h3 className="text-lg font-bold mb-2">{step.title}</h3>
-              <p className="text-sm text-gray-400">{step.desc}</p>
+              <p className="text-sm text-gray-400 whitespace-pre-line">{step.desc}</p>
             </div>
           ))}
         </div>

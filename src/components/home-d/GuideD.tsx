@@ -3,24 +3,28 @@ import { getResolvedSiteConfig } from "@/utils/siteConfig";
 
 const DEFAULT_GUIDE = [
   {
-    title: "철거 절차 안내",
-    subtitle: "Demolition Process Guide",
-    description: "상담부터 현장 방문, 견적 확정, 시공, 마무리까지 체계적인 철거 절차를 안내합니다.",
+    title: "파양·입소 절차 안내",
+    subtitle: "Intake Process Guide",
+    description:
+      "상담부터 센터 방문, 입소 비용 확인, 건강검진·케어, 분양·입양 매칭까지 안내합니다.",
   },
   {
-    title: "폐기물 처리 가이드",
-    subtitle: "Waste Disposal Guide",
-    description: "건설폐기물, 혼합폐기물 등 종류별 처리 방법과 증빙서류 발급 안내.",
+    title: "입소 비용 안내",
+    subtitle: "Intake Fee Guide",
+    description:
+      "모든 사설 보호소에는 관리 비용이 발생합니다. 항목별 입소 비용을 투명하게 안내합니다.",
   },
   {
-    title: "폐업지원금 안내",
-    subtitle: "Closure Grant Program",
-    description: "정부·지자체 폐업지원금 신청 자격과 절차. 최대 700만원까지 받을 수 있는 방법.",
+    title: "무료분양·입양 안내",
+    subtitle: "Adoption Guide",
+    description:
+      "파양견·파양묘의 무료분양·무료입양 절차. 신원 확인과 심층 상담 후 매칭합니다.",
   },
   {
-    title: "원상복구 기준",
-    subtitle: "Restoration Standards",
-    description: "임대차 계약상 원상복구 범위와 기준. 합리적인 비용으로 완벽한 복구를 약속합니다.",
+    title: "이럴 때 파양·분양",
+    subtitle: "When to Visit",
+    description:
+      "이민, 이사, 군입대, 임신·출산, 알러지 등 더 이상 함께하기 어려울 때 상담하세요.",
   },
 ];
 
@@ -35,7 +39,7 @@ export default async function GuideD() {
           Service Information
         </p>
         <h2 className="home-d-display text-2xl sm:text-3xl lg:text-4xl text-center text-gray-900 mb-12">
-          Demolition <em className="italic text-orange font-normal">Guide</em>
+          Pet Care <em className="italic text-orange font-normal">Guide</em>
         </h2>
 
         <div className="grid sm:grid-cols-2 gap-6">

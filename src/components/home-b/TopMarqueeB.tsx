@@ -6,9 +6,9 @@ export default async function TopMarqueeB() {
     tenantUi?.marqueeLines?.length
       ? tenantUi.marqueeLines
       : [
-          "서울·경기·인천 전 지역 무료 출장 견적",
-          "24시간 365일 상시 대기중",
-          "안전사고 0건 · 시간 약속 100% 엄수",
+          "강아지·고양이 파양·무료분양 전문",
+          "365일 상담 접수",
+          "투명한 입소 비용 · 책임 있는 매칭",
         ];
 
   const text = lines.join("  ·  ");

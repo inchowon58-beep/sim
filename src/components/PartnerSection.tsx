@@ -12,10 +12,13 @@ export default function PartnerSection() {
     <section className="py-16 lg:py-20 bg-white">
       <div className="max-w-4xl mx-auto px-4 text-center">
         <h2 className="text-2xl lg:text-3xl font-bold text-dark mb-4">
-          {site.brandName}와 함께할
+          {site.brandName}와 함께하는
           <br />
-          직영팀 · 파트너 업체 모집
+          새 가족 찾기 · 입양 상담
         </h2>
+        <p className="text-gray-600 mb-6 max-w-xl mx-auto">
+          파양견·파양묘의 무료분양·무료입양을 희망하시거나, 입소·분양에 대해 궁금하신 점이 있으시면 문의해 주세요.
+        </p>
         <div className="flex flex-wrap justify-center gap-4 mt-8">
           {showCompany ? (
             <>
@@ -23,13 +26,13 @@ export default function PartnerSection() {
                 href={`tel:${site.phoneTel}`}
                 className="px-8 py-3 bg-dark text-white font-bold rounded-full hover:bg-dark-light transition"
               >
-                직영팀 지원
+                무료분양·입양 문의
               </a>
               <a
                 href={`tel:${site.phoneTel}`}
                 className="px-8 py-3 border-2 border-dark text-dark font-bold rounded-full hover:bg-gray-50 transition"
               >
-                파트너 업체 신청
+                파양 입소 상담
               </a>
             </>
           ) : (
@@ -37,7 +40,7 @@ export default function PartnerSection() {
               href={`/#${INQUIRY_SECTION_ID}`}
               className={`px-8 py-3 font-bold rounded-full transition ${inquiryAccentButtonClass(site.exposureMode)}`}
             >
-              파트너·팀 지원 문의
+              파양·분양 문의하기
             </Link>
           )}
         </div>

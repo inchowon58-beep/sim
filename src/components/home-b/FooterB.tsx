@@ -16,7 +16,7 @@ export default function FooterB() {
         <div className="grid md:grid-cols-3 gap-10">
           <div>
             <h3 className="text-xl font-black mb-1">{site.brandName}</h3>
-            <p className="text-xs text-gray-500 uppercase tracking-widest mb-4">Demolition Partner</p>
+            <p className="text-xs text-gray-500 uppercase tracking-widest mb-4">Pet Care Partner</p>
             <p className="text-sm text-gray-400 leading-relaxed">{site.description}</p>
           </div>
           <div>
@@ -25,8 +25,8 @@ export default function FooterB() {
               {[
                 { href: "/#about", label: "회사소개" },
                 { href: "/#business", label: "사업영역" },
-                { href: "/#cases", label: "시공사례" },
-                { href: "/#reviews", label: "시공후기" },
+                { href: "/#cases", label: "파양·분양" },
+                { href: "/#reviews", label: "이용후기" },
               ].map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className="hover:text-orange transition">

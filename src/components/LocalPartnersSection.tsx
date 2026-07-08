@@ -13,11 +13,11 @@ export default function LocalPartnersSection({ region, partners, brandName }: Pr
   return (
     <section className="mt-10 bg-white rounded-2xl p-6 lg:p-8 shadow-sm">
       <h2 className="text-xl font-bold text-dark mb-2">
-        {region} 인테리어·철거 관련 업체
+        {region} 반려동물 관련 업체
       </h2>
       <p className="text-sm text-gray-500 mb-6">
-        {region} 지역 타일·도배·장판·철물 관련 업체 정보입니다. {brandName} 철거 후
-        마감 공사 상담 시 참고하실 수 있습니다. (출처: 네이버 지도)
+        {region} 지역 동물병원·펫샵·미용 관련 업체 정보입니다. {brandName} 입소·분양
+        상담 시 참고하실 수 있습니다. (출처: 네이버 지도)
       </p>
       <ul className="space-y-4">
         {partners.map((partner) => (

@@ -21,7 +21,7 @@ export default function FixedContactBarD() {
           href={`/#${INQUIRY_SECTION_ID}`}
           className="flex-1 text-center py-3.5 text-xs sm:text-sm font-medium bg-orange text-white hover:bg-orange-light transition"
         >
-          📋 무료 견적 문의
+          📋 빠른 문의
         </Link>
         {showCompany && (
           <a

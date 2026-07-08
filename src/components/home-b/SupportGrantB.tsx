@@ -12,40 +12,39 @@ export default async function SupportGrantB() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-10 items-center">
           <div>
-            <p className="text-sm font-semibold text-orange mb-2">폐업 지원금 안내</p>
+            <p className="text-sm font-semibold text-orange mb-2">입소 비용 안내</p>
             <h2 className="text-3xl lg:text-4xl font-black text-dark leading-tight mb-4">
-              모르면 <span className="text-orange">놓치는</span>
+              투명한 <span className="text-orange">입소 비용</span>
               <br />
-              폐업 지원금
+              안내
             </h2>
             <p className="text-gray-600 leading-relaxed mb-6">
               {tenantUi?.supportBlurb ||
-                "수도권 사장님들이 폐업 시 받을 수 있는 지원금을 대부분 모르고 지나칩니다. 철거 의뢰 고객님께 무료로 지원금 컨설팅까지 제공합니다."}
+                "모든 사설 보호소에는 입소 관리 비용이 발생합니다. 아이 관리에 필요한 현실적인 비용만 항목별로 투명하게 안내합니다."}
             </p>
             <Link
               href={`/#${INQUIRY_SECTION_ID}`}
               className={`inline-flex items-center gap-2 font-bold px-6 py-3 rounded-lg transition ${inquiryAccentButtonClass(site.exposureMode)}`}
             >
-              무료 지원금 컨설팅 신청 →
+              입소·분양 상담 신청 →
             </Link>
           </div>
 
           <div className="home-b-grant-box rounded-3xl bg-gradient-to-br from-dark to-gray-800 text-white p-8 text-center shadow-xl">
-            <p className="text-sm text-orange font-semibold mb-2">💰 수도권 사장님 전용</p>
-            <h3 className="text-xl font-bold mb-6">지원금 컨설팅으로 최대 700만원 지원받기</h3>
-            <div className="grid grid-cols-3 gap-3 items-end mb-4">
+            <p className="text-sm text-orange font-semibold mb-2">🐾 입소 비용 안내</p>
+            <h3 className="text-xl font-bold mb-6">항목별 투명한 입소 비용</h3>
+            <div className="grid grid-cols-2 gap-4 items-end mb-4">
               <div>
-                <p className="text-xs text-gray-400 mb-1">정부 지원금</p>
-                <p className="text-lg font-black text-orange">최대 600만원</p>
+                <p className="text-xs text-gray-400 mb-1">기본 입소</p>
+                <p className="text-lg font-black text-orange">{site.supportBase}</p>
               </div>
-              <p className="text-2xl font-light text-gray-500">+</p>
               <div>
-                <p className="text-xs text-gray-400 mb-1">지자체 지원금</p>
-                <p className="text-lg font-black text-orange">최대 100만원</p>
+                <p className="text-xs text-gray-400 mb-1">추가 케어</p>
+                <p className="text-lg font-black text-orange">{site.supportExtra}</p>
               </div>
             </div>
-            <p className="text-3xl font-black text-orange mb-2">합계 최대 700만원</p>
-            <p className="text-xs text-gray-400">철거 의뢰 고객 전원 무료 제공</p>
+            <p className="text-2xl font-black text-orange mb-2">장기 위탁 {site.supportMax}</p>
+            <p className="text-xs text-gray-400">입소 전 비용과 시설을 반드시 확인하세요</p>
           </div>
         </div>
       </div>

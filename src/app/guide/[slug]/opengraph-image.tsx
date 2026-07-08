@@ -4,7 +4,7 @@ import { resolvePageByKey } from "@/lib/pages-resolver";
 import { getSiteConfig, resolveSeoPage } from "@/lib/site-config";
 import { OgBrandedLayout, OG_SIZE } from "@/lib/og-template";
 
-export const alt = "1977철거 SEO";
+export const alt = "아가펫보호소 SEO";
 export const size = OG_SIZE;
 export const contentType = "image/png";
 
