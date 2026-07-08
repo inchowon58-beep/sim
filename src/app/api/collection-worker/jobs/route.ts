@@ -5,6 +5,7 @@ import {
   reportCollectionResults,
   verifyWorkerRequest,
 } from "@/lib/collection-queue";
+import { getSiteUrlFromRequest } from "@/lib/site-url";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,8 @@ export async function GET(request: NextRequest) {
   }
 
   const paramSite = request.nextUrl.searchParams.get("siteUrl")?.trim();
-  const siteUrl = paramSite || (await getCollectionSiteUrl());
+  const siteUrl =
+    paramSite || getSiteUrlFromRequest(request) || (await getCollectionSiteUrl());
   const jobs = await getPendingJobsForWorker(siteUrl);
 
   return NextResponse.json({

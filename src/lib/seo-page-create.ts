@@ -142,7 +142,7 @@ export async function createSeoPageFromKeyword(
     );
   }
 
-  const enqueueResult = await enqueueCollectionRequest(pageId, page);
+  const enqueueResult = await enqueueCollectionRequest(pageId, page, site.url);
   if (!enqueueResult.ok) {
     console.error("Auto collection enqueue failed:", enqueueResult.message);
   }

@@ -7,7 +7,6 @@ import {
   type SeoPage,
 } from "./data";
 import { getSettings } from "./data";
-import { getSiteConfig } from "./site-config";
 import { guidePageUrl } from "./constants";
 import { getSiteUrl } from "./site-url";
 
@@ -23,14 +22,28 @@ export interface CollectionPageStatus {
 }
 
 function normalizeUrl(url: string): string {
-  return url.replace(/\/$/, "").trim();
+  try {
+    const parsed = new URL(url.trim());
+    const host = parsed.hostname.replace(/^www\./, "");
+    const path = parsed.pathname.replace(/\/$/, "");
+    return `${parsed.protocol}//${host}${path}`;
+  } catch {
+    return url.replace(/\/$/, "").trim();
+  }
 }
 
+/** 요청 hostname·테넌트 기준 수집 사이트 URL (VM siteUrl과 동일해야 함) */
 export async function getCollectionSiteUrl(): Promise<string> {
-  const [settings, config] = await Promise.all([getSettings(), getSiteConfig()]);
-  const fromSettings = settings.collectionSiteUrl?.trim();
-  if (fromSettings) return normalizeUrl(fromSettings);
-  return normalizeUrl(getSiteUrl(config));
+  const { getResolvedSiteConfig } = await import("@/utils/siteConfig");
+  const { config, isTenant } = await getResolvedSiteConfig();
+  const settings = await getSettings();
+
+  if (!isTenant) {
+    const fromSettings = settings.collectionSiteUrl?.trim();
+    if (fromSettings) return normalizeUrl(fromSettings);
+  }
+
+  return normalizeUrl(config.url);
 }
 
 export function buildPageAbsoluteUrl(siteUrl: string, slug: string): string {
@@ -43,8 +56,16 @@ function latestJobForPage(jobs: CollectionJob[], pageId: string): CollectionJob 
     .sort((a, b) => b.requestedAt.localeCompare(a.requestedAt))[0];
 }
 
-function hasPendingForPage(jobs: CollectionJob[], pageId: string): boolean {
-  return jobs.some((j) => j.pageId === pageId && j.status === "pending");
+function hasPendingForPage(
+  jobs: CollectionJob[],
+  pageId: string,
+  siteUrl?: string
+): boolean {
+  return jobs.some((j) => {
+    if (j.pageId !== pageId || j.status !== "pending") return false;
+    if (!siteUrl) return true;
+    return normalizeUrl(j.siteUrl) === normalizeUrl(siteUrl);
+  });
 }
 
 /** 페이지당 pending 1건만 유지 — 오래된 중복 pending 제거 */
@@ -119,11 +140,14 @@ function uniquePendingJobsForWorker(jobs: CollectionJob[]): CollectionJob[] {
 export async function getCollectionStatusMap(): Promise<Map<string, CollectionPageStatus>> {
   const queue = await getCollectionQueue();
   const siteUrl = await getCollectionSiteUrl();
+  const normalizedSite = normalizeUrl(siteUrl);
   const map = new Map<string, CollectionPageStatus>();
 
   for (const job of queue.jobs) {
+    if (normalizeUrl(job.siteUrl) !== normalizedSite) continue;
+
     const existing = map.get(job.pageId);
-    if (!existing || (job.requestedAt > (existing.requestedAt || ""))) {
+    if (!existing || job.requestedAt > (existing.requestedAt || "")) {
       map.set(job.pageId, {
         pageId: job.pageId,
         status: job.status,
@@ -140,7 +164,8 @@ export async function getCollectionStatusMap(): Promise<Map<string, CollectionPa
 
 export async function enqueueCollectionRequest(
   pageId: string,
-  knownPage?: SeoPage
+  knownPage?: SeoPage,
+  siteUrlOverride?: string
 ): Promise<{
   ok: boolean;
   message: string;
@@ -148,21 +173,51 @@ export async function enqueueCollectionRequest(
 }> {
   let page = knownPage;
   if (!page) {
-    const { getPages } = await import("./data");
-    const pages = await getPages();
+    const { resolvePagesContext } = await import("./pages-resolver");
+    const { pages } = await resolvePagesContext();
     page = pages.find((p) => p.id === pageId);
   }
   if (!page || page.id !== pageId) {
     return { ok: false, message: "페이지를 찾을 수 없습니다." };
   }
 
-  const siteUrl = await getCollectionSiteUrl();
+  const siteUrl = normalizeUrl(siteUrlOverride || (await getCollectionSiteUrl()));
   const pageUrl = buildPageAbsoluteUrl(siteUrl, page.slug);
   const queue = await loadNormalizedQueue();
-  const latest = latestJobForPage(queue.jobs, pageId);
 
-  if (hasPendingForPage(queue.jobs, pageId)) {
-    return { ok: false, message: "이미 대기 중인 URL입니다." };
+  // 잘못된 siteUrl로 적재된 pending job 보정 (테넌트 URL 불일치 복구)
+  let repaired = 0;
+  for (const job of queue.jobs) {
+    if (
+      job.pageId === pageId &&
+      job.status === "pending" &&
+      normalizeUrl(job.siteUrl) !== siteUrl
+    ) {
+      job.siteUrl = siteUrl;
+      job.pageUrl = pageUrl;
+      repaired++;
+    }
+  }
+
+  const latest = latestJobForPage(
+    queue.jobs.filter((j) => normalizeUrl(j.siteUrl) === siteUrl),
+    pageId
+  );
+
+  if (hasPendingForPage(queue.jobs, pageId, siteUrl)) {
+    if (repaired > 0) {
+      queue.updatedAt = new Date().toISOString();
+      await saveCollectionQueue(queue);
+      return {
+        ok: true,
+        message: "기존 대기 job의 siteUrl을 테넌트 도메인으로 보정했습니다.",
+        job: latestJobForPage(
+          queue.jobs.filter((j) => normalizeUrl(j.siteUrl) === siteUrl),
+          pageId
+        ),
+      };
+    }
+    return { ok: false, message: "이미 대기 중인 URL입니다.", job: latest };
   }
 
   if (latest?.status === "submitted") {
@@ -185,20 +240,24 @@ export async function enqueueCollectionRequest(
   queue.updatedAt = now;
   await saveCollectionQueue(queue);
 
-  return { ok: true, message: "순위반영(수집) 대기열에 등록했습니다. VM 프로그램이 가져가 처리합니다.", job };
+  return {
+    ok: true,
+    message: "순위반영(수집) 대기열에 등록했습니다. VM 프로그램이 가져가 처리합니다.",
+    job,
+  };
 }
 
 export async function enqueueAllPendingPages(): Promise<{
   added: number;
   skipped: number;
 }> {
-  const { getPages } = await import("./data");
-  const pages = await getPages();
+  const { resolvePagesContext } = await import("./pages-resolver");
+  const { pages } = await resolvePagesContext();
   let added = 0;
   let skipped = 0;
 
   for (const page of pages) {
-    const result = await enqueueCollectionRequest(page.id);
+    const result = await enqueueCollectionRequest(page.id, page);
     if (result.ok) added++;
     else skipped++;
   }
