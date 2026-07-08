@@ -14,6 +14,13 @@ interface GenerateOptions {
   keyword: string;
   apiKey: string;
   site: SiteConfig;
+  /** 서브도메인(테넌트) 홈 페이지 맥락 — 생성 시 톤·지역·소개 반영 */
+  siteBrief?: {
+    keywords?: string;
+    aboutText?: string;
+    heroHeadline?: string;
+    siteDesign?: string;
+  };
 }
 
 export interface GeneratedSeoContent {
@@ -86,6 +93,7 @@ export async function generateSeoContent({
   keyword: rawKeyword,
   apiKey,
   site,
+  siteBrief,
 }: GenerateOptions): Promise<GeneratedSeoContent> {
   const keyword = normalizeSeoKeyword(rawKeyword);
   const corePhrase = buildSeoCorePhrase(keyword);
@@ -111,6 +119,17 @@ export async function generateSeoContent({
     },
   });
 
+  const tenantContextBlock = siteBrief
+    ? `
+이 사이트 전용 홈페이지 맥락 (반드시 이 사이트 기준으로 작성, 다른 브랜드·메인 사이트 문구 금지):
+- 사이트 슬로건: ${site.tagline}
+- 사이트 SEO 키워드: ${siteBrief.keywords?.trim() || "(없음)"}
+- 사이트 소개: ${(siteBrief.aboutText || site.description).trim().slice(0, 600)}
+${siteBrief.heroHeadline ? `- 히어로 문구: ${siteBrief.heroHeadline}` : ""}
+- 상호·법인명은 모두 {{brandName}}·{{companyName}} 토큰만 사용 (직접 입력 금지)
+`
+    : "";
+
   const prompt = `당신은 강아지·고양이 파양·무료분양 SEO 전문 작가입니다. 네이버 검색 최적화를 고려하여 한국어 HTML 콘텐츠를 작성하세요.
 
 센터 정보 (본문에 아래 토큰을 그대로 사용하세요):
@@ -119,7 +138,7 @@ export async function generateSeoContent({
 - 연락처: {{phone}}
 - 입소 비용 안내: {{supportBase}}, {{supportExtra}}, {{supportMax}}
 - 특징: 강아지·고양이 파양 입소, 무료분양·무료입양 매칭, 투명한 입소 비용, 입양 전·후 상담
-
+${tenantContextBlock}
 키워드: "${corePhrase}"
 (원본 입력: "${keyword}" — 지역명은 한 번만 사용)
 ${region ? `지역 맥락: ${region} 지역 파양·무료분양 (제목·본문에 "${region} ${region}"처럼 두 번 쓰지 말 것)` : ""}

@@ -44,13 +44,20 @@ function mergeTenantIntoConfig(
 ): SiteConfig {
   const content = tenant.content_data || {};
   const proto = tenant.subdomain.includes("localhost") ? "http" : "https";
+  const brandName = tenant.site_name?.trim() || legacy.brandName;
+  const description =
+    content.description?.trim() ||
+    content.aboutText?.trim() ||
+    content.body?.trim().slice(0, 160) ||
+    `${brandName} 강아지·고양이 파양·무료분양 전문 센터`;
 
   return {
     ...legacy,
-    brandName: tenant.site_name || legacy.brandName,
+    brandName,
+    companyName: brandName,
     url: `${proto}://${tenant.subdomain}`,
-    tagline: content.tagline || legacy.tagline,
-    description: content.description || content.aboutText || content.body?.slice(0, 160) || legacy.description,
+    tagline: content.tagline?.trim() || legacy.tagline,
+    description,
     supportBase: content.supportBase || legacy.supportBase,
     supportExtra: content.supportExtra || legacy.supportExtra,
     supportMax: content.supportMax || legacy.supportMax,

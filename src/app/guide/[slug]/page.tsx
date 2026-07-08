@@ -6,10 +6,10 @@ import { guidePageUrl } from "@/lib/constants";
 import { buildPageMetadata, getOgImageAbsoluteUrl } from "@/lib/metadata";
 import { buildDefaultFaqs } from "@/lib/gemini";
 import {
-  getSiteConfig,
   resolveSeoPage,
   phoneToTel,
 } from "@/lib/site-config";
+import { getResolvedSiteConfig } from "@/utils/siteConfig";
 import { extractRegionFromKeyword } from "@/lib/region-parse";
 import { getNearbyRegionLinks } from "@/lib/nearby-regions";
 import NearbyRegionsSection from "@/components/NearbyRegionsSection";
@@ -28,9 +28,9 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const [{ page }, config] = await Promise.all([
+  const [{ page }, { config }] = await Promise.all([
     resolvePageByKey(slug),
-    getSiteConfig(),
+    getResolvedSiteConfig(),
   ]);
   if (!page) return { title: "페이지를 찾을 수 없습니다" };
 
@@ -51,9 +51,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function GuidePage({ params }: Props) {
   const { slug } = await params;
-  const [{ page }, config] = await Promise.all([
+  const [{ page }, { config, isTenant }] = await Promise.all([
     resolvePageByKey(slug),
-    getSiteConfig(),
+    getResolvedSiteConfig(),
   ]);
   if (!page) notFound();
 
@@ -77,9 +77,15 @@ export default async function GuidePage({ params }: Props) {
 
   const brandShort = config.brandName.slice(0, 2) || "아가";
   const showCompany = showCompanyContact(config.exposureMode);
+  const showCompanyLine =
+    showCompany &&
+    config.companyName.trim() &&
+    config.companyName.trim() !== config.brandName.trim();
+  const tagline =
+    config.tagline?.trim() || "강아지·고양이 파양 · 무료분양 전문";
 
   return (
-    <article className="bg-cream min-h-screen">
+    <article className={`bg-cream min-h-screen${isTenant ? " tenant-guide-page" : ""}`}>
       <div className="bg-dark text-white py-8">
         <div className="max-w-4xl mx-auto px-4 flex items-center gap-4">
           <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-orange flex-shrink-0 bg-orange flex items-center justify-center">
@@ -87,10 +93,10 @@ export default async function GuidePage({ params }: Props) {
           </div>
           <div>
             <p className="font-bold">{config.brandName}</p>
-            {showCompany && (
+            {showCompanyLine && (
               <p className="text-sm text-gray-300">{config.companyName}</p>
             )}
-            <p className="text-sm text-orange">강아지·고양이 파양 · 무료분양 전문</p>
+            <p className="text-sm text-orange">{tagline}</p>
           </div>
         </div>
       </div>

@@ -57,7 +57,7 @@ export async function createSeoPageFromKeyword(
     throw new SeoCreateError("테넌트 사이트 설정을 찾을 수 없습니다.", "STORAGE");
   }
 
-  const { tenant, isTenant, config: site } = resolved!;
+  const { tenant, isTenant, config: site, tenantUi } = resolved!;
 
   const quota =
     isTenant && tenant
@@ -91,6 +91,15 @@ export async function createSeoPageFromKeyword(
       keyword: trimmedKeyword,
       apiKey: site.geminiApiKey || process.env.GEMINI_API_KEY || "",
       site,
+      siteBrief:
+        isTenant && tenantUi
+          ? {
+              keywords: tenantUi.keywords,
+              aboutText: tenantUi.aboutText || tenantUi.body,
+              heroHeadline: tenantUi.heroHeadline,
+              siteDesign: tenantUi.siteDesign,
+            }
+          : undefined,
     });
   } catch (error) {
     if (error instanceof DataStorageError) throw error;
