@@ -253,11 +253,12 @@ export async function enqueueAllPendingPages(): Promise<{
 }> {
   const { resolvePagesContext } = await import("./pages-resolver");
   const { pages } = await resolvePagesContext();
+  const siteUrl = await getCollectionSiteUrl();
   let added = 0;
   let skipped = 0;
 
   for (const page of pages) {
-    const result = await enqueueCollectionRequest(page.id, page);
+    const result = await enqueueCollectionRequest(page.id, page, siteUrl);
     if (result.ok) added++;
     else skipped++;
   }

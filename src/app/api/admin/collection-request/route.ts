@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     const result = await enqueueAllPendingPages();
     return NextResponse.json({
       ok: true,
-      message: `대기열 등록 ${result.added}건, 중복/스킵 ${result.skipped}건`,
+      message: `일괄 순위반영요청: ${result.added}건 등록, ${result.skipped}건 스킵(완료·대기 중)`,
       ...result,
     });
   }
