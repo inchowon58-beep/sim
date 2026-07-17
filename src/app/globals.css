@@ -360,6 +360,10 @@ body.home-e-root .home-e-hero-scrim {
   body.home-e-root .home-e-hero-video {
     display: none;
   }
+
+  body.home-e-root .home-e-quick-icon {
+    animation: none;
+  }
 }
 
 body.home-e-root .home-e-card {
@@ -372,6 +376,90 @@ body.home-e-root .home-e-card:hover {
 
 body.home-e-root .home-e-fixed-bar {
   padding: 0 0.5rem;
+}
+
+/* 아이좋아형 퀵링크 — 연한 회색 카드 + 원색 원형 아이콘 */
+body.home-e-root .home-e-quick-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border-radius: 1.35rem;
+  border: 1px solid #e8e8ea;
+  background: #f3f3f5;
+  padding: 1.5rem 1.15rem 1.35rem;
+  box-shadow: none;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+@media (min-width: 640px) {
+  body.home-e-root .home-e-quick-card {
+    padding: 1.75rem 1.35rem 1.5rem;
+    border-radius: 1.5rem;
+  }
+}
+
+body.home-e-root .home-e-quick-card:hover {
+  transform: translateY(-4px);
+  background: #eeeeef;
+  border-color: #dcdce0;
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
+}
+
+body.home-e-root .home-e-quick-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
+  animation: home-e-quick-bob 3.2s ease-in-out infinite;
+  animation-delay: var(--home-e-icon-delay, 0s);
+  will-change: transform;
+}
+
+@media (min-width: 640px) {
+  body.home-e-root .home-e-quick-icon {
+    width: 5rem;
+    height: 5rem;
+  }
+}
+
+body.home-e-root .home-e-quick-card:hover .home-e-quick-icon {
+  animation-duration: 1.4s;
+}
+
+body.home-e-root .home-e-quick-orange .home-e-quick-icon {
+  background: linear-gradient(145deg, #ff8a3d 0%, #ff6a00 100%);
+}
+body.home-e-root .home-e-quick-blue .home-e-quick-icon {
+  background: linear-gradient(145deg, #4dabff 0%, #1e7dff 100%);
+}
+body.home-e-root .home-e-quick-green .home-e-quick-icon {
+  background: linear-gradient(145deg, #5dd98a 0%, #22c55e 100%);
+}
+body.home-e-root .home-e-quick-purple .home-e-quick-icon {
+  background: linear-gradient(145deg, #b57bff 0%, #8b5cf6 100%);
+}
+
+@keyframes home-e-quick-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  35% {
+    transform: translateY(-7px) rotate(-4deg);
+  }
+  70% {
+    transform: translateY(-3px) rotate(3deg);
+  }
 }
 
 body.home-e-root .home-e-fill-card {
