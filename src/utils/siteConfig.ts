@@ -58,6 +58,12 @@ function mergeTenantIntoConfig(
     url: `${proto}://${tenant.subdomain}`,
     tagline: content.tagline?.trim() || legacy.tagline,
     description,
+    phone: content.phone?.trim() || legacy.phone,
+    imageCdn: content.imageCdn?.trim() || legacy.imageCdn,
+    imageCount:
+      typeof content.imageCount === "number" && content.imageCount > 0
+        ? content.imageCount
+        : legacy.imageCount,
     supportBase: content.supportBase || legacy.supportBase,
     supportExtra: content.supportExtra || legacy.supportExtra,
     supportMax: content.supportMax || legacy.supportMax,

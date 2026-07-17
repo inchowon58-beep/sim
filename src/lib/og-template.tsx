@@ -100,9 +100,10 @@ export function OgBrandedLayout({
   );
 }
 
+/** 파란색 원 + 흰색 체크 파비콘 */
 export function FaviconLayout({ size }: { size: number }): ReactNode {
-  const fontSize = size >= 180 ? 56 : size >= 48 ? 18 : 14;
-  const label = size >= 180 ? "아가" : "🐾";
+  const pad = Math.round(size * 0.22);
+  const stroke = Math.max(2, Math.round(size * 0.12));
 
   return (
     <div
@@ -112,15 +113,24 @@ export function FaviconLayout({ size }: { size: number }): ReactNode {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: `linear-gradient(145deg, ${OG_COLORS.orange} 0%, ${OG_COLORS.orangeLight} 100%)`,
-        borderRadius: size >= 48 ? 20 : 6,
-        color: OG_COLORS.white,
-        fontSize,
-        fontWeight: 900,
-        letterSpacing: "-0.04em",
+        background: "#2563eb",
+        borderRadius: "50%",
       }}
     >
-      {label}
+      <svg
+        width={size - pad * 2}
+        height={size - pad * 2}
+        viewBox="0 0 24 24"
+        fill="none"
+      >
+        <path
+          d="M5 12.5l5 5L19 7"
+          stroke="#ffffff"
+          strokeWidth={stroke > 4 ? 3.2 : 2.8}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
     </div>
   );
 }

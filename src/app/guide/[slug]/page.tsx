@@ -30,7 +30,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const [{ page }, { config }] = await Promise.all([
+  const [{ page }, { config, tenantUi }] = await Promise.all([
     resolvePageByKey(slug),
     getResolvedSiteConfig(),
   ]);
@@ -46,6 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ogPath: `/guide/${page.slug}/opengraph-image`,
       type: "article",
       keywords: [page.keyword, "강아지파양", "고양이파양", config.brandName],
+      geoRegion: tenantUi?.geoRegion || extractRegionFromKeyword(page.keyword || ""),
     }),
     title: { absolute: browserTitle },
   };

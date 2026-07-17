@@ -3,6 +3,7 @@ import { type SiteDesignId, DEFAULT_SITE_DESIGN } from "@/lib/site-designs";
 import { pickDesignBExtras } from "@/lib/tenant-content-b";
 import { pickDesignCExtras } from "@/lib/tenant-content-c";
 import { pickDesignDExtras } from "@/lib/tenant-content-d";
+import { pickDesignEExtras, DESIGN_E_IMAGE_COUNT } from "@/lib/tenant-content-e";
 import {
   buildHeroHeadline,
   buildHeroSubcopy,
@@ -405,14 +406,17 @@ export function pickTenantContentPackage(
         ? `${seed}:design-c`
         : siteDesign === "d"
           ? `${seed}:design-d`
-          : seed;
+          : siteDesign === "e"
+            ? `${seed}:design-e`
+            : seed;
   const layoutSeed = hashString(designSeed);
   const rng = createRng(layoutSeed);
   const isDesignB = siteDesign === "b";
   const isDesignC = siteDesign === "c";
   const isDesignD = siteDesign === "d";
-  const isAltDesign = isDesignB || isDesignC || isDesignD;
-  const maxImages = Math.max(4, imageCount);
+  const isDesignE = siteDesign === "e";
+  const isAltDesign = isDesignB || isDesignC || isDesignD || isDesignE;
+  const maxImages = Math.max(4, isDesignE ? DESIGN_E_IMAGE_COUNT : imageCount);
   const region = extractRegion(keywords, siteName);
   const firstKeyword = keywords.split(/[,\n]/)[0]?.trim() || siteName;
   const intro = pickOne(HERO_INTROS, rng);
@@ -484,6 +488,19 @@ export function pickTenantContentPackage(
     return { ...base, ...dExtras };
   }
 
+  if (isDesignE) {
+    const casesItems = base.casesItems || [];
+    const eExtras = pickDesignEExtras(
+      rng,
+      region,
+      siteName,
+      firstKeyword,
+      maxImages,
+      casesItems
+    );
+    return { ...base, ...eExtras };
+  }
+
   return {
     ...base,
     sectionOrder: pickSectionOrder(rng),
@@ -540,6 +557,10 @@ export function resolveTenantContentData(
     description: content?.description || pkg.description,
     aboutText: content?.aboutText || pkg.aboutText,
     footerKeywords: content?.footerKeywords || pkg.footerKeywords,
+    imageCdn: content?.imageCdn || pkg.imageCdn,
+    imageCount: content?.imageCount ?? pkg.imageCount,
+    phone: content?.phone || pkg.phone,
+    geoRegion: content?.geoRegion || pkg.geoRegion,
   };
 }
 

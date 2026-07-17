@@ -12,6 +12,9 @@ import FixedContactBarC from "@/components/home-c/FixedContactBarC";
 import HeaderD from "@/components/home-d/HeaderD";
 import FooterD from "@/components/home-d/FooterD";
 import FixedContactBarD from "@/components/home-d/FixedContactBarD";
+import HeaderE from "@/components/home-e/HeaderE";
+import FooterE from "@/components/home-e/FooterE";
+import FixedContactBarE from "@/components/home-e/FixedContactBarE";
 import TenantThemeStyles from "@/components/TenantThemeStyles";
 import { SiteConfigProvider } from "@/components/SiteConfigProvider";
 import { getResolvedSiteConfig } from "@/utils/siteConfig";
@@ -22,8 +25,8 @@ import { showCompanyContact } from "@/lib/exposure-mode";
 import { resolveFooterKeywordLinks } from "@/lib/footer-keywords";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { config, tenant } = await getResolvedSiteConfig();
-  const meta = buildSiteMetadata(config);
+  const { config, tenant, tenantUi } = await getResolvedSiteConfig();
+  const meta = buildSiteMetadata(config, { geoRegion: tenantUi?.geoRegion });
   if (tenant?.naver_verification) {
     return {
       ...meta,
@@ -57,13 +60,15 @@ export default async function RootLayout({
   const isDesignB = siteDesign === "b";
   const isDesignC = siteDesign === "c";
   const isDesignD = siteDesign === "d";
-  const isAltDesign = isDesignB || isDesignC || isDesignD;
+  const isDesignE = siteDesign === "e";
+  const isAltDesign = isDesignB || isDesignC || isDesignD || isDesignE;
   const bodyClasses = [
     "antialiased",
     `tenant-design-${siteDesign}`,
     isDesignB ? "home-b-root" : "",
     isDesignC ? "home-c-root" : "",
     isDesignD ? "home-d-root" : "",
+    isDesignE ? "home-e-root" : "",
     !isAltDesign && tenantUi?.designVariant ? `tenant-${tenantUi.designVariant}` : "",
     !isAltDesign && headerStyle === "overlay" ? "tenant-header-overlay" : "",
   ]
@@ -133,7 +138,14 @@ export default async function RootLayout({
           tenantUi={tenantUi}
           footerKeywordLinks={footerKeywordLinks}
         >
-          {isDesignD ? (
+          {isDesignE ? (
+            <>
+              <HeaderE />
+              <main className="flex-1">{children}</main>
+              <FooterE />
+              <FixedContactBarE />
+            </>
+          ) : isDesignD ? (
             <>
               <HeaderD />
               <main className="flex-1">{children}</main>

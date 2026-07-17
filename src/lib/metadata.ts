@@ -3,6 +3,7 @@ import type { SiteConfig } from "./site-config-types";
 import { pickSeoSuffixKeywords } from "./seo-title-keywords";
 import { NAVER_SITE_VERIFICATION } from "./constants";
 import { getSiteUrl } from "./site-url";
+import { resolveGeoMeta } from "./geo-meta";
 
 export const OG_IMAGE_WIDTH = 1200;
 export const OG_IMAGE_HEIGHT = 630;
@@ -42,6 +43,8 @@ interface PageMetadataOptions {
   type?: "website" | "article";
   keywords?: string[];
   noIndex?: boolean;
+  /** geo 메타용 지역 힌트 (예: 인천) */
+  geoRegion?: string | null;
 }
 
 export function buildPageMetadata(
@@ -56,12 +59,14 @@ export function buildPageMetadata(
     type = "website",
     keywords,
     noIndex = false,
+    geoRegion,
   } = options;
 
   const url = path.startsWith("http") ? path : `${getSiteUrl(config)}${path}`;
   const images = ogPath
     ? buildOgImageMeta(config, ogPath, title)
     : buildOgImageMeta(config, "/opengraph-image", title);
+  const geo = resolveGeoMeta(geoRegion);
 
   return {
     title,
@@ -87,15 +92,20 @@ export function buildPageMetadata(
     other: {
       "og:image:width": String(OG_IMAGE_WIDTH),
       "og:image:height": String(OG_IMAGE_HEIGHT),
+      ...geo,
     },
   };
 }
 
-export function buildSiteMetadata(config: SiteConfig): Metadata {
+export function buildSiteMetadata(
+  config: SiteConfig,
+  options?: { geoRegion?: string | null }
+): Metadata {
   const images = buildOgImageMeta(config, "/opengraph-image", config.brandName);
   const baseUrl = getSiteUrl(config);
   const suffixKeywords = pickSeoSuffixKeywords(config.brandName, 3);
   const defaultTitle = `${config.brandName} | 강아지·고양이 파양·무료분양 · ${suffixKeywords.join("·")}`;
+  const geo = resolveGeoMeta(options?.geoRegion);
 
   return {
     metadataBase: new URL(baseUrl),
@@ -151,6 +161,7 @@ export function buildSiteMetadata(config: SiteConfig): Metadata {
     other: {
       "og:image:width": String(OG_IMAGE_WIDTH),
       "og:image:height": String(OG_IMAGE_HEIGHT),
+      ...geo,
     },
   };
 }

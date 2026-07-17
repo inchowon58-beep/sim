@@ -307,3 +307,35 @@ body.home-d-root .home-d-fixed-bar {
   box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12);
 }
 
+/* E 디자인 — 컴투펫 SaaS 스타일 (home-e 컴포넌트) */
+body.home-e-root {
+  --e-accent: var(--orange, #0f766e);
+  --e-accent-soft: color-mix(in srgb, var(--orange, #0f766e) 14%, white);
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+body.home-e-root .home-e-display {
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+body.home-e-root .home-e-hero-bg {
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 0%, color-mix(in srgb, var(--e-accent-soft) 80%, white), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 90% 20%, #e2e8f0 0%, transparent 50%),
+    linear-gradient(180deg, #f8fafc 0%, #ffffff 55%);
+}
+
+body.home-e-root .home-e-card {
+  transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+
+body.home-e-root .home-e-card:hover {
+  transform: translateY(-2px);
+}
+
+body.home-e-root .home-e-fixed-bar {
+  padding: 0 0.5rem;
+}
+

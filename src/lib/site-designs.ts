@@ -20,6 +20,11 @@ export const SITE_DESIGN_OPTIONS = [
     label: "D 디자인",
     description: "mainecoon 스타일 · 프리미엄 히어로 · 서비스·가이드·갤러리·FAQ",
   },
+  {
+    id: "e",
+    label: "E 디자인",
+    description: "컴투펫 SaaS 스타일 · 강아지파양·무료분양 · 클린 메뉴·모바일 햄버거",
+  },
 ] as const;
 
 export type SiteDesignId = (typeof SITE_DESIGN_OPTIONS)[number]["id"];
