@@ -6,7 +6,6 @@ import {
   showCompanyContact,
 } from "@/lib/exposure-mode";
 import { getResolvedSiteConfig } from "@/utils/siteConfig";
-import { buildHeroSubcopy } from "@/lib/brand-copy";
 
 /** 무료 스톡 영상 (Pexels, 상업적 이용·출처표기 불필요) */
 const HERO_VIDEO_SRC = "/videos/hero-dog.mp4";
@@ -14,14 +13,10 @@ const HERO_VIDEO_SRC = "/videos/hero-dog.mp4";
 export default async function HeroE() {
   const site = await getSiteConfig();
   const showCompany = showCompanyContact(site.exposureMode);
-  const { tenant, tenantUi } = await getResolvedSiteConfig();
+  const { tenantUi } = await getResolvedSiteConfig();
 
   const eyebrow = tenantUi?.heroEyebrow || "Dog Surrender & Free Adoption";
   const headline = tenantUi?.heroHeadline || site.brandName;
-  const subline =
-    tenantUi?.heroSubline ||
-    tenantUi?.heroSubcopy ||
-    buildHeroSubcopy(tenant?.subdomain || site.brandName);
   const badges = tenantUi?.trustBadges || ["파양 입소", "보호중 아이들", "투명 안내", "빠른 상담"];
   const poster = getImageUrl(tenantUi?.heroImageIndex || 5, site);
 
@@ -45,24 +40,34 @@ export default async function HeroE() {
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-20 lg:pt-32 lg:pb-28 min-h-[78vh] flex items-center">
         <div className="max-w-2xl">
-          <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-wide text-white/90 mb-5">
-            <span className="w-2 h-2 rounded-full bg-white" />
-            {eyebrow}
+          <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-wide mb-5">
+            <span className="w-2 h-2 rounded-full bg-[var(--e-yellow)] shadow-[0_0_0_4px_rgba(255,212,0,0.28)]" />
+            <span className="text-[var(--e-yellow)]">{eyebrow}</span>
           </p>
           <h1 className="home-e-display text-3xl sm:text-4xl lg:text-5xl text-white leading-[1.18] mb-5 drop-shadow-md">
             {headline}
           </h1>
-          <p className="text-base sm:text-lg text-white/90 leading-relaxed mb-4 max-w-xl">
-            {subline}
+          <p className="text-base sm:text-lg leading-relaxed mb-4 max-w-xl drop-shadow-sm">
+            <span className="text-[var(--e-yellow)] font-semibold">강아지 파양</span>
+            <span className="text-white/80"> · </span>
+            <span className="text-[var(--orange)] font-semibold">무료분양</span>
+            <span className="text-white/90"> 전문 상담</span>
           </p>
-          <p className="text-lg sm:text-xl font-semibold text-white mb-6">
-            강아지 파양 · 보호중인 아이들, {site.brandName}가 함께합니다.
+          <p className="text-lg sm:text-xl font-semibold mb-6 drop-shadow-sm">
+            <span className="text-[var(--e-yellow)]">강아지 파양</span>
+            <span className="text-white/80"> · </span>
+            <span className="text-[var(--orange)]">보호중인 아이들</span>
+            <span className="text-white">, {site.brandName}가 함께합니다.</span>
           </p>
           <ul className="flex flex-wrap gap-2 mb-8">
-            {badges.map((b) => (
+            {badges.map((b, i) => (
               <li
                 key={b}
-                className="text-xs font-semibold px-3 py-1.5 rounded-full bg-white/15 text-white border border-white/25 backdrop-blur-[2px]"
+                className={`text-xs font-semibold px-3 py-1.5 rounded-full border backdrop-blur-[2px] ${
+                  i % 2 === 0
+                    ? "bg-[var(--e-yellow)]/20 text-[var(--e-yellow)] border-[var(--e-yellow)]/45"
+                    : "bg-[var(--orange)]/20 text-[#ffb078] border-[var(--orange)]/45"
+                }`}
               >
                 {b}
               </li>

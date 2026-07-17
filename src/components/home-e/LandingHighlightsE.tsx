@@ -141,20 +141,22 @@ export default function LandingHighlightsE() {
                 <span className="home-e-quick-icon" aria-hidden>
                   {item.icon}
                 </span>
-                <h3 className="home-e-quick-title">{item.title}</h3>
+                <div className="home-e-quick-title-row">
+                  <h3 className="home-e-quick-title">{item.title}</h3>
+                  <span className="home-e-quick-more">
+                    더보기
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
+                      <path
+                        d="M9 6l6 6-6 6"
+                        stroke="currentColor"
+                        strokeWidth="2.4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </span>
+                </div>
               </div>
-              <span className="home-e-quick-more">
-                더보기
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
-                  <path
-                    d="M9 6l6 6-6 6"
-                    stroke="currentColor"
-                    strokeWidth="2.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </span>
               <p className="home-e-quick-desc">{item.desc}</p>
             </Link>
           ))}
