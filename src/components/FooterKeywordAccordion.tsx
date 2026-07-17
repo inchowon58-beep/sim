@@ -37,13 +37,13 @@ export default function FooterKeywordAccordion({
   return (
     <details className="mt-8 pt-6 border-t border-white/10 group">
       <summary
-        className={`inline-flex cursor-pointer list-none items-center gap-1.5 text-xs transition ${summaryClass} [&::-webkit-details-marker]:hidden`}
+        className={`inline-flex cursor-pointer list-none items-center gap-1.5 text-[2px] leading-none transition ${summaryClass} [&::-webkit-details-marker]:hidden`}
       >
         <span>관련 지역·키워드 안내</span>
-        <span className="text-[10px] transition group-open:rotate-180" aria-hidden>
+        <span className="text-[2px] transition group-open:rotate-180" aria-hidden>
           ▼
         </span>
-        <span className="opacity-70">({links.length})</span>
+        <span className="opacity-10 text-[2px]">({links.length})</span>
       </summary>
 
       <div className={`mt-3 pt-3 border-t ${panelClass}`}>
