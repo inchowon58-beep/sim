@@ -3,7 +3,6 @@ import { getSiteConfig, phoneToTel } from "@/lib/site-config";
 import { getImageUrl } from "@/lib/site-images";
 import {
   INQUIRY_SECTION_ID,
-  inquiryAccentButtonClass,
   showCompanyContact,
 } from "@/lib/exposure-mode";
 import { getResolvedSiteConfig } from "@/utils/siteConfig";
@@ -46,8 +45,8 @@ export default async function HeroE() {
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-20 lg:pt-32 lg:pb-28 min-h-[78vh] flex items-center">
         <div className="max-w-2xl">
-          <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-wide text-white mb-5">
-            <span className="w-2 h-2 rounded-full bg-[var(--e-yellow)] shadow-[0_0_0_4px_rgba(255,212,0,0.35)]" />
+          <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-wide text-white/90 mb-5">
+            <span className="w-2 h-2 rounded-full bg-white" />
             {eyebrow}
           </p>
           <h1 className="home-e-display text-3xl sm:text-4xl lg:text-5xl text-white leading-[1.18] mb-5 drop-shadow-md">
@@ -60,18 +59,10 @@ export default async function HeroE() {
             강아지 파양 · 보호중인 아이들, {site.brandName}가 함께합니다.
           </p>
           <ul className="flex flex-wrap gap-2 mb-8">
-            {badges.map((b, i) => (
+            {badges.map((b) => (
               <li
                 key={b}
-                className={`text-xs font-bold px-3 py-1.5 rounded-full shadow-sm ${
-                  i % 4 === 0
-                    ? "bg-[var(--e-yellow)] text-slate-900"
-                    : i % 4 === 1
-                      ? "bg-[var(--e-blue)] text-white"
-                      : i % 4 === 2
-                        ? "bg-[var(--e-violet)] text-white"
-                        : "bg-[var(--e-lime)] text-slate-900"
-                }`}
+                className="text-xs font-semibold px-3 py-1.5 rounded-full bg-white/15 text-white border border-white/25 backdrop-blur-[2px]"
               >
                 {b}
               </li>
@@ -80,29 +71,24 @@ export default async function HeroE() {
           <div className="flex flex-wrap gap-3">
             <Link
               href={`/#${INQUIRY_SECTION_ID}`}
-              className="inline-flex items-center justify-center font-bold px-6 py-3.5 text-sm rounded-xl transition shadow-lg home-e-cta-yellow"
+              className="inline-flex items-center justify-center font-bold px-6 py-3.5 text-sm rounded-xl transition shadow-lg bg-white text-slate-900 hover:bg-white/90"
             >
-              빠른 문의
+              상담하기
             </Link>
-            <Link
-              href="/#surrender"
-              className={`inline-flex items-center justify-center font-semibold px-6 py-3.5 text-sm rounded-xl transition shadow-lg ${inquiryAccentButtonClass(site.exposureMode)}`}
-            >
-              파양 입소 안내
-            </Link>
-            <Link
-              href="/#protected"
-              className="inline-flex items-center justify-center font-semibold px-6 py-3.5 text-sm rounded-xl bg-white/95 text-slate-900 hover:bg-white transition"
-            >
-              보호중인 아이들
-            </Link>
-            {showCompany && (
+            {showCompany ? (
               <a
                 href={`tel:${phoneToTel(site.phone)}`}
-                className="inline-flex items-center justify-center font-semibold px-6 py-3.5 text-sm rounded-xl text-white/90 hover:text-white transition"
+                className="inline-flex items-center justify-center font-semibold px-6 py-3.5 text-sm rounded-xl transition border-2 border-white/80 text-white hover:bg-white/10"
               >
-                {site.phone}
+                전화하기
               </a>
+            ) : (
+              <Link
+                href="/#surrender"
+                className="inline-flex items-center justify-center font-semibold px-6 py-3.5 text-sm rounded-xl transition border-2 border-white/80 text-white hover:bg-white/10"
+              >
+                파양 입소 안내
+              </Link>
             )}
           </div>
         </div>

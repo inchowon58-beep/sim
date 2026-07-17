@@ -339,21 +339,21 @@ body.home-e-root .home-e-hero {
   background-color: #1e293b;
 }
 
-/* 기본 CDN 사진·영상 채도·밝기 보정 (아이좋아식 쨍함) */
+/* 사진·영상 원본 그대로 (필터 없음) */
 body.home-e-root .home-e-photo,
 body.home-e-root .home-e-hero-video {
-  filter: saturate(1.4) contrast(1.1) brightness(1.08);
+  filter: none;
 }
 
 body.home-e-root .home-e-hero-scrim {
   background:
     linear-gradient(
-      105deg,
-      rgba(15, 23, 42, 0.58) 0%,
-      rgba(15, 23, 42, 0.28) 48%,
-      rgba(255, 180, 40, 0.18) 100%
+      100deg,
+      rgba(15, 23, 42, 0.72) 0%,
+      rgba(15, 23, 42, 0.45) 48%,
+      rgba(15, 23, 42, 0.28) 100%
     ),
-    linear-gradient(to top, rgba(15, 23, 42, 0.38), transparent 48%);
+    linear-gradient(to top, rgba(15, 23, 42, 0.4), transparent 45%);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -378,17 +378,18 @@ body.home-e-root .home-e-fixed-bar {
   padding: 0 0.5rem;
 }
 
-/* 아이좋아형 퀵링크 — 연한 회색 카드 + 원색 원형 아이콘 */
+/* 아이좋아형 퀵링크 — 연한 회색 + 아이콘|제목 / 더보기 / 설명 */
 body.home-e-root .home-e-quick-card {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: stretch;
+  text-align: left;
   border-radius: 1.35rem;
   border: 1px solid #e8e8ea;
   background: #f3f3f5;
-  padding: 1.5rem 1.15rem 1.35rem;
+  padding: 1.15rem 1.2rem 1.25rem;
   box-shadow: none;
+  height: 100%;
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease,
@@ -398,7 +399,7 @@ body.home-e-root .home-e-quick-card {
 
 @media (min-width: 640px) {
   body.home-e-root .home-e-quick-card {
-    padding: 1.75rem 1.35rem 1.5rem;
+    padding: 1.35rem 1.4rem 1.45rem;
     border-radius: 1.5rem;
   }
 }
@@ -410,30 +411,86 @@ body.home-e-root .home-e-quick-card:hover {
   box-shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
 }
 
+body.home-e-root .home-e-quick-head {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-height: 3.5rem;
+}
+
 body.home-e-root .home-e-quick-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 4.5rem;
-  height: 4.5rem;
+  width: 3.25rem;
+  height: 3.25rem;
   border-radius: 999px;
   flex-shrink: 0;
   color: #ffffff;
-  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
   animation: home-e-quick-bob 3.2s ease-in-out infinite;
   animation-delay: var(--home-e-icon-delay, 0s);
   will-change: transform;
 }
 
+body.home-e-root .home-e-quick-step {
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  animation: home-e-quick-bob 3.2s ease-in-out infinite;
+  animation-delay: var(--home-e-icon-delay, 0s);
+}
+
 @media (min-width: 640px) {
   body.home-e-root .home-e-quick-icon {
-    width: 5rem;
-    height: 5rem;
+    width: 3.5rem;
+    height: 3.5rem;
   }
 }
 
 body.home-e-root .home-e-quick-card:hover .home-e-quick-icon {
   animation-duration: 1.4s;
+}
+
+body.home-e-root .home-e-quick-title {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  font-size: 1.125rem;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+}
+
+@media (min-width: 640px) {
+  body.home-e-root .home-e-quick-title {
+    font-size: 1.25rem;
+  }
+}
+
+body.home-e-root .home-e-quick-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  transition: color 0.2s ease;
+}
+
+body.home-e-root .home-e-quick-card:hover .home-e-quick-more,
+body.home-e-root a.home-e-quick-card:hover .home-e-quick-more {
+  color: #0f172a;
+}
+
+body.home-e-root .home-e-quick-desc {
+  margin: 0.45rem 0 0;
+  flex: 1;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #64748b;
 }
 
 body.home-e-root .home-e-quick-orange .home-e-quick-icon {
@@ -455,10 +512,10 @@ body.home-e-root .home-e-quick-purple .home-e-quick-icon {
     transform: translateY(0) rotate(0deg);
   }
   35% {
-    transform: translateY(-7px) rotate(-4deg);
+    transform: translateY(-6px) rotate(-4deg);
   }
   70% {
-    transform: translateY(-3px) rotate(3deg);
+    transform: translateY(-2px) rotate(3deg);
   }
 }
 

@@ -3,7 +3,7 @@ import type { CSSProperties, ReactNode } from "react";
 
 function IconHome() {
   return (
-    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path
         d="M4.5 10.8 12 4.5l7.5 6.3V19a1.5 1.5 0 0 1-1.5 1.5h-4.2v-5.2h-3.6V20.5H6A1.5 1.5 0 0 1 4.5 19v-8.2Z"
         fill="currentColor"
@@ -19,7 +19,7 @@ function IconHome() {
 
 function IconClipboard() {
   return (
-    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path
         d="M8.2 3.8h7.6c.9 0 1.6.7 1.6 1.6v13.2c0 .9-.7 1.6-1.6 1.6H8.2c-.9 0-1.6-.7-1.6-1.6V5.4c0-.9.7-1.6 1.6-1.6Z"
         fill="currentColor"
@@ -43,7 +43,7 @@ function IconClipboard() {
 
 function IconPaw() {
   return (
-    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden>
       <ellipse cx="8.2" cy="8.1" rx="1.7" ry="2.1" fill="currentColor" />
       <ellipse cx="15.8" cy="8.1" rx="1.7" ry="2.1" fill="currentColor" />
       <ellipse cx="5.9" cy="12.2" rx="1.55" ry="1.9" fill="currentColor" />
@@ -58,7 +58,7 @@ function IconPaw() {
 
 function IconStar() {
   return (
-    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path
         d="M12 3.4 14.2 9h5.9l-4.8 3.6 1.8 5.7L12 15.2 6.9 18.3l1.8-5.7L3.9 9h5.9L12 3.4Z"
         fill="currentColor"
@@ -129,7 +129,7 @@ export default function LandingHighlightsE() {
           </div>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {QUICK_LINKS.map((item, i) => (
             <Link
               key={item.href}
@@ -137,14 +137,13 @@ export default function LandingHighlightsE() {
               className={`home-e-quick-card group ${item.tone}`}
               style={{ "--home-e-icon-delay": `${i * 0.35}s` } as CSSProperties}
             >
-              <span className="home-e-quick-icon" aria-hidden>
-                {item.icon}
-              </span>
-              <h3 className="text-lg sm:text-xl font-bold text-slate-900 leading-tight tracking-tight mt-4 mb-2 text-center">
-                {item.title}
-              </h3>
-              <p className="text-sm text-slate-500 leading-relaxed text-center flex-1">{item.desc}</p>
-              <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-slate-500 group-hover:text-slate-800 transition">
+              <div className="home-e-quick-head">
+                <span className="home-e-quick-icon" aria-hidden>
+                  {item.icon}
+                </span>
+                <h3 className="home-e-quick-title">{item.title}</h3>
+              </div>
+              <span className="home-e-quick-more">
                 더보기
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
                   <path
@@ -156,6 +155,7 @@ export default function LandingHighlightsE() {
                   />
                 </svg>
               </span>
+              <p className="home-e-quick-desc">{item.desc}</p>
             </Link>
           ))}
         </div>
