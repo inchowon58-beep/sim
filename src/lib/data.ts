@@ -91,8 +91,12 @@ async function readJsonFromBlobOrLocal<T>(
   fallback: T
 ): Promise<T | null> {
   if (isBlobConfigured()) {
-    const raw = await readBlobText(filename);
-    if (raw) return parseJson(raw, fallback);
+    try {
+      const raw = await readBlobText(filename);
+      if (raw) return parseJson(raw, fallback);
+    } catch (error) {
+      console.error(`[data] blob read failed (${filename}):`, error);
+    }
     const filePath = path.join(DATA_DIR, filename);
     try {
       const localRaw = await fs.readFile(filePath, "utf-8");
@@ -128,8 +132,12 @@ async function readJson<T>(filename: string, fallback: T): Promise<T> {
   }
 
   if (isBlobConfigured()) {
-    const raw = await readBlobText(filename);
-    if (raw) return parseJson(raw, fallback);
+    try {
+      const raw = await readBlobText(filename);
+      if (raw) return parseJson(raw, fallback);
+    } catch (error) {
+      console.error(`[data] blob read failed (${filename}):`, error);
+    }
     const filePath = path.join(DATA_DIR, filename);
     try {
       const localRaw = await fs.readFile(filePath, "utf-8");

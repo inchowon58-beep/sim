@@ -52,7 +52,8 @@ export async function readBlobText(filename: string): Promise<string | null> {
     } catch (error) {
       if (error instanceof BlobNotFoundError) return null;
       if (error instanceof BlobAccessError) continue;
-      throw error;
+      // Blob 일시 장애(500 등)는 빌드/렌더를 깨지 않고 로컬·정적 폴백으로 넘긴다
+      console.error(`[blob] read failed (${pathname}, ${access}):`, error);
     }
   }
 
