@@ -66,7 +66,7 @@ export default function FooterD() {
           </p>
           <FooterAdminLinks />
         </div>
-        <FooterKeywordAccordion tone="dark" />
+        <FooterKeywordAccordion />
       </div>
     </footer>
   );

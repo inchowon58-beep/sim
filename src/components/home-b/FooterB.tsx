@@ -52,7 +52,7 @@ export default function FooterB() {
           </p>
           <FooterAdminLinks />
         </div>
-        <FooterKeywordAccordion tone="dark" />
+        <FooterKeywordAccordion />
       </div>
     </footer>
   );

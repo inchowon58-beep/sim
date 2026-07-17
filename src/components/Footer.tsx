@@ -132,7 +132,7 @@ export default function Footer({ isLoggedIn = false }: FooterProps) {
             </div>
           </div>
 
-          <FooterKeywordAccordion tone="dark" />
+          <FooterKeywordAccordion />
         </div>
       </footer>
 

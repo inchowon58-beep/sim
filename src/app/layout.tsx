@@ -19,6 +19,7 @@ import { buildSiteMetadata } from "@/lib/metadata";
 import { NAVER_SITE_VERIFICATION } from "@/lib/constants";
 import { parseSiteDesignId } from "@/lib/site-designs";
 import { showCompanyContact } from "@/lib/exposure-mode";
+import { resolveFooterKeywordLinks } from "@/lib/footer-keywords";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { config, tenant } = await getResolvedSiteConfig();
@@ -45,6 +46,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const { config, tenant, tenantUi, theme } = await getResolvedSiteConfig();
+  const footerKeywordLinks = await resolveFooterKeywordLinks(
+    tenantUi?.footerKeywords
+  );
   const showCompany = showCompanyContact(config.exposureMode);
   const naverVerification =
     tenant?.naver_verification?.trim() || NAVER_SITE_VERIFICATION;
@@ -124,7 +128,11 @@ export default async function RootLayout({
         />
       </head>
       <body className={`${bodyClasses} min-h-screen flex flex-col`}>
-        <SiteConfigProvider config={config} tenantUi={tenantUi}>
+        <SiteConfigProvider
+          config={config}
+          tenantUi={tenantUi}
+          footerKeywordLinks={footerKeywordLinks}
+        >
           {isDesignD ? (
             <>
               <HeaderD />
