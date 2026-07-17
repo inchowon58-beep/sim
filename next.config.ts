@@ -33,6 +33,16 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "image.cattery.co.kr",
+        pathname: "/com2pet/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.imweb.me",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
         hostname: "demolishzone.yourdogzone.co.kr",
         pathname: "/**",
       },

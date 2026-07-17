@@ -24,10 +24,10 @@ const QUICK_LINKS = [
     desc: "새 가족 매칭 상담",
   },
   {
-    href: "/#cases",
+    href: "/#adoption-gallery",
     icon: "M7 5h10v2H7V5Zm-2 4h14v2H5V9Zm2 4h10v2H7v-2Zm-2 4h14v2H5v-2Z",
-    title: "매칭 사례",
-    desc: "보호중·입양 후기 흐름",
+    title: "책임분양",
+    desc: "강아지·고양이 사진 갤러리",
   },
 ] as const;
 
