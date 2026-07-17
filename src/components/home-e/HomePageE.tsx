@@ -8,7 +8,6 @@ import CasesE from "@/components/home-e/CasesE";
 import EnvironmentE from "@/components/home-e/EnvironmentE";
 import ReviewsE from "@/components/home-e/ReviewsE";
 import FaqE from "@/components/home-e/FaqE";
-import CenterNetworkE from "@/components/home-e/CenterNetworkE";
 import ContactE from "@/components/home-e/ContactE";
 import { getResolvedSiteConfig } from "@/utils/siteConfig";
 import { getCom2petAdoptionLists } from "@/lib/com2pet-adoption";
@@ -34,7 +33,6 @@ export default async function HomePageE() {
       <CasesE />
       <EnvironmentE />
       <ReviewsE />
-      <CenterNetworkE />
       <FaqE items={faqItems} />
       <ContactE />
     </>

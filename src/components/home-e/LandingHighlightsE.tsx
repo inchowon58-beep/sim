@@ -1,8 +1,4 @@
-import Image from "next/image";
 import Link from "next/link";
-import { getSiteConfig } from "@/lib/site-config";
-import { getImageUrl } from "@/lib/site-images";
-import { getResolvedSiteConfig } from "@/utils/siteConfig";
 
 const QUICK_LINKS = [
   {
@@ -18,30 +14,26 @@ const QUICK_LINKS = [
     desc: "절차·비용을 투명하게 안내",
   },
   {
-    href: "/#adoption",
+    href: "/#protected",
     icon: "M12 21s-7-4.4-7-10.1C5 7.6 7.3 5 10.1 5c1.2 0 2.1.5 2.9 1.4.8-.9 1.7-1.4 2.9-1.4C18.7 5 21 7.6 21 10.9 21 16.6 12 21 12 21Z",
-    title: "무료분양",
-    desc: "새 가족 매칭 상담",
+    title: "보호중인 아이들",
+    desc: "파양 후 새 가족을 기다리는 아이들",
   },
   {
-    href: "/#adoption-gallery",
+    href: "/#cases",
     icon: "M7 5h10v2H7V5Zm-2 4h14v2H5V9Zm2 4h10v2H7v-2Zm-2 4h14v2H5v-2Z",
-    title: "책임분양",
-    desc: "강아지·고양이 사진 갤러리",
+    title: "매칭 사례",
+    desc: "입양 후기·매칭 스토리",
   },
 ] as const;
 
 const NOTICES = [
   "강아지 파양 입소는 사전 상담 후 방문 예약제로 진행됩니다.",
-  "무료분양은 신원 확인과 생활 환경 상담 후 매칭됩니다.",
-  "입소 비용·절차는 상담 단계에서 항목별로 안내합니다.",
+  "센터 방문이 어려운 경우 담당자 방문 픽업도 안내합니다.",
+  "보호중인 아이들은 상담 후 새 가족 매칭을 진행합니다.",
 ] as const;
 
-export default async function LandingHighlightsE() {
-  const site = await getSiteConfig();
-  const { tenantUi } = await getResolvedSiteConfig();
-  const animals = (tenantUi?.casesItems || []).slice(0, 4);
-
+export default function LandingHighlightsE() {
   return (
     <section className="home-e-section py-12 lg:py-16 bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -59,7 +51,7 @@ export default async function LandingHighlightsE() {
           </div>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-14">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {QUICK_LINKS.map((item, i) => (
             <Link
               key={item.href}
@@ -80,51 +72,6 @@ export default async function LandingHighlightsE() {
             </Link>
           ))}
         </div>
-
-        {animals.length > 0 && (
-          <div id="protected" className="pt-2">
-            <div className="flex items-end justify-between gap-4 mb-6">
-              <div>
-                <p className="text-xs font-semibold tracking-wider uppercase text-[var(--e-accent)] mb-2">
-                  Protected Pets
-                </p>
-                <h2 className="home-e-display text-2xl sm:text-3xl text-slate-900">
-                  보호중인 아이들
-                </h2>
-              </div>
-              <Link
-                href="/#contact"
-                className="hidden sm:inline-flex text-sm font-semibold text-[var(--e-accent)] hover:underline"
-              >
-                입양 상담 →
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              {animals.map((item) => (
-                <article
-                  key={item.id}
-                  className="home-e-card overflow-hidden rounded-3xl bg-white border border-slate-200 shadow-sm"
-                >
-                  <div className="relative aspect-square">
-                    <Image
-                      src={getImageUrl(item.imageIndex, site)}
-                      alt={item.title}
-                      fill
-                      className="object-cover"
-                    />
-                    <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-[var(--e-accent)]">
-                      상담가능
-                    </span>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-sm font-semibold text-slate-900 truncate">{item.title}</p>
-                    <p className="text-xs text-slate-400 mt-1">{item.type}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </section>
   );

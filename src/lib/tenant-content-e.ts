@@ -87,28 +87,28 @@ const SERVICE_CARDS = [
 
 const GUIDE_ITEMS = [
   {
-    title: "파양 입소 절차",
-    subtitle: "Surrender Process",
+    title: "상담 신청",
+    subtitle: "01 Consult",
     description:
-      "전화·온라인 상담 후 센터 방문, 입소 비용 확인, 건강검진과 함께 입소가 진행됩니다. 방문은 사전 예약제입니다.",
+      "전화·온라인으로 파양 입소 또는 입양 상담을 신청합니다.",
   },
   {
-    title: "입소 비용 안내",
-    subtitle: "Intake Fee",
+    title: "센터 방문 · 방문 픽업",
+    subtitle: "02 Visit / Pickup",
     description:
-      "사설 센터 운영에는 관리 비용이 발생합니다. 항목별 입소 비용을 사전에 투명하게 안내합니다.",
+      "사전 예약 후 센터를 방문합니다. 방문이 힘든 경우 담당자가 직접 방문 픽업도 가능합니다.",
   },
   {
-    title: "무료분양·입양",
-    subtitle: "Free Adoption",
+    title: "입소·비용 안내",
+    subtitle: "03 Intake",
     description:
-      "파양견의 무료분양·입양 절차입니다. 신원 확인과 심층 상담 후 매칭합니다.",
+      "입소 비용과 케어 내용을 투명하게 안내한 뒤 입소를 진행합니다.",
   },
   {
-    title: "이럴 때 상담하세요",
-    subtitle: "When to Call",
+    title: "새 가족 매칭",
+    subtitle: "04 Matching",
     description:
-      "이민, 이사, 군입대, 임신·출산, 알러지 등 더 이상 함께하기 어려울 때 문의해 주세요.",
+      "보호중인 아이와 책임 있는 보호자를 연결하고 사후 상담을 지원합니다.",
   },
 ];
 

@@ -28,6 +28,7 @@ async function runSync() {
     updatedAt: result.updatedAt,
     dogs: result.dogs.length,
     cats: result.cats.length,
+    reviews: result.reviews?.length ?? 0,
   });
 }
 

@@ -1,38 +1,29 @@
 import Link from "next/link";
-import { getResolvedSiteConfig } from "@/utils/siteConfig";
 
-const DEFAULT_GUIDE = [
+const STEPS = [
   {
-    title: "파양 입소 절차",
-    subtitle: "Surrender Process",
-    description:
-      "전화·온라인 상담 후 센터 방문, 입소 비용 확인, 건강검진과 함께 입소가 진행됩니다.",
+    step: "01",
+    title: "상담 신청",
+    desc: "전화·온라인으로 파양 입소 또는 입양 상담을 신청합니다.",
   },
   {
-    title: "입소 비용 안내",
-    subtitle: "Intake Fee",
-    description:
-      "사설 센터 운영에는 관리 비용이 발생합니다. 항목별 입소 비용을 사전에 투명하게 안내합니다.",
+    step: "02",
+    title: "센터 방문",
+    desc: "사전 예약 후 센터를 방문해 아이와 절차를 확인합니다. 방문이 힘든 경우 담당자가 직접 방문 픽업도 가능합니다.",
   },
   {
-    title: "무료분양·입양",
-    subtitle: "Free Adoption",
-    description:
-      "파양견의 무료분양·입양 절차입니다. 신원 확인과 심층 상담 후 매칭합니다.",
+    step: "03",
+    title: "입소·비용 안내",
+    desc: "입소 비용과 케어 내용을 투명하게 안내한 뒤 입소를 진행합니다.",
   },
   {
-    title: "이럴 때 상담하세요",
-    subtitle: "When to Call",
-    description:
-      "이민, 이사, 군입대, 임신·출산, 알러지 등 더 이상 함께하기 어려울 때 문의해 주세요.",
+    step: "04",
+    title: "새 가족 매칭",
+    desc: "보호중인 아이와 책임 있는 보호자를 연결하고 사후 상담을 지원합니다.",
   },
-];
+] as const;
 
-export default async function GuideE() {
-  const { tenantUi } = await getResolvedSiteConfig();
-  const items = tenantUi?.guideItems?.length ? tenantUi.guideItems : DEFAULT_GUIDE;
-  const steps = tenantUi?.processSteps?.slice(0, 4);
-
+export default function GuideE() {
   return (
     <section id="guide" className="home-e-section py-16 lg:py-24 bg-slate-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -44,44 +35,36 @@ export default async function GuideE() {
             입소·분양 안내
           </h2>
           <p className="text-slate-600 text-sm leading-relaxed">
-            파양 입소부터 무료분양까지, 필요한 정보를 한눈에 확인하세요.
+            파양 입소부터 새 가족 매칭까지, 4단계로 안내합니다.
           </p>
         </div>
 
-        {steps && steps.length > 0 && (
-          <ol className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-            {steps.map((step) => (
-              <li
-                key={step.step}
-                className="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm"
-              >
-                <span className="text-xs font-bold text-[var(--e-accent)]">{step.step}</span>
-                <h3 className="mt-2 font-semibold text-slate-900 text-sm">{step.title}</h3>
-                <p className="mt-2 text-xs text-slate-500 leading-relaxed">{step.desc}</p>
-              </li>
-            ))}
-          </ol>
-        )}
-
-        <div className="grid sm:grid-cols-2 gap-5">
-          {items.map((item) => (
-            <article
-              key={item.title}
-              className="home-e-card rounded-2xl bg-white border border-slate-200 p-6 shadow-sm hover:border-[var(--e-accent)]/30 transition"
+        <ol className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {STEPS.map((step, i) => (
+            <li
+              key={step.step}
+              className="rounded-3xl bg-white border border-slate-200 p-5 shadow-sm"
             >
-              <h3 className="text-lg font-semibold text-slate-900 mb-1">{item.title}</h3>
-              <p className="text-[11px] tracking-wide uppercase text-slate-400 mb-3">
-                {item.subtitle}
-              </p>
-              <p className="text-sm text-slate-600 leading-relaxed mb-4">{item.description}</p>
-              <Link
-                href="/#contact"
-                className="text-sm font-semibold text-[var(--e-accent)] hover:underline"
+              <span
+                className="home-e-mini-icon mb-4"
+                style={{ animationDelay: `${i * 100}ms` }}
+                aria-hidden
               >
-                상담 문의 →
-              </Link>
-            </article>
+                {step.step}
+              </span>
+              <h3 className="font-semibold text-slate-900 text-sm mb-2">{step.title}</h3>
+              <p className="text-xs text-slate-500 leading-relaxed">{step.desc}</p>
+            </li>
           ))}
+        </ol>
+
+        <div className="mt-8 text-center">
+          <Link
+            href="/#contact"
+            className="inline-flex text-sm font-semibold text-[var(--e-accent)] hover:underline"
+          >
+            상담 문의하기 →
+          </Link>
         </div>
       </div>
     </section>

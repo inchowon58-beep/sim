@@ -9,13 +9,11 @@ import { showCompanyContact } from "@/lib/exposure-mode";
 const NAV = [
   { href: "/", label: "홈" },
   { href: "/#about", label: "센터소개" },
-  { href: "/#surrender", label: "입소하기" },
-  { href: "/#adoption", label: "입양하기" },
-  { href: "/#adoption-gallery", label: "책임분양" },
+  { href: "/#surrender", label: "파양입소" },
   { href: "/#protected", label: "보호중인 아이들" },
-  { href: "/#environment", label: "환경안내" },
-  { href: "/#centers", label: "지역상담" },
   { href: "/#guide", label: "입소안내" },
+  { href: "/#cases", label: "매칭사례" },
+  { href: "/#environment", label: "환경안내" },
 ] as const;
 
 export default function HeaderE() {

@@ -14,9 +14,11 @@ export type Com2petAdoptionCache = {
   source: {
     dog: string;
     cat: string;
+    reviews?: string;
   };
   dogs: Com2petAdoptionItem[];
   cats: Com2petAdoptionItem[];
+  reviews?: import("@/lib/com2pet-reviews").Com2petReviewItem[];
 };
 
 export const COM2PET_DOG_URL = "https://www.com2petcare.com/23";
@@ -318,15 +320,28 @@ export async function getCom2petAdoptionLists(): Promise<{
   };
 }
 
-/** 컴투펫 /23·/24 스크랩 → Blob 저장 */
+/** 컴투펫 /23·/24·/29 스크랩 → Blob 저장 */
 export async function syncCom2petAdoptions(): Promise<Com2petAdoptionCache> {
-  const [dogHtml, catHtml] = await Promise.all([
+  const { parseCom2petReviews, COM2PET_REVIEW_URL, COM2PET_REVIEWS } = await import(
+    "@/lib/com2pet-reviews"
+  );
+
+  const [dogHtml, catHtml, reviewHtml] = await Promise.all([
     fetchPageHtml(COM2PET_DOG_URL),
     fetchPageHtml(COM2PET_CAT_URL),
+    fetchPageHtml(COM2PET_REVIEW_URL),
   ]);
 
   const dogs = parseCom2petListings(dogHtml, "dog");
   const cats = parseCom2petListings(catHtml, "cat");
+  let reviews = parseCom2petReviews(reviewHtml, 8);
+  if (reviews.length < 8) {
+    for (const fb of COM2PET_REVIEWS) {
+      if (reviews.length >= 8) break;
+      if (!reviews.some((x) => x.imageUrl === fb.imageUrl)) reviews.push(fb);
+    }
+    reviews = reviews.slice(0, 8);
+  }
 
   if (!dogs.length && !cats.length) {
     throw new Error("컴투펫 책임분양 목록을 파싱하지 못했습니다.");
@@ -335,9 +350,18 @@ export async function syncCom2petAdoptions(): Promise<Com2petAdoptionCache> {
   const previous = await readCom2petAdoptionCache();
   const payload: Com2petAdoptionCache = {
     updatedAt: new Date().toISOString(),
-    source: { dog: COM2PET_DOG_URL, cat: COM2PET_CAT_URL },
+    source: {
+      dog: COM2PET_DOG_URL,
+      cat: COM2PET_CAT_URL,
+      reviews: COM2PET_REVIEW_URL,
+    },
     dogs: dogs.length ? dogs : previous?.dogs?.length ? previous.dogs : COM2PET_DOG_ADOPTIONS,
     cats: cats.length ? cats : previous?.cats?.length ? previous.cats : COM2PET_CAT_ADOPTIONS,
+    reviews: reviews.length
+      ? reviews
+      : previous?.reviews?.length
+        ? previous.reviews
+        : COM2PET_REVIEWS,
   };
 
   if (!isBlobConfigured()) {

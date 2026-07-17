@@ -24,19 +24,19 @@ export default function AdoptionGalleryE({
   const items = tab === "dog" ? dogs : cats;
 
   return (
-    <section id="adoption-gallery" className="home-e-section py-16 lg:py-24 bg-white">
+    <section id="protected" className="home-e-section py-16 lg:py-24 bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-8">
           <div>
             <p className="text-xs font-semibold tracking-wider uppercase text-[var(--e-accent)] mb-3">
-              Responsible Adoption
+              Protected Pets
             </p>
             <h2 className="home-e-display text-2xl sm:text-3xl text-slate-900 mb-3">
-              강아지·고양이 책임분양
+              보호중인 아이들
             </h2>
             <p className="text-sm text-slate-600 leading-relaxed max-w-xl">
-              {site.brandName} 메인에서 책임분양 가능 아이들을 먼저 확인해 보세요.
-              상담 후 매칭을 진행합니다.
+              파양으로 입소한 아이들이 새 가족을 기다리고 있습니다.
+              {site.brandName}에서 먼저 확인하고, 상담 후 매칭을 진행해 주세요.
             </p>
             {updatedAt && (
               <p className="text-[11px] text-slate-400 mt-2">
@@ -58,7 +58,7 @@ export default function AdoptionGalleryE({
                   : "text-slate-500 hover:text-slate-800"
               }`}
             >
-              강아지 책임분양
+              강아지
             </button>
             <button
               type="button"
@@ -69,7 +69,7 @@ export default function AdoptionGalleryE({
                   : "text-slate-500 hover:text-slate-800"
               }`}
             >
-              고양이 책임분양
+              고양이
             </button>
           </div>
         </div>
@@ -83,7 +83,7 @@ export default function AdoptionGalleryE({
               <div className="relative aspect-square overflow-hidden">
                 <Image
                   src={item.imageUrl}
-                  alt={`${item.breed} ${item.name} 책임분양`}
+                  alt={`${item.breed} ${item.name} 보호중`}
                   fill
                   className="object-cover group-hover:scale-105 transition duration-500"
                   sizes="(max-width: 1024px) 50vw, 25vw"
@@ -97,7 +97,7 @@ export default function AdoptionGalleryE({
                   {item.breed} · {item.name}
                 </p>
                 <p className="text-xs text-slate-400 mt-1">
-                  {tab === "dog" ? "강아지" : "고양이"} 책임분양
+                  {tab === "dog" ? "강아지" : "고양이"} · 새 가족 찾는 중
                 </p>
                 <Link
                   href="/#contact"
@@ -115,13 +115,13 @@ export default function AdoptionGalleryE({
             href="/#contact"
             className="inline-flex items-center justify-center rounded-xl bg-[var(--e-accent)] px-5 py-3 text-sm font-semibold text-white hover:opacity-90 transition"
           >
-            책임분양 상담하기
+            입양 상담하기
           </Link>
           <Link
-            href="/#adoption"
+            href="/#surrender"
             className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50 transition"
           >
-            무료분양 안내 보기
+            파양 입소 안내
           </Link>
         </div>
       </div>

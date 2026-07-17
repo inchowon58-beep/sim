@@ -23,7 +23,7 @@ export default async function HeroE() {
     tenantUi?.heroSubline ||
     tenantUi?.heroSubcopy ||
     buildHeroSubcopy(tenant?.subdomain || site.brandName);
-  const badges = tenantUi?.trustBadges || ["파양 입소", "무료분양", "투명 안내", "빠른 상담"];
+  const badges = tenantUi?.trustBadges || ["파양 입소", "보호중 아이들", "투명 안내", "빠른 상담"];
   const poster = getImageUrl(tenantUi?.heroImageIndex || 1, site);
 
   return (
@@ -57,7 +57,7 @@ export default async function HeroE() {
             {subline}
           </p>
           <p className="text-lg sm:text-xl font-semibold text-white mb-6">
-            강아지 파양 · 무료분양, {site.brandName}가 함께합니다.
+            강아지 파양 · 보호중인 아이들, {site.brandName}가 함께합니다.
           </p>
           <ul className="flex flex-wrap gap-2 mb-8">
             {badges.map((b) => (
@@ -83,10 +83,10 @@ export default async function HeroE() {
               파양 입소 안내
             </Link>
             <Link
-              href="/#adoption-gallery"
+              href="/#protected"
               className="inline-flex items-center justify-center font-semibold px-6 py-3.5 text-sm rounded-xl border border-white/40 text-white hover:bg-white/10 transition"
             >
-              무료분양 보기
+              보호중인 아이들
             </Link>
             {showCompany && (
               <a
