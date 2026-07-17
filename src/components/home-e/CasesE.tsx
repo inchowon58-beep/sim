@@ -80,7 +80,7 @@ export default async function CasesE() {
                   src={item.imageUrl}
                   alt={item.title}
                   fill
-                  className="object-cover group-hover:scale-105 transition duration-500"
+                  className="home-e-photo object-cover group-hover:scale-105 transition duration-500"
                   sizes="(max-width: 1024px) 50vw, 25vw"
                 />
               </div>

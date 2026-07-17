@@ -55,7 +55,7 @@ export default async function ReviewsE() {
   if (!reviews.length) return null;
 
   return (
-    <section id="reviews" className="home-e-section py-16 lg:py-24 bg-slate-50">
+    <section id="reviews" className="home-e-section py-16 lg:py-24 bg-[var(--e-surface-warm)]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-10 sm:mb-12">
           <p className="text-xs font-semibold tracking-wider uppercase text-[var(--e-accent)] mb-3">

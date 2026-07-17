@@ -9,7 +9,7 @@ export default async function AboutE() {
   const { tenantUi } = await getResolvedSiteConfig();
   const keyword = tenantUi?.heroKeyword || "강아지파양";
   const bullets = tenantUi?.aboutFeatures || [];
-  const supportImg = tenantUi?.supportImageIndex || 2;
+  const supportImg = tenantUi?.supportImageIndex || 5;
 
   return (
     <section id="about" className="home-e-section py-16 lg:py-24">
@@ -21,7 +21,7 @@ export default async function AboutE() {
                 src={getImageUrl(supportImg, site)}
                 alt={`${site.brandName} 센터 소개`}
                 fill
-                className="object-cover"
+                className="home-e-photo object-cover"
               />
             </div>
           </div>

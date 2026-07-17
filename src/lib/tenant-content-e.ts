@@ -176,12 +176,18 @@ export function pickDesignEExtras(
     Array.from({ length: Math.min(maxImages, DESIGN_E_IMAGE_COUNT) }, (_, i) => i + 1),
     rng
   );
+  /** 강아지·야외 활동 컷을 앞에 두어 흐린 건물 전경보다 생동감 있게 */
+  const vividPreferred = [2, 4, 5, 7, 6, 19, 18, 1];
+  const orderedPool = [
+    ...vividPreferred.filter((n) => imagePool.includes(n)),
+    ...imagePool.filter((n) => !vividPreferred.includes(n)),
+  ];
   const responseMin = randomResponseMinutes(rng);
   const aboutFn = pickOne(ABOUT_POOL, rng);
 
   const serviceCards = SERVICE_CARDS.map((item, i) => ({
     ...item,
-    imageIndex: imagePool[i % imagePool.length],
+    imageIndex: orderedPool[i % orderedPool.length],
   }));
 
   const aboutFeatures = ABOUT_BULLETS.map((text, i) => ({
@@ -209,6 +215,8 @@ export function pickDesignEExtras(
     heroEyebrow: pickOne(HERO_EYEBROWS, rng),
     heroKeyword: firstKeyword || `${region}강아지파양`,
     heroSubline: "강아지 파양 · 무료분양 전문 상담",
+    heroImageIndex: 5,
+    supportImageIndex: 2,
     aboutText: aboutFn(siteName, region),
     description: `${siteName} | ${region} 강아지파양·무료분양 전문. 파양 입소부터 새 가족 매칭까지 안전하게 안내합니다.`,
     tagline: "강아지 파양 · 무료분양",

@@ -19,14 +19,14 @@ export default function FixedContactBarE() {
         </Link>
         <Link
           href={`/#${INQUIRY_SECTION_ID}`}
-          className="flex-1 text-center py-3.5 text-xs sm:text-sm font-semibold bg-[var(--e-accent)] text-white hover:opacity-90 transition"
+          className="flex-1 text-center py-3.5 text-xs sm:text-sm font-bold home-e-cta-yellow transition"
         >
           빠른 문의
         </Link>
         {showCompany && (
           <a
             href={`tel:${site.phoneTel}`}
-            className="flex-1 text-center py-3.5 text-xs sm:text-sm font-semibold bg-slate-800 text-white hover:bg-slate-700 transition tabular-nums"
+            className="flex-1 text-center py-3.5 text-xs sm:text-sm font-semibold bg-[var(--e-accent)] text-white hover:opacity-90 transition tabular-nums"
           >
             {site.phone}
           </a>

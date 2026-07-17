@@ -17,21 +17,21 @@ const ENV_ITEMS = [
   },
 ] as const;
 
-/** 서로 다른 느낌의 실내·생활 환경 이미지 인덱스 (com2pet CDN) */
-const HOME_ENV_IMAGES = [3, 8, 12, 17] as const;
+/** 강아지·야외 활동 위주 — 건물만 있는 흐린 컷 대신 생동감 있는 인덱스 */
+const HOME_ENV_IMAGES = [2, 4, 5, 7] as const;
 
 const ENV_CAPTIONS = [
-  "따뜻한 실내 휴식 공간",
-  "안정적인 생활 케어",
-  "함께하는 일상 환경",
-  "편안한 보금자리 분위기",
+  "햇살 가득한 야외 놀이",
+  "아이와 함께하는 케어",
+  "활기찬 산책·놀이 시간",
+  "밝은 표정으로 맞이하는 일상",
 ] as const;
 
 export default async function EnvironmentE() {
   const site = await getSiteConfig();
 
   return (
-    <section id="environment" className="home-e-section py-16 lg:py-24 bg-slate-50">
+    <section id="environment" className="home-e-section py-16 lg:py-24 bg-[var(--e-surface-warm)]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-start">
           <div>
@@ -81,7 +81,7 @@ export default async function EnvironmentE() {
                     src={getImageUrl(idx, site)}
                     alt={ENV_CAPTIONS[i]}
                     fill
-                    className="object-cover hover:scale-105 transition duration-700"
+                    className="home-e-photo object-cover hover:scale-105 transition duration-700"
                     sizes="(max-width: 1024px) 50vw, 28vw"
                   />
                 </div>

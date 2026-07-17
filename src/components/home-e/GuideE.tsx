@@ -5,31 +5,31 @@ const STEPS = [
     step: "01",
     title: "상담 신청",
     desc: "전화·온라인으로 파양 입소 또는 입양 상담을 신청합니다. 상황과 일정에 맞춰 빠르게 안내합니다.",
-    tone: "home-e-card-teal",
+    tone: "home-e-card-orange",
   },
   {
     step: "02",
     title: "센터 방문",
     desc: "사전 예약 후 센터를 방문해 시설과 절차를 확인합니다. 방문이 힘든 경우 담당자가 직접 방문 픽업도 가능합니다.",
-    tone: "home-e-card-sand",
+    tone: "home-e-card-blue",
   },
   {
     step: "03",
     title: "입소·비용 안내",
     desc: "입소 비용과 케어 내용을 투명하게 확인한 뒤 입소를 진행합니다. 항목별 안내를 사전에 드립니다.",
-    tone: "home-e-card-sky",
+    tone: "home-e-card-violet",
   },
   {
     step: "04",
     title: "새 가족 매칭",
     desc: "보호중인 아이가 새 가족을 만날 때까지 매칭과 사후 상담을 책임지고 지원합니다.",
-    tone: "home-e-card-coral",
+    tone: "home-e-card-lime",
   },
 ] as const;
 
 export default function GuideE() {
   return (
-    <section id="guide" className="home-e-section py-16 lg:py-24 bg-slate-50">
+    <section id="guide" className="home-e-section py-16 lg:py-24 bg-[var(--e-surface-warm)]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
           <p className="text-xs font-semibold tracking-wider uppercase text-[var(--e-accent)] mb-3">

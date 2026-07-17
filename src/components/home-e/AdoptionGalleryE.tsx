@@ -48,13 +48,13 @@ export default function AdoptionGalleryE({
             )}
           </div>
 
-          <div className="inline-flex rounded-2xl border border-slate-200 bg-slate-50 p-1 self-start">
+          <div className="inline-flex rounded-2xl border border-orange-200 bg-[var(--e-surface-warm)] p-1 self-start">
             <button
               type="button"
               onClick={() => setTab("dog")}
               className={`px-4 py-2.5 text-sm font-semibold rounded-xl transition ${
                 tab === "dog"
-                  ? "bg-white text-slate-900 shadow-sm"
+                  ? "bg-[var(--e-accent)] text-white shadow-sm"
                   : "text-slate-500 hover:text-slate-800"
               }`}
             >
@@ -65,7 +65,7 @@ export default function AdoptionGalleryE({
               onClick={() => setTab("cat")}
               className={`px-4 py-2.5 text-sm font-semibold rounded-xl transition ${
                 tab === "cat"
-                  ? "bg-white text-slate-900 shadow-sm"
+                  ? "bg-[var(--e-accent)] text-white shadow-sm"
                   : "text-slate-500 hover:text-slate-800"
               }`}
             >
@@ -85,10 +85,10 @@ export default function AdoptionGalleryE({
                   src={item.imageUrl}
                   alt={`${item.breed} ${item.name} 보호중`}
                   fill
-                  className="object-cover group-hover:scale-105 transition duration-500"
+                  className="home-e-photo object-cover group-hover:scale-105 transition duration-500"
                   sizes="(max-width: 1024px) 50vw, 25vw"
                 />
-                <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold text-[var(--e-accent)] shadow-sm">
+                <span className="absolute left-3 top-3 rounded-full bg-[var(--e-yellow)] px-2.5 py-1 text-[10px] font-bold text-slate-900 shadow-sm">
                   {item.branch}
                 </span>
               </div>

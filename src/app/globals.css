@@ -307,43 +307,53 @@ body.home-d-root .home-d-fixed-bar {
   box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12);
 }
 
-/* E 디자인 — 컴투펫 SaaS 스타일 (home-e 컴포넌트) */
+/* E 디자인 — 아이좋아식 고채도·밝은 SaaS 톤 */
 body.home-e-root {
-  --e-accent: var(--orange, #0f766e);
-  --e-accent-soft: color-mix(in srgb, var(--orange, #0f766e) 14%, white);
-  background-color: #ffffff;
-  color: #0f172a;
+  --orange: #ff6a00;
+  --orange-light: #ff9a1a;
+  --e-accent: #ff6a00;
+  --e-accent-soft: #fff1e6;
+  --e-yellow: #ffd400;
+  --e-blue: #2f80ed;
+  --e-violet: #7c5cff;
+  --e-lime: #7ad321;
+  --e-surface: #fffdf8;
+  --e-surface-warm: #fff6eb;
+  background-color: var(--e-surface);
+  color: #1a1a1a;
 }
 
 body.home-e-root .home-e-display {
-  font-weight: 700;
-  letter-spacing: -0.025em;
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
 
 body.home-e-root .home-e-hero-bg {
   background:
-    radial-gradient(ellipse 80% 60% at 10% 0%, color-mix(in srgb, var(--e-accent-soft) 80%, white), transparent 55%),
-    radial-gradient(ellipse 50% 40% at 90% 20%, #e2e8f0 0%, transparent 50%),
-    linear-gradient(180deg, #f8fafc 0%, #ffffff 55%);
+    radial-gradient(ellipse 80% 60% at 10% 0%, #ffe8c8 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 90% 20%, #e8f0ff 0%, transparent 50%),
+    linear-gradient(180deg, #fff9f0 0%, #ffffff 55%);
 }
 
 body.home-e-root .home-e-hero {
-  background-color: #0f172a;
+  background-color: #1e293b;
 }
 
+/* 기본 CDN 사진·영상 채도·밝기 보정 (아이좋아식 쨍함) */
+body.home-e-root .home-e-photo,
 body.home-e-root .home-e-hero-video {
-  filter: saturate(1.05);
+  filter: saturate(1.4) contrast(1.1) brightness(1.08);
 }
 
 body.home-e-root .home-e-hero-scrim {
   background:
     linear-gradient(
-      100deg,
-      rgba(15, 23, 42, 0.82) 0%,
-      rgba(15, 23, 42, 0.6) 45%,
-      rgba(15, 23, 42, 0.35) 100%
+      105deg,
+      rgba(15, 23, 42, 0.58) 0%,
+      rgba(15, 23, 42, 0.28) 48%,
+      rgba(255, 180, 40, 0.18) 100%
     ),
-    linear-gradient(to top, rgba(15, 23, 42, 0.55), transparent 40%);
+    linear-gradient(to top, rgba(15, 23, 42, 0.38), transparent 48%);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -367,10 +377,11 @@ body.home-e-root .home-e-fixed-bar {
 body.home-e-root .home-e-fill-card {
   display: flex;
   flex-direction: column;
-  border-radius: 1.25rem;
+  border-radius: 1.35rem;
   border: 1px solid transparent;
   padding: 1.15rem 1.2rem 1.25rem;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+  background: #ffffff;
+  box-shadow: 0 10px 28px rgba(255, 106, 0, 0.08);
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease,
@@ -381,81 +392,116 @@ body.home-e-root .home-e-fill-card {
 @media (min-width: 640px) {
   body.home-e-root .home-e-fill-card {
     padding: 1.35rem 1.4rem 1.5rem;
-    border-radius: 1.5rem;
+    border-radius: 1.6rem;
   }
 }
 
 body.home-e-root .home-e-fill-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(255, 106, 0, 0.14);
 }
 
 body.home-e-root .home-e-fill-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 0.9rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
   flex-shrink: 0;
-  transition: transform 0.25s ease, background-color 0.25s ease, color 0.25s ease;
+  color: #ffffff;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 body.home-e-root .home-e-fill-card:hover .home-e-fill-icon {
-  transform: scale(1.06);
+  transform: scale(1.08);
 }
 
-/* 카드별 포인트 컬러 */
+/* 아이좋아식 4색 — 오렌지 / 블루 / 퍼플 / 라임 */
+body.home-e-root .home-e-card-orange {
+  background: linear-gradient(165deg, #fff4e8 0%, #ffffff 68%);
+  border-color: #ffc078;
+}
+body.home-e-root .home-e-card-orange .home-e-fill-icon {
+  background: #ff6a00;
+  box-shadow: 0 10px 22px rgba(255, 106, 0, 0.4);
+}
+body.home-e-root .home-e-card-orange:hover {
+  background: linear-gradient(165deg, #ffe8d0 0%, #ffffff 70%);
+  border-color: #ff9a1a;
+}
+
+body.home-e-root .home-e-card-blue {
+  background: linear-gradient(165deg, #eef5ff 0%, #ffffff 68%);
+  border-color: #9ec5ff;
+}
+body.home-e-root .home-e-card-blue .home-e-fill-icon {
+  background: #2f80ed;
+  box-shadow: 0 10px 22px rgba(47, 128, 237, 0.4);
+}
+body.home-e-root .home-e-card-blue:hover {
+  background: linear-gradient(165deg, #dcebff 0%, #ffffff 70%);
+  border-color: #5ba0ff;
+}
+
+body.home-e-root .home-e-card-violet {
+  background: linear-gradient(165deg, #f3eeff 0%, #ffffff 68%);
+  border-color: #c4b5ff;
+}
+body.home-e-root .home-e-card-violet .home-e-fill-icon {
+  background: #7c5cff;
+  box-shadow: 0 10px 22px rgba(124, 92, 255, 0.4);
+}
+body.home-e-root .home-e-card-violet:hover {
+  background: linear-gradient(165deg, #e8deff 0%, #ffffff 70%);
+  border-color: #9b85ff;
+}
+
+body.home-e-root .home-e-card-lime {
+  background: linear-gradient(165deg, #f2fce3 0%, #ffffff 68%);
+  border-color: #b8ec6a;
+}
+body.home-e-root .home-e-card-lime .home-e-fill-icon {
+  background: #7ad321;
+  box-shadow: 0 10px 22px rgba(122, 211, 33, 0.4);
+}
+body.home-e-root .home-e-card-lime:hover {
+  background: linear-gradient(165deg, #e6f9c8 0%, #ffffff 70%);
+  border-color: #9ae03d;
+}
+
+/* 하위 호환 별칭 */
 body.home-e-root .home-e-card-teal {
-  background: #ecfdf8;
-  border-color: #99f6e4;
+  background: linear-gradient(165deg, #fff4e8 0%, #ffffff 68%);
+  border-color: #ffc078;
 }
 body.home-e-root .home-e-card-teal .home-e-fill-icon {
-  background: #0f766e;
-  color: #ffffff;
+  background: #ff6a00;
+  box-shadow: 0 10px 22px rgba(255, 106, 0, 0.4);
 }
-body.home-e-root .home-e-card-teal:hover {
-  background: #d5f5ef;
-  border-color: #2dd4bf;
-}
-
 body.home-e-root .home-e-card-sand {
-  background: #fff7ed;
-  border-color: #fed7aa;
+  background: linear-gradient(165deg, #eef5ff 0%, #ffffff 68%);
+  border-color: #9ec5ff;
 }
 body.home-e-root .home-e-card-sand .home-e-fill-icon {
-  background: #c2410c;
-  color: #ffffff;
+  background: #2f80ed;
+  box-shadow: 0 10px 22px rgba(47, 128, 237, 0.4);
 }
-body.home-e-root .home-e-card-sand:hover {
-  background: #ffedd5;
-  border-color: #fb923c;
-}
-
 body.home-e-root .home-e-card-sky {
-  background: #eff6ff;
-  border-color: #bfdbfe;
+  background: linear-gradient(165deg, #f3eeff 0%, #ffffff 68%);
+  border-color: #c4b5ff;
 }
 body.home-e-root .home-e-card-sky .home-e-fill-icon {
-  background: #1d4ed8;
-  color: #ffffff;
+  background: #7c5cff;
+  box-shadow: 0 10px 22px rgba(124, 92, 255, 0.4);
 }
-body.home-e-root .home-e-card-sky:hover {
-  background: #dbeafe;
-  border-color: #60a5fa;
-}
-
 body.home-e-root .home-e-card-coral {
-  background: #fff1f2;
-  border-color: #fecdd3;
+  background: linear-gradient(165deg, #f2fce3 0%, #ffffff 68%);
+  border-color: #b8ec6a;
 }
 body.home-e-root .home-e-card-coral .home-e-fill-icon {
-  background: #be123c;
-  color: #ffffff;
-}
-body.home-e-root .home-e-card-coral:hover {
-  background: #ffe4e6;
-  border-color: #fb7185;
+  background: #7ad321;
+  box-shadow: 0 10px 22px rgba(122, 211, 33, 0.4);
 }
 
 body.home-e-root .home-e-animated-icon,
@@ -463,16 +509,16 @@ body.home-e-root .home-e-mini-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--e-accent);
-  background: var(--e-accent-soft);
+  color: #ffffff;
+  background: var(--e-accent);
 }
 
 body.home-e-root .home-e-animated-icon {
   width: 3.25rem;
   height: 3.25rem;
-  border-radius: 1.25rem;
+  border-radius: 999px;
   animation: home-e-icon-float 3.6s ease-in-out infinite;
-  box-shadow: 0 12px 30px color-mix(in srgb, var(--e-accent) 14%, transparent);
+  box-shadow: 0 12px 30px rgba(255, 106, 0, 0.28);
 }
 
 body.home-e-root .home-e-mini-icon {
@@ -500,9 +546,18 @@ body.home-e-root .home-e-pulse-dot {
   width: 0.65rem;
   height: 0.65rem;
   border-radius: 999px;
-  background: var(--e-accent);
-  box-shadow: 0 0 0 0 color-mix(in srgb, var(--e-accent) 35%, transparent);
+  background: var(--e-yellow);
+  box-shadow: 0 0 0 0 rgba(255, 212, 0, 0.55);
   animation: home-e-pulse 1.8s ease-out infinite;
+}
+
+body.home-e-root .home-e-cta-yellow {
+  background: var(--e-yellow);
+  color: #1a1a1a;
+}
+
+body.home-e-root .home-e-cta-yellow:hover {
+  background: #ffe14d;
 }
 
 body.home-e-root .home-e-notice-mask {
@@ -560,7 +615,7 @@ body.home-e-root .home-e-float-badge {
 
 @keyframes home-e-pulse {
   0% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--e-accent) 35%, transparent);
+    box-shadow: 0 0 0 0 rgba(255, 212, 0, 0.55);
   }
   80%,
   100% {

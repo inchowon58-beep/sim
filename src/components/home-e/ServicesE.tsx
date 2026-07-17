@@ -35,7 +35,7 @@ export default async function ServicesE() {
   });
 
   return (
-    <section id="surrender" className="home-e-section py-16 lg:py-24 bg-slate-50">
+    <section id="surrender" className="home-e-section py-16 lg:py-24 bg-[var(--e-surface-warm)]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="max-w-2xl mb-10">
           <p className="text-xs font-semibold tracking-wider uppercase text-[var(--e-accent)] mb-3">
@@ -53,16 +53,16 @@ export default async function ServicesE() {
           {NEWS_CARDS.map((card, i) => (
             <article
               key={card.title}
-              className="home-e-card group bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-sm hover:shadow-md transition"
+              className="home-e-card group bg-white rounded-3xl border border-orange-100 overflow-hidden shadow-sm hover:shadow-md transition"
             >
               <div className="relative h-44">
                 <Image
                   src={getImageUrl(images[i], site)}
                   alt={card.title}
                   fill
-                  className="object-cover group-hover:scale-105 transition duration-500"
+                  className="home-e-photo object-cover group-hover:scale-105 transition duration-500"
                 />
-                <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold text-[var(--e-accent)] shadow-sm">
+                <span className="absolute left-3 top-3 rounded-full bg-[var(--e-yellow)] px-2.5 py-1 text-[10px] font-bold text-slate-900 shadow-sm">
                   {card.tag}
                 </span>
               </div>

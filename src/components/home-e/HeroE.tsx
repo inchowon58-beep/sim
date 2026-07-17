@@ -24,7 +24,7 @@ export default async function HeroE() {
     tenantUi?.heroSubcopy ||
     buildHeroSubcopy(tenant?.subdomain || site.brandName);
   const badges = tenantUi?.trustBadges || ["파양 입소", "보호중 아이들", "투명 안내", "빠른 상담"];
-  const poster = getImageUrl(tenantUi?.heroImageIndex || 1, site);
+  const poster = getImageUrl(tenantUi?.heroImageIndex || 5, site);
 
   return (
     <section className="home-e-hero relative overflow-hidden">
@@ -46,24 +46,32 @@ export default async function HeroE() {
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-20 lg:pt-32 lg:pb-28 min-h-[78vh] flex items-center">
         <div className="max-w-2xl">
-          <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-wide text-white/90 mb-5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--e-accent)]" />
+          <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-wide text-white mb-5">
+            <span className="w-2 h-2 rounded-full bg-[var(--e-yellow)] shadow-[0_0_0_4px_rgba(255,212,0,0.35)]" />
             {eyebrow}
           </p>
-          <h1 className="home-e-display text-3xl sm:text-4xl lg:text-5xl text-white leading-[1.18] mb-5 drop-shadow-sm">
+          <h1 className="home-e-display text-3xl sm:text-4xl lg:text-5xl text-white leading-[1.18] mb-5 drop-shadow-md">
             {headline}
           </h1>
-          <p className="text-base sm:text-lg text-white/85 leading-relaxed mb-4 max-w-xl">
+          <p className="text-base sm:text-lg text-white/90 leading-relaxed mb-4 max-w-xl">
             {subline}
           </p>
           <p className="text-lg sm:text-xl font-semibold text-white mb-6">
             강아지 파양 · 보호중인 아이들, {site.brandName}가 함께합니다.
           </p>
           <ul className="flex flex-wrap gap-2 mb-8">
-            {badges.map((b) => (
+            {badges.map((b, i) => (
               <li
                 key={b}
-                className="text-xs font-medium px-3 py-1.5 rounded-full bg-white/15 border border-white/25 text-white backdrop-blur-sm"
+                className={`text-xs font-bold px-3 py-1.5 rounded-full shadow-sm ${
+                  i % 4 === 0
+                    ? "bg-[var(--e-yellow)] text-slate-900"
+                    : i % 4 === 1
+                      ? "bg-[var(--e-blue)] text-white"
+                      : i % 4 === 2
+                        ? "bg-[var(--e-violet)] text-white"
+                        : "bg-[var(--e-lime)] text-slate-900"
+                }`}
               >
                 {b}
               </li>
@@ -72,19 +80,19 @@ export default async function HeroE() {
           <div className="flex flex-wrap gap-3">
             <Link
               href={`/#${INQUIRY_SECTION_ID}`}
-              className={`inline-flex items-center justify-center font-semibold px-6 py-3.5 text-sm rounded-xl transition shadow-lg ${inquiryAccentButtonClass(site.exposureMode)}`}
+              className="inline-flex items-center justify-center font-bold px-6 py-3.5 text-sm rounded-xl transition shadow-lg home-e-cta-yellow"
             >
               빠른 문의
             </Link>
             <Link
               href="/#surrender"
-              className="inline-flex items-center justify-center font-semibold px-6 py-3.5 text-sm rounded-xl bg-white/95 text-slate-900 hover:bg-white transition"
+              className={`inline-flex items-center justify-center font-semibold px-6 py-3.5 text-sm rounded-xl transition shadow-lg ${inquiryAccentButtonClass(site.exposureMode)}`}
             >
               파양 입소 안내
             </Link>
             <Link
               href="/#protected"
-              className="inline-flex items-center justify-center font-semibold px-6 py-3.5 text-sm rounded-xl border border-white/40 text-white hover:bg-white/10 transition"
+              className="inline-flex items-center justify-center font-semibold px-6 py-3.5 text-sm rounded-xl bg-white/95 text-slate-900 hover:bg-white transition"
             >
               보호중인 아이들
             </Link>
