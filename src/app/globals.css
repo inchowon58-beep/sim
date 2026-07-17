@@ -327,6 +327,31 @@ body.home-e-root .home-e-hero-bg {
     linear-gradient(180deg, #f8fafc 0%, #ffffff 55%);
 }
 
+body.home-e-root .home-e-hero {
+  background-color: #0f172a;
+}
+
+body.home-e-root .home-e-hero-video {
+  filter: saturate(1.05);
+}
+
+body.home-e-root .home-e-hero-scrim {
+  background:
+    linear-gradient(
+      100deg,
+      rgba(15, 23, 42, 0.82) 0%,
+      rgba(15, 23, 42, 0.6) 45%,
+      rgba(15, 23, 42, 0.35) 100%
+    ),
+    linear-gradient(to top, rgba(15, 23, 42, 0.55), transparent 40%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.home-e-root .home-e-hero-video {
+    display: none;
+  }
+}
+
 body.home-e-root .home-e-card {
   transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
 }
