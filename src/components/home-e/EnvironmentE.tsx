@@ -1,12 +1,11 @@
 import Image from "next/image";
 import { getSiteConfig } from "@/lib/site-config";
 import { getImageUrl } from "@/lib/site-images";
-import { getResolvedSiteConfig } from "@/utils/siteConfig";
 
 const ENV_ITEMS = [
   {
-    title: "쾌적한 생활 공간",
-    desc: "입소 후 아이가 안정적으로 지낼 수 있도록 공간과 생활 루틴을 관리합니다.",
+    title: "가정과 가까운 생활 공간",
+    desc: "입소 후에도 아이가 안정적으로 쉴 수 있도록 공간과 생활 루틴을 관리합니다.",
   },
   {
     title: "일상 케어",
@@ -14,19 +13,27 @@ const ENV_ITEMS = [
   },
   {
     title: "성향 기반 매칭",
-    desc: "아이의 성격과 보호자의 환경을 함께 확인해 무료분양을 진행합니다.",
+    desc: "아이의 성격과 보호자의 생활 환경을 함께 확인해 새 가족 매칭을 진행합니다.",
   },
+] as const;
+
+/** 서로 다른 느낌의 실내·생활 환경 이미지 인덱스 (com2pet CDN) */
+const HOME_ENV_IMAGES = [3, 8, 12, 17] as const;
+
+const ENV_CAPTIONS = [
+  "따뜻한 실내 휴식 공간",
+  "안정적인 생활 케어",
+  "함께하는 일상 환경",
+  "편안한 보금자리 분위기",
 ] as const;
 
 export default async function EnvironmentE() {
   const site = await getSiteConfig();
-  const { tenantUi } = await getResolvedSiteConfig();
-  const base = tenantUi?.heroImageIndex || 1;
 
   return (
     <section id="environment" className="home-e-section py-16 lg:py-24 bg-slate-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-10 lg:gap-14 items-center">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-start">
           <div>
             <p className="text-xs font-semibold tracking-wider uppercase text-[var(--e-accent)] mb-3">
               Care Environment
@@ -38,8 +45,8 @@ export default async function EnvironmentE() {
               </span>
             </h2>
             <p className="text-sm sm:text-base text-slate-600 leading-relaxed mb-8">
-              {site.brandName}는 강아지 파양 입소와 무료분양 과정을 한 페이지에서 쉽게
-              이해할 수 있도록 안내합니다. 방문 전 상담으로 필요한 내용을 먼저 확인하세요.
+              {site.brandName}는 파양 입소 후에도 아이가 집처럼 편안하게 지낼 수 있도록
+              생활 환경을 관리합니다. 방문 전 상담으로 필요한 내용을 먼저 확인하세요.
             </p>
             <div className="space-y-3">
               {ENV_ITEMS.map((item, i) => (
@@ -63,23 +70,27 @@ export default async function EnvironmentE() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            {[base, base + 1, base + 2, base + 3].map((idx, i) => (
-              <div
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            {HOME_ENV_IMAGES.map((idx, i) => (
+              <figure
                 key={idx}
-                className={`relative overflow-hidden rounded-3xl shadow-sm ring-1 ring-slate-200 ${
-                  i === 1 ? "mt-8" : i === 2 ? "-mt-4" : ""
-                }`}
+                className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-white shadow-sm ring-1 ring-slate-200"
               >
                 <div className="relative aspect-[4/5]">
                   <Image
                     src={getImageUrl(idx, site)}
-                    alt={`${site.brandName} 환경 사진 ${i + 1}`}
+                    alt={ENV_CAPTIONS[i]}
                     fill
                     className="object-cover hover:scale-105 transition duration-700"
+                    sizes="(max-width: 1024px) 50vw, 28vw"
                   />
                 </div>
-              </div>
+                <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/70 to-transparent px-3 py-3">
+                  <span className="text-[11px] sm:text-xs font-medium text-white">
+                    {ENV_CAPTIONS[i]}
+                  </span>
+                </figcaption>
+              </figure>
             ))}
           </div>
         </div>

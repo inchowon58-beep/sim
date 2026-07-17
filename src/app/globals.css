@@ -364,6 +364,100 @@ body.home-e-root .home-e-fixed-bar {
   padding: 0 0.5rem;
 }
 
+body.home-e-root .home-e-fill-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 1.25rem;
+  border: 1px solid transparent;
+  padding: 1.15rem 1.2rem 1.25rem;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+@media (min-width: 640px) {
+  body.home-e-root .home-e-fill-card {
+    padding: 1.35rem 1.4rem 1.5rem;
+    border-radius: 1.5rem;
+  }
+}
+
+body.home-e-root .home-e-fill-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.1);
+}
+
+body.home-e-root .home-e-fill-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.9rem;
+  flex-shrink: 0;
+  transition: transform 0.25s ease, background-color 0.25s ease, color 0.25s ease;
+}
+
+body.home-e-root .home-e-fill-card:hover .home-e-fill-icon {
+  transform: scale(1.06);
+}
+
+/* 카드별 포인트 컬러 */
+body.home-e-root .home-e-card-teal {
+  background: #ecfdf8;
+  border-color: #99f6e4;
+}
+body.home-e-root .home-e-card-teal .home-e-fill-icon {
+  background: #0f766e;
+  color: #ffffff;
+}
+body.home-e-root .home-e-card-teal:hover {
+  background: #d5f5ef;
+  border-color: #2dd4bf;
+}
+
+body.home-e-root .home-e-card-sand {
+  background: #fff7ed;
+  border-color: #fed7aa;
+}
+body.home-e-root .home-e-card-sand .home-e-fill-icon {
+  background: #c2410c;
+  color: #ffffff;
+}
+body.home-e-root .home-e-card-sand:hover {
+  background: #ffedd5;
+  border-color: #fb923c;
+}
+
+body.home-e-root .home-e-card-sky {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+body.home-e-root .home-e-card-sky .home-e-fill-icon {
+  background: #1d4ed8;
+  color: #ffffff;
+}
+body.home-e-root .home-e-card-sky:hover {
+  background: #dbeafe;
+  border-color: #60a5fa;
+}
+
+body.home-e-root .home-e-card-coral {
+  background: #fff1f2;
+  border-color: #fecdd3;
+}
+body.home-e-root .home-e-card-coral .home-e-fill-icon {
+  background: #be123c;
+  color: #ffffff;
+}
+body.home-e-root .home-e-card-coral:hover {
+  background: #ffe4e6;
+  border-color: #fb7185;
+}
+
 body.home-e-root .home-e-animated-icon,
 body.home-e-root .home-e-mini-icon {
   display: inline-flex;
