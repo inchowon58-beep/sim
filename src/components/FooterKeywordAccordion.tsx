@@ -23,9 +23,10 @@ export default function FooterKeywordAccordion({
   if (!links.length) return null;
 
   const isDark = tone === "dark";
+  // 배경보다 살짝만 밝은 색 + 70% — 눈에 잘 띄지 않게
   const summaryClass = isDark
-    ? "text-gray-500 hover:text-gray-300"
-    : "text-gray-400 hover:text-gray-600";
+    ? "text-gray-800 hover:text-gray-700"
+    : "text-gray-200 hover:text-gray-300";
   const panelClass = isDark
     ? "border-gray-800 text-gray-500"
     : "border-gray-100 text-gray-500";
@@ -37,13 +38,13 @@ export default function FooterKeywordAccordion({
   return (
     <details className="mt-8 pt-6 border-t border-white/10 group">
       <summary
-        className={`inline-flex cursor-pointer list-none items-center gap-1.5 text-[2px] leading-none transition ${summaryClass} [&::-webkit-details-marker]:hidden`}
+        className={`inline-flex cursor-pointer list-none items-center gap-1.5 text-[10px] leading-none opacity-70 transition ${summaryClass} [&::-webkit-details-marker]:hidden`}
       >
         <span>관련 지역·키워드 안내</span>
-        <span className="text-[2px] transition group-open:rotate-180" aria-hidden>
+        <span className="text-[10px] transition group-open:rotate-180" aria-hidden>
           ▼
         </span>
-        <span className="opacity-10 text-[2px]">({links.length})</span>
+        <span className="text-[10px]">({links.length})</span>
       </summary>
 
       <div className={`mt-3 pt-3 border-t ${panelClass}`}>
