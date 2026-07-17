@@ -67,12 +67,16 @@ export async function PATCH(req: NextRequest, context: RouteContext) {
   if (body.description !== undefined) {
     content.description = String(body.description).trim();
   }
+  if (body.footerKeywords !== undefined) {
+    content.footerKeywords = String(body.footerKeywords).trim();
+  }
 
   if (
     body.keywords !== undefined ||
     body.bodyContent !== undefined ||
     body.tagline !== undefined ||
-    body.description !== undefined
+    body.description !== undefined ||
+    body.footerKeywords !== undefined
   ) {
     patch.content_data = content;
   }

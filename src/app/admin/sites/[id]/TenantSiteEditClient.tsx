@@ -15,6 +15,7 @@ export default function TenantSiteEditClient({ siteId }: Props) {
   const [bodyContent, setBodyContent] = useState("");
   const [tagline, setTagline] = useState("");
   const [description, setDescription] = useState("");
+  const [footerKeywords, setFooterKeywords] = useState("");
   const [slackWebhook, setSlackWebhook] = useState("");
   const [clearSlack, setClearSlack] = useState(false);
   const [naverVerification, setNaverVerification] = useState("");
@@ -49,6 +50,7 @@ export default function TenantSiteEditClient({ siteId }: Props) {
         setBodyContent(data.bodyContent);
         setTagline(data.tagline);
         setDescription(data.description);
+        setFooterKeywords(data.footerKeywords || "");
         setNaverVerification(data.naverVerification);
         setDailySeoLimit(
           data.dailySeoLimit != null ? String(data.dailySeoLimit) : ""
@@ -76,6 +78,7 @@ export default function TenantSiteEditClient({ siteId }: Props) {
       bodyContent,
       tagline,
       description,
+      footerKeywords,
       naverVerification,
       dailySeoLimit: dailySeoLimit.trim() === "" ? null : dailySeoLimit.trim(),
     };
@@ -228,6 +231,21 @@ export default function TenantSiteEditClient({ siteId }: Props) {
                 rows={5}
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl outline-none focus:border-orange resize-y text-sm"
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                페이지 하단 키워드 설정
+              </label>
+              <textarea
+                value={footerKeywords}
+                onChange={(e) => setFooterKeywords(e.target.value)}
+                placeholder={"한 줄에 하나, 또는 쉼표로 구분\n예:\n인천중구파양\n부평강아지파양"}
+                rows={5}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl outline-none focus:border-orange resize-y text-sm font-mono"
+              />
+              <p className="text-xs text-gray-400 mt-1">
+                비우면 미표시. 푸터 「관련 지역·키워드 안내」접기/펼치기에 사용됩니다.
+              </p>
             </div>
           </section>
 

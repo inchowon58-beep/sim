@@ -11,6 +11,7 @@ export default function RegisterSiteClient() {
   const [subdomain, setSubdomain] = useState("");
   const [keywords, setKeywords] = useState("");
   const [bodyContent, setBodyContent] = useState("");
+  const [footerKeywords, setFooterKeywords] = useState("");
   const [slackWebhook, setSlackWebhook] = useState("");
   const [naverVerification, setNaverVerification] = useState("");
   const [dailySeoLimit, setDailySeoLimit] = useState("");
@@ -51,6 +52,7 @@ export default function RegisterSiteClient() {
           subdomain,
           keywords,
           bodyContent,
+          footerKeywords,
           slackWebhook,
           naverVerification: naverAccountId ? "" : naverVerification,
           naverAccountId: naverAccountId || undefined,
@@ -152,6 +154,7 @@ export default function RegisterSiteClient() {
                 setSubdomain("");
                 setKeywords("");
                 setBodyContent("");
+                setFooterKeywords("");
                 setSlackWebhook("");
                 setNaverVerification("");
                 setDailySeoLimit("");
@@ -215,6 +218,22 @@ export default function RegisterSiteClient() {
                 rows={6}
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl outline-none focus:border-orange resize-y text-sm"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                페이지 하단 키워드 설정
+              </label>
+              <textarea
+                value={footerKeywords}
+                onChange={(e) => setFooterKeywords(e.target.value)}
+                placeholder={"한 줄에 하나, 또는 쉼표로 구분\n예:\n인천중구파양\n부평강아지파양\n연수구고양이무료분양"}
+                rows={5}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl outline-none focus:border-orange resize-y text-sm font-mono"
+              />
+              <p className="text-xs text-gray-400 mt-1">
+                비우면 표시하지 않습니다. 푸터에 「관련 지역·키워드 안내」접기/펼치기로 노출됩니다.
+              </p>
             </div>
 
             <div>

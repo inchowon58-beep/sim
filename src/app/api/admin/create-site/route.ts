@@ -241,6 +241,7 @@ export async function POST(req: NextRequest) {
   const subdomain = normalizeHostname(String(body.subdomain || "").trim());
   const keywords = String(body.keywords || "").trim();
   const bodyContent = String(body.bodyContent || "").trim();
+  const footerKeywords = String(body.footerKeywords || "").trim();
   const slackWebhook = String(body.slackWebhook || "").trim();
   const naverVerification = String(body.naverVerification || "").trim();
   const naverAccountId = String(body.naverAccountId || "").trim();
@@ -280,6 +281,9 @@ export async function POST(req: NextRequest) {
       imageCount,
       siteDesign
     );
+    if (footerKeywords) {
+      contentData.footerKeywords = footerKeywords;
+    }
 
     const defaultLimit = resolveDailySeoLimit(settings);
     const dailySeoLimitRaw = body.dailySeoLimit;

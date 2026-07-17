@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import FooterAdminLinks from "@/components/FooterAdminLinks";
+import FooterKeywordAccordion from "@/components/FooterKeywordAccordion";
 import { useSiteConfig } from "@/components/SiteConfigProvider";
 import { showCompanyContact } from "@/lib/exposure-mode";
 
@@ -45,6 +46,7 @@ export default function FooterC() {
           </p>
           <FooterAdminLinks />
         </div>
+        <FooterKeywordAccordion tone="dark" />
       </div>
     </footer>
   );

@@ -41,6 +41,7 @@ export function toTenantSiteDetail(row: TenantSiteConfigRow): TenantSiteDetail {
     bodyContent: content.body || "",
     tagline: content.tagline || "",
     description: content.description || "",
+    footerKeywords: content.footerKeywords || "",
     naverVerification: row.naver_verification || "",
     seoQuotaUsedToday: used,
   };

@@ -70,6 +70,11 @@ export interface TenantContentData {
   serviceCards?: { title: string; englishLabel: string; description: string; imageIndex: number }[];
   guideItems?: { title: string; subtitle: string; description: string }[];
   regionLinks?: string[];
+  /**
+   * 페이지 하단(푸터) 접기/펼치기용 지역·관련 키워드 목록
+   * 줄바꿈 또는 쉼표로 구분. 비어 있으면 하단 블록 미표시.
+   */
+  footerKeywords?: string;
 }
 
 export interface TenantSiteConfigRow {
@@ -94,6 +99,8 @@ export interface CreateSiteInput {
   subdomain: string;
   keywords?: string;
   bodyContent?: string;
+  /** 푸터 접기/펼치기용 하단 키워드 (줄바꿈/쉼표) */
+  footerKeywords?: string;
   slackWebhook?: string;
   naverVerification?: string;
   /** 미입력 시 마스터 전역 dailySeoLimit 복사 */
@@ -149,6 +156,7 @@ export interface TenantSiteDetail extends TenantSiteSummary {
   bodyContent: string;
   tagline: string;
   description: string;
+  footerKeywords: string;
   naverVerification: string;
   seoQuotaUsedToday: number;
 }
@@ -159,6 +167,7 @@ export interface UpdateTenantSiteInput {
   bodyContent?: string;
   tagline?: string;
   description?: string;
+  footerKeywords?: string;
   slackWebhook?: string;
   naverVerification?: string;
   dailySeoLimit?: number | string | null;

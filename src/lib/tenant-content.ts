@@ -539,6 +539,7 @@ export function resolveTenantContentData(
     body: content?.body || pkg.body,
     description: content?.description || pkg.description,
     aboutText: content?.aboutText || pkg.aboutText,
+    footerKeywords: content?.footerKeywords || pkg.footerKeywords,
   };
 }
 

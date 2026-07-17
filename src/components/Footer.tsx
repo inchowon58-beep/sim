@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSiteConfig } from "@/components/SiteConfigProvider";
 import InquiryLinkButton from "@/components/InquiryLinkButton";
 import LoginModal from "./LoginModal";
+import FooterKeywordAccordion from "@/components/FooterKeywordAccordion";
 import { showCompanyContact } from "@/lib/exposure-mode";
 
 interface FooterProps {
@@ -130,6 +131,8 @@ export default function Footer({ isLoggedIn = false }: FooterProps) {
               )}
             </div>
           </div>
+
+          <FooterKeywordAccordion tone="dark" />
         </div>
       </footer>
 
