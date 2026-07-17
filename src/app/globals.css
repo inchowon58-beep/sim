@@ -339,3 +339,132 @@ body.home-e-root .home-e-fixed-bar {
   padding: 0 0.5rem;
 }
 
+body.home-e-root .home-e-animated-icon,
+body.home-e-root .home-e-mini-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--e-accent);
+  background: var(--e-accent-soft);
+}
+
+body.home-e-root .home-e-animated-icon {
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 1.25rem;
+  animation: home-e-icon-float 3.6s ease-in-out infinite;
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--e-accent) 14%, transparent);
+}
+
+body.home-e-root .home-e-mini-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  animation: home-e-icon-breathe 2.8s ease-in-out infinite;
+}
+
+body.home-e-root .home-e-icon-row {
+  display: flex;
+  gap: 0.875rem;
+  align-items: flex-start;
+}
+
+body.home-e-root .home-e-icon-card:hover .home-e-animated-icon,
+body.home-e-root .home-e-center-card:hover .home-e-mini-icon {
+  animation-duration: 1.35s;
+}
+
+body.home-e-root .home-e-pulse-dot {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 999px;
+  background: var(--e-accent);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--e-accent) 35%, transparent);
+  animation: home-e-pulse 1.8s ease-out infinite;
+}
+
+body.home-e-root .home-e-notice-mask {
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+body.home-e-root .home-e-notice-track {
+  width: max-content;
+  animation: home-e-marquee 28s linear infinite;
+}
+
+body.home-e-root .home-e-float-badge {
+  position: absolute;
+  z-index: 2;
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  background: rgba(255, 255, 255, 0.92);
+  padding: 0.5rem 0.8rem 0.5rem 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #0f172a;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.14);
+  backdrop-filter: blur(10px);
+  animation: home-e-badge-float 4.4s ease-in-out infinite;
+}
+
+@media (min-width: 640px) {
+  body.home-e-root .home-e-float-badge {
+    display: inline-flex;
+  }
+}
+
+@keyframes home-e-icon-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-3deg);
+  }
+}
+
+@keyframes home-e-icon-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes home-e-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--e-accent) 35%, transparent);
+  }
+  80%,
+  100% {
+    box-shadow: 0 0 0 12px transparent;
+  }
+}
+
+@keyframes home-e-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes home-e-badge-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+

@@ -9,10 +9,12 @@ import { showCompanyContact } from "@/lib/exposure-mode";
 const NAV = [
   { href: "/", label: "홈" },
   { href: "/#about", label: "센터소개" },
-  { href: "/#surrender", label: "강아지파양" },
-  { href: "/#adoption", label: "무료분양" },
+  { href: "/#surrender", label: "입소하기" },
+  { href: "/#adoption", label: "입양하기" },
+  { href: "/#protected", label: "보호중인 아이들" },
+  { href: "/#environment", label: "환경안내" },
+  { href: "/#centers", label: "지역상담" },
   { href: "/#guide", label: "입소안내" },
-  { href: "/#contact", label: "문의하기" },
 ] as const;
 
 export default function HeaderE() {
@@ -33,12 +35,12 @@ export default function HeaderE() {
             </span>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden xl:flex items-center gap-1">
             {NAV.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="px-3 py-2 text-sm text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-50 transition"
+                className="px-2.5 py-2 text-sm text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-50 transition"
               >
                 {item.label}
               </Link>
@@ -62,7 +64,7 @@ export default function HeaderE() {
 
           <button
             type="button"
-            className="lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-xl text-slate-700 hover:bg-slate-100 transition"
+            className="xl:hidden inline-flex items-center justify-center w-10 h-10 rounded-xl text-slate-700 hover:bg-slate-100 transition"
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? "메뉴 닫기" : "메뉴 열기"}
             aria-expanded={open}
@@ -82,7 +84,7 @@ export default function HeaderE() {
       </div>
 
       {open && (
-        <div className="lg:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-1 shadow-lg">
+        <div className="xl:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-1 shadow-lg">
           {NAV.map((item) => (
             <Link
               key={item.href}

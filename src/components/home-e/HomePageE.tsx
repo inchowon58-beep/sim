@@ -1,10 +1,13 @@
 import HeroE from "@/components/home-e/HeroE";
+import LandingHighlightsE from "@/components/home-e/LandingHighlightsE";
 import AboutE from "@/components/home-e/AboutE";
 import ServicesE from "@/components/home-e/ServicesE";
 import GuideE from "@/components/home-e/GuideE";
 import CasesE from "@/components/home-e/CasesE";
+import EnvironmentE from "@/components/home-e/EnvironmentE";
 import ReviewsE from "@/components/home-e/ReviewsE";
 import FaqE from "@/components/home-e/FaqE";
+import CenterNetworkE from "@/components/home-e/CenterNetworkE";
 import ContactE from "@/components/home-e/ContactE";
 import { getResolvedSiteConfig } from "@/utils/siteConfig";
 
@@ -16,11 +19,14 @@ export default async function HomePageE() {
   return (
     <>
       <HeroE />
+      <LandingHighlightsE />
       <AboutE />
       <ServicesE />
       <GuideE />
       <CasesE />
+      <EnvironmentE />
       <ReviewsE />
+      <CenterNetworkE />
       <FaqE items={faqItems} />
       <ContactE />
     </>

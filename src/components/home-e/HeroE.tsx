@@ -18,8 +18,8 @@ export default async function HeroE() {
   const eyebrow = tenantUi?.heroEyebrow || "Dog Surrender & Free Adoption";
   const headline = tenantUi?.heroHeadline || site.brandName;
   const subline =
-    tenantUi?.heroSubcopy ||
     tenantUi?.heroSubline ||
+    tenantUi?.heroSubcopy ||
     buildHeroSubcopy(tenant?.subdomain || site.brandName);
   const badges = tenantUi?.trustBadges || ["파양 입소", "무료분양", "투명 안내", "빠른 상담"];
 
@@ -74,6 +74,18 @@ export default async function HeroE() {
           </div>
 
           <div className="relative">
+            <div className="home-e-float-badge left-2 top-8 sm:-left-8">
+              <span className="home-e-mini-icon" aria-hidden>
+                01
+              </span>
+              <span>입소상담</span>
+            </div>
+            <div className="home-e-float-badge right-1 bottom-16 sm:-right-8">
+              <span className="home-e-mini-icon" aria-hidden>
+                02
+              </span>
+              <span>무료분양</span>
+            </div>
             <div className="relative aspect-[4/5] sm:aspect-[5/4] lg:aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl shadow-slate-900/10 ring-1 ring-slate-900/5">
               <Image
                 src={getImageUrl(tenantUi?.heroImageIndex || 1, site)}
