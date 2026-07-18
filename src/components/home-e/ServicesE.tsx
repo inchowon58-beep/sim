@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { getSiteConfig } from "@/lib/site-config";
 import { getImageUrl } from "@/lib/site-images";
 import { getResolvedSiteConfig } from "@/utils/siteConfig";
@@ -53,7 +52,7 @@ export default async function ServicesE() {
           {NEWS_CARDS.map((card, i) => (
             <article
               key={card.title}
-              className="home-e-card group bg-white rounded-3xl border border-orange-100 overflow-hidden shadow-sm hover:shadow-md transition"
+              className="home-e-card group bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-sm hover:shadow-md transition"
             >
               <div className="relative h-44">
                 <Image
@@ -62,31 +61,16 @@ export default async function ServicesE() {
                   fill
                   className="home-e-photo object-cover group-hover:scale-105 transition duration-500"
                 />
-                <span className="absolute left-3 top-3 rounded-full bg-[var(--e-yellow)] px-2.5 py-1 text-[10px] font-bold text-slate-900 shadow-sm">
+                <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-bold text-[var(--e-accent)] shadow-sm">
                   {card.tag}
                 </span>
               </div>
               <div className="p-5">
                 <h3 className="font-semibold text-slate-900 mb-2 text-base">{card.title}</h3>
-                <p className="text-sm text-slate-600 leading-relaxed mb-4">{card.description}</p>
-                <Link
-                  href="/#contact"
-                  className="text-sm font-semibold text-[var(--e-accent)] hover:underline"
-                >
-                  자세히 보기 →
-                </Link>
+                <p className="text-sm text-slate-600 leading-relaxed">{card.description}</p>
               </div>
             </article>
           ))}
-        </div>
-
-        <div className="mt-8">
-          <Link
-            href="/#contact"
-            className="inline-flex text-sm font-semibold text-[var(--e-accent)] hover:underline"
-          >
-            파양 입소 상담하기 →
-          </Link>
         </div>
       </div>
     </section>

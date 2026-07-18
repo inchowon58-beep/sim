@@ -100,8 +100,66 @@ export function OgBrandedLayout({
   );
 }
 
-/** 파란색 원 + 흰색 체크 파비콘 */
-export function FaviconLayout({ size }: { size: number }): ReactNode {
+/** 디자인별 파비콘 — E(컴투펫): 주황 원 + 흰 메달, 그 외: 파란 원 + 흰 체크 */
+export function FaviconLayout({
+  size,
+  design = "a",
+}: {
+  size: number;
+  design?: string;
+}): ReactNode {
+  if (design === "e") {
+    const pad = Math.round(size * 0.18);
+    const inner = size - pad * 2;
+
+    return (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "#ff6a00",
+          borderRadius: "50%",
+        }}
+      >
+        <svg
+          width={inner}
+          height={inner}
+          viewBox="0 0 24 24"
+          fill="none"
+        >
+          {/* 리본 */}
+          <path
+            d="M9.2 2.8h5.6l-.7 4.2H9.9L9.2 2.8Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M8.4 2.6 6.2 6.8l2.8.6.4-4.8Zm7.2 0 .4 4.8 2.8-.6-2.2-4.2Z"
+            fill="#ffffff"
+            opacity="0.92"
+          />
+          {/* 메달 본체 */}
+          <circle cx="12" cy="14.2" r="7.1" fill="#ffffff" />
+          <circle
+            cx="12"
+            cy="14.2"
+            r="5.35"
+            fill="none"
+            stroke="#ff6a00"
+            strokeWidth="1.35"
+          />
+          {/* 별 */}
+          <path
+            d="M12 10.4l1.05 2.15 2.35.34-1.7 1.66.4 2.35L12 15.8l-2.1 1.1.4-2.35-1.7-1.66 2.35-.34L12 10.4Z"
+            fill="#ff6a00"
+          />
+        </svg>
+      </div>
+    );
+  }
+
   const pad = Math.round(size * 0.22);
   const stroke = Math.max(2, Math.round(size * 0.12));
 

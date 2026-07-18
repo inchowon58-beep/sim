@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import type { Com2petAdoptionItem } from "@/lib/com2pet-adoption";
 import { useSiteConfig } from "@/components/SiteConfigProvider";
 
@@ -48,7 +47,7 @@ export default function AdoptionGalleryE({
             )}
           </div>
 
-          <div className="inline-flex rounded-2xl border border-orange-200 bg-[var(--e-surface-warm)] p-1 self-start">
+          <div className="inline-flex rounded-2xl border border-slate-200 bg-slate-50 p-1 self-start">
             <button
               type="button"
               onClick={() => setTab("dog")}
@@ -88,7 +87,7 @@ export default function AdoptionGalleryE({
                   className="home-e-photo object-cover group-hover:scale-105 transition duration-500"
                   sizes="(max-width: 1024px) 50vw, 25vw"
                 />
-                <span className="absolute left-3 top-3 rounded-full bg-[var(--e-yellow)] px-2.5 py-1 text-[10px] font-bold text-slate-900 shadow-sm">
+                <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-bold text-[var(--e-accent)] shadow-sm">
                   {item.branch}
                 </span>
               </div>
@@ -99,30 +98,9 @@ export default function AdoptionGalleryE({
                 <p className="text-xs text-slate-400 mt-1">
                   {tab === "dog" ? "강아지" : "고양이"} · 새 가족 찾는 중
                 </p>
-                <Link
-                  href="/#contact"
-                  className="mt-3 inline-flex text-xs font-semibold text-[var(--e-accent)] hover:underline"
-                >
-                  입양 상담 →
-                </Link>
               </div>
             </article>
           ))}
-        </div>
-
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Link
-            href="/#contact"
-            className="inline-flex items-center justify-center rounded-xl bg-[var(--e-accent)] px-5 py-3 text-sm font-semibold text-white hover:opacity-90 transition"
-          >
-            입양 상담하기
-          </Link>
-          <Link
-            href="/#surrender"
-            className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50 transition"
-          >
-            파양 입소 안내
-          </Link>
         </div>
       </div>
     </section>

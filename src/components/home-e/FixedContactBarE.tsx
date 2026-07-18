@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSiteConfig } from "@/components/SiteConfigProvider";
-import { INQUIRY_SECTION_ID, showCompanyContact } from "@/lib/exposure-mode";
+import { showCompanyContact } from "@/lib/exposure-mode";
 
 export default function FixedContactBarE() {
   const site = useSiteConfig();
@@ -17,16 +17,10 @@ export default function FixedContactBarE() {
         >
           홈
         </Link>
-        <Link
-          href={`/#${INQUIRY_SECTION_ID}`}
-          className="flex-1 text-center py-3.5 text-xs sm:text-sm font-bold home-e-cta-yellow transition"
-        >
-          빠른 문의
-        </Link>
         {showCompany && (
           <a
             href={`tel:${site.phoneTel}`}
-            className="flex-1 text-center py-3.5 text-xs sm:text-sm font-semibold bg-[var(--e-accent)] text-white hover:opacity-90 transition tabular-nums"
+            className="flex-[1.4] text-center py-3.5 text-xs sm:text-sm font-semibold bg-[var(--e-accent)] text-white hover:opacity-90 transition tabular-nums"
           >
             {site.phone}
           </a>

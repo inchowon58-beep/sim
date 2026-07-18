@@ -50,7 +50,7 @@ export default function FooterKeywordAccordion({
       <div className={`mt-3 pt-3 border-t ${panelClass}`}>
         <p className="text-[11px] mb-3 opacity-80 leading-relaxed">
           지역별 파양·무료분양 안내 바로가기입니다. 해당 페이지가 있으면 상세로,
-          없으면 상담 신청으로 이동합니다.
+          없으면 자주 묻는 질문으로 이동합니다.
         </p>
         <nav aria-label="관련 지역 키워드 바로가기">
           <ul className="flex flex-wrap items-center gap-x-1 gap-y-2 max-h-56 overflow-y-auto pr-1 text-[11px] leading-relaxed">
@@ -67,7 +67,7 @@ export default function FooterKeywordAccordion({
                   title={
                     item.hasPage
                       ? `${item.label} 상세 안내`
-                      : `${item.label} 상담 신청`
+                      : `${item.label} 자주 묻는 질문`
                   }
                 >
                   {item.label}

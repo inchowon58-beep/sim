@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSiteConfig } from "@/components/SiteConfigProvider";
-import InquiryLinkButton from "@/components/InquiryLinkButton";
 import { showCompanyContact } from "@/lib/exposure-mode";
 
 const NAV = [
@@ -15,6 +14,9 @@ const NAV = [
   { href: "/#cases", label: "매칭사례" },
   { href: "/#environment", label: "환경안내" },
 ] as const;
+
+const phoneBtnClass =
+  "inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold bg-slate-900 text-white hover:bg-slate-800 transition tabular-nums whitespace-nowrap";
 
 export default function HeaderE() {
   const site = useSiteConfig();
@@ -48,17 +50,10 @@ export default function HeaderE() {
 
           <div className="hidden lg:flex items-center gap-3 shrink-0">
             {showCompany && (
-              <a
-                href={`tel:${site.phoneTel}`}
-                className="text-sm font-semibold text-slate-800 hover:text-[var(--e-accent)] transition tabular-nums"
-              >
+              <a href={`tel:${site.phoneTel}`} className={phoneBtnClass}>
                 {site.phone}
               </a>
             )}
-            <InquiryLinkButton
-              context="header"
-              className="!rounded-xl !px-4 !py-2 !text-sm !font-semibold"
-            />
           </div>
 
           <button
@@ -97,16 +92,12 @@ export default function HeaderE() {
           {showCompany && (
             <a
               href={`tel:${site.phoneTel}`}
-              className="block rounded-xl px-3 py-3 text-sm font-semibold text-[var(--e-accent)]"
+              className={`${phoneBtnClass} w-full mt-2`}
               onClick={() => setOpen(false)}
             >
               {site.phone}
             </a>
           )}
-          <InquiryLinkButton
-            context="header"
-            className="w-full justify-center !rounded-xl mt-2"
-          />
         </div>
       )}
     </header>

@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { getSiteConfig } from "@/lib/site-config";
 import {
   COM2PET_REVIEWS,
@@ -34,7 +33,6 @@ async function getReviewItems(): Promise<Com2petReviewItem[]> {
       const html = await res.text();
       const live = parseCom2petReviews(html, 8);
       if (live.length >= 4) {
-        // 8개 미만이면 정적 폴백으로 채움
         const merged = [...live];
         for (const fb of COM2PET_REVIEWS) {
           if (merged.length >= 8) break;
@@ -94,15 +92,6 @@ export default async function CasesE() {
               </div>
             </article>
           ))}
-        </div>
-
-        <div className="mt-8 text-center">
-          <Link
-            href="/#contact"
-            className="inline-flex text-sm font-semibold text-[var(--e-accent)] hover:underline"
-          >
-            입양 상담하기 →
-          </Link>
         </div>
       </div>
     </section>

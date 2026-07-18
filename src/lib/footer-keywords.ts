@@ -1,7 +1,6 @@
 import { guidePageUrl } from "@/lib/constants";
 import { resolvePagesContext } from "@/lib/pages-resolver";
 import { normalizeSeoKeyword } from "@/lib/seo-keyword";
-import { INQUIRY_SECTION_ID } from "@/lib/exposure-mode";
 
 /** 푸터 하단 키워드 텍스트 → 목록 (줄바꿈·쉼표·세미콜론) */
 export function parseFooterKeywords(raw: string | undefined | null): string[] {
@@ -34,7 +33,7 @@ function normalizeKey(value: string): string {
 }
 
 /**
- * 하단 키워드 → 실제 SEO 페이지 링크 (있으면), 없으면 상담 문의 앵커.
+ * 하단 키워드 → 실제 SEO 페이지 링크 (있으면), 없으면 자주 묻는 질문(#faq).
  */
 export async function resolveFooterKeywordLinks(
   raw: string | undefined | null
@@ -76,7 +75,7 @@ export async function resolveFooterKeywordLinks(
 
     return {
       label,
-      href: `/#${INQUIRY_SECTION_ID}`,
+      href: "/#faq",
       hasPage: false,
     };
   });

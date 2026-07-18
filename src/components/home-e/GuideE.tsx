@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { CSSProperties } from "react";
 
 const STEPS = [
@@ -75,15 +74,6 @@ export default function GuideE() {
             </li>
           ))}
         </ol>
-
-        <div className="mt-8 text-center">
-          <Link
-            href="/#contact"
-            className="inline-flex text-sm font-semibold text-[var(--e-accent)] hover:underline"
-          >
-            상담 문의하기 →
-          </Link>
-        </div>
       </div>
     </section>
   );

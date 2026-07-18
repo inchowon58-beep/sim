@@ -339,6 +339,58 @@ body.home-e-root .home-e-hero {
   background-color: #1e293b;
 }
 
+body.home-e-root .home-e-hero-eyebrow {
+  margin: 0 0 1.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+body.home-e-root .home-e-hero-slogan {
+  margin: 0 0 1.5rem;
+  font-weight: 700;
+  font-size: clamp(2.35rem, 7vw, 4.25rem);
+  line-height: 1.18;
+  letter-spacing: -0.04em;
+  color: #ffffff;
+  text-shadow: 0 8px 28px rgba(15, 23, 42, 0.35);
+}
+
+body.home-e-root .home-e-hero-slogan span {
+  color: var(--e-accent);
+}
+
+body.home-e-root .home-e-hero-lead {
+  margin: 0 0 1.75rem;
+  max-width: 28rem;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+@media (min-width: 640px) {
+  body.home-e-root .home-e-hero-lead {
+    font-size: 1.05rem;
+  }
+}
+
+body.home-e-root .home-e-hero-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+body.home-e-root .home-e-hero-link:hover {
+  color: var(--e-accent);
+}
+
 /* 사진·영상 원본 그대로 (필터 없음) */
 body.home-e-root .home-e-photo,
 body.home-e-root .home-e-hero-video {
