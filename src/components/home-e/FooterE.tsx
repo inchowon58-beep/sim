@@ -1,19 +1,16 @@
 "use client";
 
-import Link from "next/link";
 import FooterAdminLinks from "@/components/FooterAdminLinks";
 import FooterKeywordAccordion from "@/components/FooterKeywordAccordion";
-import { useSiteConfig, useTenantUi } from "@/components/SiteConfigProvider";
+import { useSiteConfig } from "@/components/SiteConfigProvider";
 import { showCompanyContact } from "@/lib/exposure-mode";
 
 export default function FooterE() {
   const site = useSiteConfig();
-  const tenantUi = useTenantUi();
   const showCompany = showCompanyContact(site.exposureMode);
-  const regionLinks = tenantUi?.regionLinks || [];
 
   return (
-    <footer className="home-e-footer bg-slate-950 text-slate-400 pb-28">
+    <footer id="contact" className="home-e-footer bg-slate-950 text-slate-400 pb-28">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-14">
         <div className="grid md:grid-cols-3 gap-10 mb-12">
           <div>
@@ -43,22 +40,12 @@ export default function FooterE() {
             </ul>
           </div>
 
-          {regionLinks.length > 0 && (
-            <div>
-              <h4 className="text-xs tracking-wider uppercase text-slate-500 mb-4">
-                지역별 파양·분양
-              </h4>
-              <ul className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
-                {regionLinks.slice(0, 12).map((label) => (
-                  <li key={label}>
-                    <Link href="/#contact" className="hover:text-[var(--e-accent)] transition">
-                      {label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          <div>
+            <h4 className="text-xs tracking-wider uppercase text-slate-500 mb-4">Service</h4>
+            <p className="text-sm leading-relaxed text-slate-400">
+              강아지 파양 · 무료분양 · 입소 케어 · 입양 매칭
+            </p>
+          </div>
         </div>
 
         <div className="pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">

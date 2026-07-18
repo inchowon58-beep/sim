@@ -29,21 +29,20 @@ export default async function HeroE() {
       </div>
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-24 lg:pt-36 lg:pb-32 min-h-[78vh] flex items-center">
-        <div className="max-w-xl">
+        <div className="home-e-hero-copy">
           <p className="home-e-hero-eyebrow">
             파양·무료분양 상담 · {site.brandName}
           </p>
           <h1 className="home-e-hero-slogan">
-            이별 뒤에도
+            <span className="home-e-hero-slogan-line">이별 뒤에도 좋은 인연은</span>
             <br />
-            좋은 인연은
-            <br />
-            <span>이어집니다.</span>
+            <span className="home-e-hero-slogan-accent">이어집니다.</span>
           </h1>
           <p className="home-e-hero-lead">
-            {site.brandName}은 오늘도 파양 입소와 새 가족 매칭의 자리를 지킵니다.
-            <br className="hidden sm:block" />
-            힘든 결정, 혼자 두지 마세요.
+            <span className="home-e-hero-lead-main">
+              {site.brandName}는 오늘도 파양 입소와 새 가족 매칭의 자리를 지킵니다.
+            </span>
+            <span className="home-e-hero-lead-sub">힘든 결정, 혼자 두지 마세요.</span>
           </p>
           <a href="/#protected" className="home-e-hero-link">
             ↘ 보호중인 아이들

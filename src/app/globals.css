@@ -339,6 +339,16 @@ body.home-e-root .home-e-hero {
   background-color: #1e293b;
 }
 
+body.home-e-root .home-e-hero-copy {
+  max-width: 36rem;
+}
+
+@media (min-width: 1024px) {
+  body.home-e-root .home-e-hero-copy {
+    max-width: 52rem;
+  }
+}
+
 body.home-e-root .home-e-hero-eyebrow {
   margin: 0 0 1.25rem;
   font-size: 0.75rem;
@@ -350,29 +360,52 @@ body.home-e-root .home-e-hero-eyebrow {
 body.home-e-root .home-e-hero-slogan {
   margin: 0 0 1.5rem;
   font-weight: 700;
-  font-size: clamp(2.35rem, 7vw, 4.25rem);
-  line-height: 1.18;
+  font-size: clamp(1.55rem, 5vw, 3.35rem);
+  line-height: 1.22;
   letter-spacing: -0.04em;
   color: #ffffff;
   text-shadow: 0 8px 28px rgba(15, 23, 42, 0.35);
 }
 
-body.home-e-root .home-e-hero-slogan span {
+body.home-e-root .home-e-hero-slogan-line {
+  white-space: nowrap;
+}
+
+body.home-e-root .home-e-hero-slogan-accent {
+  display: inline-block;
+  margin-top: 0.12em;
   color: var(--e-accent);
+  font-size: clamp(2.85rem, 9vw, 5.75rem);
+  line-height: 1.05;
+  letter-spacing: -0.05em;
 }
 
 body.home-e-root .home-e-hero-lead {
   margin: 0 0 1.75rem;
-  max-width: 28rem;
   font-size: 0.95rem;
   line-height: 1.75;
   font-weight: 400;
   color: rgba(255, 255, 255, 0.82);
 }
 
+body.home-e-root .home-e-hero-lead-main {
+  display: block;
+}
+
+body.home-e-root .home-e-hero-lead-sub {
+  display: block;
+  margin-top: 0.35rem;
+}
+
 @media (min-width: 640px) {
   body.home-e-root .home-e-hero-lead {
     font-size: 1.05rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  body.home-e-root .home-e-hero-lead-main {
+    white-space: nowrap;
   }
 }
 
