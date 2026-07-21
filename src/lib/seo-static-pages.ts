@@ -2,61 +2,95 @@ import fs from "fs/promises";
 import path from "path";
 import type { SeoPage } from "@/lib/data";
 
-const ROOT = path.join(process.cwd(), "data", "seo-static");
+/** Vercel CDN에 배포되는 경로 (public/seo-data) */
+const PUBLIC_ROOT = path.join(process.cwd(), "public", "seo-data");
 
-function hostDir(hostname: string): string {
-  const host = hostname.trim().toLowerCase().replace(/^www\./, "");
-  return path.join(ROOT, host);
+function normalizeHost(hostname: string): string {
+  return hostname.trim().toLowerCase().replace(/^www\./, "");
+}
+
+async function readJsonFile<T>(filePath: string): Promise<T | undefined> {
+  try {
+    const raw = await fs.readFile(filePath, "utf-8");
+    return JSON.parse(raw) as T;
+  } catch {
+    return undefined;
+  }
+}
+
+async function fetchJson<T>(url: string): Promise<T | undefined> {
+  try {
+    const res = await fetch(url, { next: { revalidate: 300 } });
+    if (!res.ok) return undefined;
+    return (await res.json()) as T;
+  } catch {
+    return undefined;
+  }
+}
+
+async function pageJsonUrl(host: string, slug: string): Promise<string> {
+  const { getSiteUrlAsync } = await import("@/lib/site-url");
+  const base = await getSiteUrlAsync();
+  return `${base}/seo-data/${host}/pages/${encodeURIComponent(slug)}.json`;
 }
 
 export async function readStaticSeoPage(
   hostname: string,
   key: string
 ): Promise<SeoPage | undefined> {
-  const dir = hostDir(hostname);
-  const direct = path.join(dir, "pages", `${key}.json`);
-  try {
-    const raw = await fs.readFile(direct, "utf-8");
-    return JSON.parse(raw) as SeoPage;
-  } catch {
-    /* continue */
-  }
+  const host = normalizeHost(hostname);
+  const dir = path.join(PUBLIC_ROOT, host, "pages");
 
-  try {
-    const indexRaw = await fs.readFile(path.join(dir, "index.json"), "utf-8");
-    const index = JSON.parse(indexRaw) as { slugs?: string[] };
-    for (const slug of index.slugs || []) {
-      if (slug === key) continue;
-      try {
-        const raw = await fs.readFile(path.join(dir, "pages", `${slug}.json`), "utf-8");
-        const page = JSON.parse(raw) as SeoPage;
-        if (page.id === key || page.slug === key) return page;
-      } catch {
-        /* skip */
-      }
+  const direct = await readJsonFile<SeoPage>(path.join(dir, `${key}.json`));
+  if (direct) return direct;
+
+  const fromUrl = await fetchJson<SeoPage>(await pageJsonUrl(host, key));
+  if (fromUrl) return fromUrl;
+
+  const index = await readJsonFile<{ slugs?: string[] }>(
+    path.join(PUBLIC_ROOT, host, "index.json")
+  );
+  const slugs = index?.slugs || [];
+  for (const slug of slugs) {
+    if (slug === key) continue;
+    let page = await readJsonFile<SeoPage>(path.join(dir, `${slug}.json`));
+    if (!page) {
+      page = await fetchJson<SeoPage>(await pageJsonUrl(host, slug));
     }
-  } catch {
-    /* no index */
+    if (page && (page.id === key || page.slug === key)) return page;
   }
   return undefined;
 }
 
 export async function listStaticSeoPages(hostname: string): Promise<SeoPage[]> {
-  const dir = path.join(hostDir(hostname), "pages");
+  const host = normalizeHost(hostname);
+  const dir = path.join(PUBLIC_ROOT, host, "pages");
+  const pages: SeoPage[] = [];
+
   try {
     const files = await fs.readdir(dir);
-    const pages: SeoPage[] = [];
     for (const file of files) {
       if (!file.endsWith(".json")) continue;
-      try {
-        const raw = await fs.readFile(path.join(dir, file), "utf-8");
-        pages.push(JSON.parse(raw) as SeoPage);
-      } catch {
-        /* skip */
-      }
+      const page = await readJsonFile<SeoPage>(path.join(dir, file));
+      if (page) pages.push(page);
     }
-    return pages.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
   } catch {
-    return [];
+    /* local dir 없음 — index + fetch */
   }
+
+  if (pages.length === 0) {
+    const { getSiteUrlAsync } = await import("@/lib/site-url");
+    const base = await getSiteUrlAsync();
+    const index = await fetchJson<{ slugs?: string[] }>(
+      `${base}/seo-data/${host}/index.json`
+    );
+    for (const slug of index?.slugs || []) {
+      const page = await fetchJson<SeoPage>(
+        `${base}/seo-data/${host}/pages/${encodeURIComponent(slug)}.json`
+      );
+      if (page) pages.push(page);
+    }
+  }
+
+  return pages.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 }

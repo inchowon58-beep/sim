@@ -106,7 +106,7 @@ def load_config() -> Config:
         repo_root=repo,
         sites_path=sites_path,
         sites=sites,
-        seo_static_root=repo / "data" / "seo-static",
+        seo_static_root=repo / "public" / "seo-data",
         sitemap_root=repo / "public" / "seo-hosts",
         indexnow_key=_req("INDEXNOW_KEY", ""),
         indexnow_endpoint=_req(

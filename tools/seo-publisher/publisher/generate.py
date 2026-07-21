@@ -106,7 +106,7 @@ def generate_pages_for_site(
     keywords: list[str],
     repo_root: Path,
 ) -> tuple[list[str], dict]:
-    """도메인별 JSON 페이지 생성 → data/seo-static/{hostname}/pages/{slug}.json
+    """도메인별 JSON 페이지 생성 → public/seo-data/{hostname}/pages/{slug}.json
     반환: (urls, image_info)
     """
     if not keywords:
@@ -114,7 +114,7 @@ def generate_pages_for_site(
 
     host = site.hostname
     brand = _display_name(site)
-    pages_dir = repo_root / "data" / "seo-static" / host / "pages"
+    pages_dir = repo_root / "public" / "seo-data" / host / "pages"
     pages_dir.mkdir(parents=True, exist_ok=True)
 
     now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -138,7 +138,7 @@ def generate_pages_for_site(
                 "imageCount": cdn_pool.count,
             }
 
-    index_path = repo_root / "data" / "seo-static" / host / "index.json"
+    index_path = repo_root / "public" / "seo-data" / host / "index.json"
     existing_slugs: list[str] = []
     if index_path.exists():
         try:
@@ -212,7 +212,7 @@ def generate_pages_for_site(
         "imageCount": image_info.get("imageCount"),
         "updatedAt": now,
     }
-    (repo_root / "data" / "seo-static" / host / "site.json").write_text(
+    (repo_root / "public" / "seo-data" / host / "site.json").write_text(
         json.dumps(meta, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
@@ -224,6 +224,6 @@ def generate_pages_for_site(
         encoding="utf-8",
     )
 
-    last_urls = repo_root / "data" / "seo-static" / host / "_last_urls.txt"
+    last_urls = repo_root / "public" / "seo-data" / host / "_last_urls.txt"
     last_urls.write_text("\n".join(urls) + ("\n" if urls else ""), encoding="utf-8")
     return urls, image_info
