@@ -11,13 +11,22 @@ from publisher.sites import SiteProfile
 
 
 def slugify(keyword: str) -> str:
-    raw = keyword.strip().lower()
-    raw = re.sub(r"\s+", "-", raw)
-    raw = re.sub(r"[^0-9a-zA-Z가-힣\-]+", "", raw)
-    raw = re.sub(r"-+", "-", raw).strip("-")
-    if not raw:
-        raw = f"guide-{hashlib.md5(keyword.encode('utf-8')).hexdigest()[:12]}"
-    return raw[:80]
+    """URL용 slug: 영문(a-z) + 숫자만. 숫자는 5자리 이상. 한글 미포함."""
+    digest = hashlib.md5(keyword.strip().encode("utf-8")).hexdigest()
+    letters = "".join(c for c in digest if c.isalpha())
+    if len(letters) < 4:
+        letters = (letters + "page")[:4]
+    else:
+        letters = letters[:8]
+    # hex에서 숫자만 모으고, 부족하면 해시 정수로 5자리 이상 보장
+    digits = "".join(c for c in digest if c.isdigit())
+    if len(digits) < 5:
+        digits = f"{int(digest[:12], 16) % 100_000_000:08d}"
+    else:
+        digits = digits[:8]
+        if len(digits) < 5:
+            digits = f"{digits}{int(digest[12:20], 16) % 100_000:05d}"[:8]
+    return f"{letters}{digits}"[:80]
 
 
 def parse_keywords(text: str, count: int | None = None) -> list[str]:
@@ -159,7 +168,8 @@ def generate_pages_for_site(
                         break
                 except json.JSONDecodeError:
                     pass
-            slug = f"{base}-{n}"
+            # 충돌 시에도 영문+숫자만 유지 (하이픈/한글 없음)
+            slug = f"{base}{n:03d}"
             n += 1
 
         image_url: str | None = None

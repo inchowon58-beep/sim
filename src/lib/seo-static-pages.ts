@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import { headers } from "next/headers";
 import path from "path";
-import type { SeoPage } from "@/lib/data";
+import { normalizePageKey, type SeoPage } from "@/lib/data";
 
 /** Vercel CDN에 배포되는 경로 (public/seo-data) */
 const PUBLIC_ROOT = path.join(process.cwd(), "public", "seo-data");
@@ -38,7 +38,7 @@ async function readJsonFile<T>(filePath: string): Promise<T | undefined> {
 
 async function fetchJson<T>(url: string): Promise<T | undefined> {
   try {
-    const res = await fetch(url, { next: { revalidate: 300 } });
+    const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) return undefined;
     return (await res.json()) as T;
   } catch {
@@ -55,26 +55,27 @@ export async function readStaticSeoPage(
   key: string
 ): Promise<SeoPage | undefined> {
   const host = normalizeHost(hostname);
+  const slug = normalizePageKey(key);
   const dir = path.join(PUBLIC_ROOT, host, "pages");
 
-  const direct = await readJsonFile<SeoPage>(path.join(dir, `${key}.json`));
+  const direct = await readJsonFile<SeoPage>(path.join(dir, `${slug}.json`));
   if (direct) return direct;
 
   const base = await requestBaseUrl();
-  const fromUrl = await fetchJson<SeoPage>(`${base}${publicPagePath(host, key)}`);
+  const fromUrl = await fetchJson<SeoPage>(`${base}${publicPagePath(host, slug)}`);
   if (fromUrl) return fromUrl;
 
   const index =
     (await readJsonFile<{ slugs?: string[] }>(path.join(PUBLIC_ROOT, host, "index.json"))) ||
     (await fetchJson<{ slugs?: string[] }>(`${base}/seo-data/${host}/index.json`));
 
-  for (const slug of index?.slugs || []) {
-    if (slug === key) continue;
-    let page = await readJsonFile<SeoPage>(path.join(dir, `${slug}.json`));
+  for (const indexedSlug of index?.slugs || []) {
+    if (indexedSlug === slug) continue;
+    let page = await readJsonFile<SeoPage>(path.join(dir, `${indexedSlug}.json`));
     if (!page) {
-      page = await fetchJson<SeoPage>(`${base}${publicPagePath(host, slug)}`);
+      page = await fetchJson<SeoPage>(`${base}${publicPagePath(host, indexedSlug)}`);
     }
-    if (page && (page.id === key || page.slug === key)) return page;
+    if (page && (page.id === slug || page.slug === slug)) return page;
   }
   return undefined;
 }

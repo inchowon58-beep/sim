@@ -70,12 +70,16 @@ export interface Settings {
 
 const DATA_DIR = path.join(process.cwd(), "data");
 
-function normalizeKey(value: string): string {
+export function normalizePageKey(value: string): string {
   try {
     return decodeURIComponent(value).normalize("NFC").trim();
   } catch {
     return value.normalize("NFC").trim();
   }
+}
+
+function normalizeKey(value: string): string {
+  return normalizePageKey(value);
 }
 
 function parseJson<T>(raw: string, fallback: T): T {

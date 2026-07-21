@@ -17,28 +17,36 @@ sys.path.insert(0, str(ROOT))
 
 
 def _load_env() -> None:
-    candidates = [ROOT / ".env"]
+    # exe 옆 .env → 도구 .env → 저장소 .env.local (Supabase/워커 시크릿 공용)
+    candidates: list[Path] = []
     if getattr(sys, "frozen", False):
-        candidates.insert(0, Path(sys.executable).resolve().parent / ".env")
+        candidates.append(Path(sys.executable).resolve().parent / ".env")
+    candidates.append(ROOT / ".env")
+    # tools/seo-publisher → repo root
+    candidates.append(ROOT.parent.parent / ".env.local")
+    candidates.append(ROOT.parent.parent / ".env")
+    loaded = False
     for p in candidates:
         if p.exists():
-            load_dotenv(p)
-            return
-    load_dotenv(ROOT / ".env")
+            load_dotenv(p, override=False)
+            loaded = True
+    if not loaded:
+        load_dotenv(ROOT / ".env")
 
 
 _load_env()
 
 from publisher.config import load_config  # noqa: E402
 from publisher.pipeline import run_pipeline  # noqa: E402
+from publisher.sync_tenants import describe_sync_target, sync_sites_json  # noqa: E402
 
 
 class PublisherApp(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
         self.title("SEO 대량 발행 (도메인별 · Vercel)")
-        self.geometry("820x780")
-        self.minsize(700, 640)
+        self.geometry("820x820")
+        self.minsize(700, 680)
 
         frm = ttk.Frame(self, padding=12)
         frm.pack(fill=tk.BOTH, expand=True)
@@ -48,13 +56,16 @@ class PublisherApp(tk.Tk):
         ttk.Label(site_row, text="발행 도메인").pack(side=tk.LEFT)
         self.site_var = tk.StringVar()
         self.site_combo = ttk.Combobox(
-            site_row, textvariable=self.site_var, state="readonly", width=48
+            site_row, textvariable=self.site_var, state="readonly", width=40
         )
         self.site_combo.pack(side=tk.LEFT, padx=(8, 0), fill=tk.X, expand=True)
         self.site_combo.bind("<<ComboboxSelected>>", lambda _e: self.fill_site_fields())
         ttk.Button(site_row, text="새로고침", command=self.reload_sites).pack(
             side=tk.LEFT, padx=(8, 0)
         )
+        ttk.Button(
+            site_row, text="관리자 사이트 불러오기", command=self.sync_from_admin
+        ).pack(side=tk.LEFT, padx=(8, 0))
 
         meta = ttk.LabelFrame(frm, text="업체 · 이미지 (이번 발행에 적용)", padding=8)
         meta.pack(fill=tk.X, pady=(0, 8))
@@ -192,7 +203,40 @@ class PublisherApp(tk.Tk):
         self.company_var.set(site.company_name or site.brand_name)
         self.brand_var.set(site.brand_name)
         self.phone_var.set(site.phone)
-        self.image_var.set(site.image_url or "")
+        self.image_var.set(site.image_url or site.image_cdn or "")
+
+    def sync_from_admin(self) -> None:
+        """관리자(site_configs) 도메인·디자인·연락처를 sites.json 으로 저장."""
+
+        def work() -> None:
+            try:
+                cfg = load_config()
+                target = describe_sync_target()
+                self.after(0, lambda: self.append_log(f"관리자 동기화 중… ({target})"))
+                sites = sync_sites_json(cfg.sites_path)
+                count = len(sites)
+                path = str(cfg.sites_path)
+
+                def done() -> None:
+                    self.append_log(f"동기화 완료: {count}개 → {path}")
+                    self.reload_sites()
+                    messagebox.showinfo(
+                        "완료",
+                        f"관리자 사이트 {count}개를 sites.json 에 저장했습니다.\n"
+                        "발행 도메인 목록에서 골라 쓰세요.",
+                    )
+
+                self.after(0, done)
+            except Exception as e:
+                err = str(e)
+
+                def fail() -> None:
+                    self.append_log(f"동기화 실패: {err}")
+                    messagebox.showerror("동기화 실패", err)
+
+                self.after(0, fail)
+
+        threading.Thread(target=work, daemon=True).start()
 
     def selected_hostname(self) -> str | None:
         idx = self.site_combo.current()

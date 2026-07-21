@@ -3,11 +3,26 @@
 Vercel/VM에서 문서를 만들던 방식을 대체합니다.  
 **도메인마다 다른 브랜드·디자인(a~e)** 이 기존 Next `/guide/[slug]` + 테넌트 설정으로 적용됩니다.
 
-1. `sites.json`에 도메인 등록  
-2. PC에서 도메인 선택 → 키워드 등록 → `data/seo-static/{hostname}/pages/*.json`  
+1. **관리자 사이트 불러오기** 버튼으로 관리자(site_configs) 도메인·업체·전화·디자인을 `sites.json`에 저장  
+   (또는 `sites.json`을 직접 작성)  
+2. PC에서 도메인 선택 → 키워드 등록 → `public/seo-data/{hostname}/pages/*.json`  
 3. git commit/push → **Vercel 배포**  
 4. 접속: `https://{hostname}/guide/{slug}` (해당 도메인 헤더/푸터/테마)  
 5. sitemap + **IndexNow**
+
+## 관리자 사이트 불러오기
+
+관리자 페이지에 등록된 사이트를 그대로 가져옵니다.
+
+| 환경변수 | 설명 |
+|----------|------|
+| `SITE_URL` | 동기화 API 주소 (예: `https://sim-seven-woad.vercel.app`) |
+| `COLLECTION_WORKER_SECRET` | Vercel과 동일한 시크릿 (또는 `SEO_PUBLISHER_SECRET`) |
+
+GUI: **관리자 사이트 불러오기**  
+CLI: `python publish.py sync-sites`
+
+가져오는 값: 도메인(`subdomain`), 업체명(`site_name`), 전화·이미지CDN·디자인·태그라인(`content_data`)
 
 ## sites.json
 
@@ -37,6 +52,7 @@ build_exe.bat
 
 ```bash
 cd tools/seo-publisher
+python publish.py sync-sites
 python publish.py sites
 python publish.py run --hostname example.com --keywords keywords.txt --count 100
 python app_gui.py

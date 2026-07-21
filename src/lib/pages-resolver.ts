@@ -1,4 +1,4 @@
-import { getPages, getPageByKey, type SeoPage } from "@/lib/data";
+import { getPages, getPageByKey, normalizePageKey, type SeoPage } from "@/lib/data";
 import { getTenantPages, getTenantPageByKey } from "@/lib/supabase/tenant-pages";
 import {
   listStaticSeoPages,
@@ -65,23 +65,24 @@ export async function resolvePageByKey(key: string): Promise<{
   page: SeoPage | undefined;
   tenant: TenantSiteConfigRow | null;
 }> {
+  const slug = normalizePageKey(key);
   const { tenant, isTenant, config, hostname } = await getResolvedSiteConfig();
   const host = resolveHost(hostname, tenant, config.url);
 
   if (isTenant && tenant) {
-    const page = await getTenantPageByKey(tenant.id, key);
+    const page = await getTenantPageByKey(tenant.id, slug);
     if (page) return { page, tenant };
     if (host) {
-      const staticPage = await readStaticSeoPage(host, key);
+      const staticPage = await readStaticSeoPage(host, slug);
       if (staticPage) return { page: staticPage, tenant };
     }
     return { page: undefined, tenant };
   }
 
-  const page = await getPageByKey(key);
+  const page = await getPageByKey(slug);
   if (page) return { page, tenant: null };
   if (host) {
-    const staticPage = await readStaticSeoPage(host, key);
+    const staticPage = await readStaticSeoPage(host, slug);
     if (staticPage) return { page: staticPage, tenant: null };
   }
   return { page: undefined, tenant: null };

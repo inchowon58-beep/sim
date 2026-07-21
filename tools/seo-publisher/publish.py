@@ -18,6 +18,7 @@ sys.path.insert(0, str(ROOT))
 
 from publisher.config import load_config  # noqa: E402
 from publisher.pipeline import run_pipeline  # noqa: E402
+from publisher.sync_tenants import sync_sites_json  # noqa: E402
 
 
 def _add_common(p: argparse.ArgumentParser) -> None:
@@ -46,9 +47,19 @@ def main() -> int:
     _add_common(gen)
 
     sub.add_parser("sites", help="sites.json 목록")
+    sync = sub.add_parser("sync-sites", help="관리자(site_configs) → sites.json 동기화")
+    sync.add_argument(
+        "--api-base",
+        default=None,
+        help="예: https://sim-seven-woad.vercel.app (기본: SITE_URL)",
+    )
 
     args = parser.parse_args()
     load_dotenv(Path(args.env) if Path(args.env).exists() else ROOT / ".env")
+    # 저장소 .env.local 도 보조 로드 (COLLECTION_WORKER_SECRET 등)
+    repo_env = ROOT.parent.parent / ".env.local"
+    if repo_env.exists():
+        load_dotenv(repo_env, override=False)
     cfg = load_config()
 
     if args.command == "sites":
@@ -57,6 +68,13 @@ def main() -> int:
                 f"{s.hostname}\t{s.company_name or s.brand_name}\t"
                 f"design={s.site_design}\timg={s.image_url or s.image_cdn or '-'}\t{s.site_url}"
             )
+        return 0
+
+    if args.command == "sync-sites":
+        sites = sync_sites_json(cfg.sites_path, api_base=args.api_base)
+        print(f"[ok] synced {len(sites)} sites → {cfg.sites_path}")
+        for s in sites:
+            print(f"  {s.hostname}\t{s.company_name or s.brand_name}\tdesign={s.site_design}")
         return 0
 
     overrides = dict(
