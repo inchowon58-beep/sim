@@ -1,4 +1,5 @@
 import fs from "fs/promises";
+import { headers } from "next/headers";
 import path from "path";
 import type { SeoPage } from "@/lib/data";
 
@@ -7,6 +8,23 @@ const PUBLIC_ROOT = path.join(process.cwd(), "public", "seo-data");
 
 function normalizeHost(hostname: string): string {
   return hostname.trim().toLowerCase().replace(/^www\./, "");
+}
+
+async function requestBaseUrl(): Promise<string> {
+  try {
+    const h = await headers();
+    const raw =
+      h.get("x-forwarded-host")?.split(",")[0]?.trim() ||
+      h.get("host")?.trim();
+    if (raw) {
+      const proto = h.get("x-forwarded-proto")?.split(",")[0]?.trim() || "https";
+      return `${proto}://${raw.replace(/^www\./, "")}`.replace(/\/$/, "");
+    }
+  } catch {
+    /* outside request */
+  }
+  const { getSiteUrlAsync } = await import("@/lib/site-url");
+  return getSiteUrlAsync();
 }
 
 async function readJsonFile<T>(filePath: string): Promise<T | undefined> {
@@ -28,10 +46,8 @@ async function fetchJson<T>(url: string): Promise<T | undefined> {
   }
 }
 
-async function pageJsonUrl(host: string, slug: string): Promise<string> {
-  const { getSiteUrlAsync } = await import("@/lib/site-url");
-  const base = await getSiteUrlAsync();
-  return `${base}/seo-data/${host}/pages/${encodeURIComponent(slug)}.json`;
+function publicPagePath(host: string, slug: string): string {
+  return `/seo-data/${host}/pages/${encodeURIComponent(slug)}.json`;
 }
 
 export async function readStaticSeoPage(
@@ -44,18 +60,19 @@ export async function readStaticSeoPage(
   const direct = await readJsonFile<SeoPage>(path.join(dir, `${key}.json`));
   if (direct) return direct;
 
-  const fromUrl = await fetchJson<SeoPage>(await pageJsonUrl(host, key));
+  const base = await requestBaseUrl();
+  const fromUrl = await fetchJson<SeoPage>(`${base}${publicPagePath(host, key)}`);
   if (fromUrl) return fromUrl;
 
-  const index = await readJsonFile<{ slugs?: string[] }>(
-    path.join(PUBLIC_ROOT, host, "index.json")
-  );
-  const slugs = index?.slugs || [];
-  for (const slug of slugs) {
+  const index =
+    (await readJsonFile<{ slugs?: string[] }>(path.join(PUBLIC_ROOT, host, "index.json"))) ||
+    (await fetchJson<{ slugs?: string[] }>(`${base}/seo-data/${host}/index.json`));
+
+  for (const slug of index?.slugs || []) {
     if (slug === key) continue;
     let page = await readJsonFile<SeoPage>(path.join(dir, `${slug}.json`));
     if (!page) {
-      page = await fetchJson<SeoPage>(await pageJsonUrl(host, slug));
+      page = await fetchJson<SeoPage>(`${base}${publicPagePath(host, slug)}`);
     }
     if (page && (page.id === key || page.slug === key)) return page;
   }
@@ -75,19 +92,16 @@ export async function listStaticSeoPages(hostname: string): Promise<SeoPage[]> {
       if (page) pages.push(page);
     }
   } catch {
-    /* local dir 없음 — index + fetch */
+    /* local dir 없음 */
   }
 
   if (pages.length === 0) {
-    const { getSiteUrlAsync } = await import("@/lib/site-url");
-    const base = await getSiteUrlAsync();
+    const base = await requestBaseUrl();
     const index = await fetchJson<{ slugs?: string[] }>(
       `${base}/seo-data/${host}/index.json`
     );
     for (const slug of index?.slugs || []) {
-      const page = await fetchJson<SeoPage>(
-        `${base}/seo-data/${host}/pages/${encodeURIComponent(slug)}.json`
-      );
+      const page = await fetchJson<SeoPage>(`${base}${publicPagePath(host, slug)}`);
       if (page) pages.push(page);
     }
   }
