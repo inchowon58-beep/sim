@@ -31,6 +31,19 @@ yarn-error.log*
 # env files
 .env*
 !.env.example
+!tools/cafe24-publisher/.env.example
+
+# cafe24 publisher local artifacts
+tools/cafe24-publisher/.venv/
+tools/cafe24-publisher/output/
+tools/cafe24-publisher/.env
+
+# seo publisher
+tools/seo-publisher/.venv/
+tools/seo-publisher/.env
+tools/seo-publisher/build/
+tools/seo-publisher/dist/
+tools/seo-publisher/*.spec
 
 # typescript
 *.tsbuildinfo

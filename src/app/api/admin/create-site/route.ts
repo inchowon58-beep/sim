@@ -13,7 +13,6 @@ import { pickTenantContentPackage } from "@/lib/tenant-content";
 import { getSettings } from "@/lib/data";
 import { resolveDailySeoLimit } from "@/lib/seo-quota";
 import { fetchNaverAccountById } from "@/lib/supabase/naver-accounts";
-import { enqueueNaverSiteRegistration } from "@/lib/naver-register-worker";
 import { parseSiteDesignId, siteDesignLabel } from "@/lib/site-designs";
 import type { CreateSiteInput, TenantContentData } from "@/types/tenant";
 
@@ -318,16 +317,9 @@ export async function POST(req: NextRequest) {
       seo_quota_count: 0,
     });
 
-    let naverRegisterQueued = false;
-    if (linkedNaverAccountId) {
-      await enqueueNaverSiteRegistration({
-        siteConfigId: row.id,
-        naverAccountId: linkedNaverAccountId,
-        siteName,
-        subdomain,
-      });
-      naverRegisterQueued = true;
-    }
+    // 네이버 서치어드바이저 VM 등록 워커 연동 종료 — 대기열 enqueue 하지 않음
+    const naverRegisterQueued = false;
+    void linkedNaverAccountId;
 
     const vercel = await registerVercelDomain(subdomain);
     let vercelNote = "";

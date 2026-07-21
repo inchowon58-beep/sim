@@ -440,11 +440,11 @@ export default function AdminClient() {
           ) : (
             <button
               type="button"
-              onClick={() => handleCollectionRequest(page.id)}
-              disabled={requestingCollection === page.id}
-              className={naverBtn}
+              disabled
+              className={`${naverBtn} opacity-40 cursor-not-allowed`}
+              title="VM 수집 워커 연동 종료"
             >
-              {requestingCollection === page.id ? "등록 중..." : "순위반영요청"}
+              순위반영요청 (종료됨)
             </button>
           )}
           <Link
@@ -538,6 +538,19 @@ export default function AdminClient() {
 
         <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
           <h2 className="font-bold text-dark mb-4">SEO 페이지 생성</h2>
+          <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-950 mb-4">
+            <p className="font-semibold mb-1">Vercel·VM 자동 발행이 종료되었습니다</p>
+            <p className="text-amber-900/90 leading-relaxed">
+              개별·대량 등록, SEO 생성 워커, 네이버 수집/등록 워커 연동은 더 이상 Vercel에서
+              동작하지 않습니다.               도구 <code className="font-mono text-xs bg-white/80 px-1 rounded">tools/seo-publisher</code>
+              (또는 <code className="font-mono text-xs bg-white/80 px-1 rounded">SEO발행.exe</code>)에서
+              <strong>도메인을 선택</strong>한 뒤 키워드를 등록하면
+              <code className="font-mono text-xs bg-white/80 px-1 rounded">data/seo-static/&#123;도메인&#125;/</code>에
+              JSON이 생기고, 배포 후 <code className="font-mono text-xs bg-white/80 px-1 rounded">/guide/&#123;slug&#125;</code>가
+              해당 도메인 디자인·브랜드로 노출됩니다.
+            </p>
+          </div>
+          <div className="opacity-40 pointer-events-none select-none" aria-hidden>
 
           <div className="flex flex-wrap gap-2 mb-4">
             {(
@@ -703,9 +716,10 @@ export default function AdminClient() {
               )}
             </div>
           )}
+          </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
+        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6 opacity-40 pointer-events-none select-none" aria-hidden>
           <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
             <div>
               <h2 className="font-bold text-dark">최적화 대기열 · 타겟 키워드 확인</h2>
@@ -875,16 +889,11 @@ export default function AdminClient() {
               <button
                 type="button"
                 onClick={() => void handleBulkCollectionRequest()}
-                disabled={
-                  bulkRequestingCollection ||
-                  unsubmittedCollectionCount === 0 ||
-                  requestingCollection !== null
-                }
-                className={naverBtn}
+                disabled
+                className={`${naverBtn} opacity-40 cursor-not-allowed`}
+                title="VM 수집 워커 연동 종료 — tools/cafe24-publisher 사용"
               >
-                {bulkRequestingCollection
-                  ? "일괄 등록 중..."
-                  : `일괄 순위반영요청 (${unsubmittedCollectionCount}건)`}
+                일괄 순위반영요청 (종료됨)
               </button>
             )}
           </div>

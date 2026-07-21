@@ -6,12 +6,6 @@
     }
   ],
   "functions": {
-    "src/app/api/seo-worker/generate-next/route.ts": {
-      "maxDuration": 300
-    },
-    "src/app/api/admin/pages/route.ts": {
-      "maxDuration": 300
-    },
     "src/app/api/cron/com2pet-adoption/route.ts": {
       "maxDuration": 60
     }

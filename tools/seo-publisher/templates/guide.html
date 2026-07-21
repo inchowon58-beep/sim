@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{TITLE}}</title>
+  <meta name="description" content="{{DESCRIPTION}}" />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="{{SITE_URL}}/guide/{{SLUG}}.html" />
+  <meta property="og:title" content="{{TITLE}}" />
+  <meta property="og:description" content="{{DESCRIPTION}}" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="{{SITE_URL}}/guide/{{SLUG}}.html" />
+  <style>
+    :root { --orange:#ff6a00; --dark:#0f172a; --cream:#fffaf5; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Pretendard, "Apple SD Gothic Neo", sans-serif; background:var(--cream); color:#1a1a1a; line-height:1.7; }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+    .brand { font-size: .85rem; color:#64748b; margin-bottom: 1rem; }
+    h1 { font-size: clamp(1.5rem, 4vw, 2rem); line-height:1.3; letter-spacing:-.03em; margin:0 0 1rem; }
+    .lead { color:#475569; margin-bottom: 1.5rem; }
+    .card { background:#fff; border:1px solid #e2e8f0; border-radius:1rem; padding:1.25rem 1.35rem; margin:1rem 0; }
+    .phone { display:inline-block; margin-top:1rem; padding:.85rem 1.25rem; background:var(--dark); color:#fff; border-radius:.75rem; text-decoration:none; font-weight:700; }
+    footer { margin-top:3rem; font-size:.75rem; color:#94a3b8; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <p class="brand">{{BRAND}} · 파양·무료분양 안내</p>
+    <h1>{{KEYWORD}}</h1>
+    <p class="lead">{{DESCRIPTION}}</p>
+    <section class="card">
+      <h2 style="font-size:1.05rem;margin:0 0 .5rem;">상담 안내</h2>
+      <p style="margin:0;color:#475569;">
+        {{KEYWORD}} 관련 파양 입소·무료분양 절차를 {{BRAND}}에서 안내합니다.
+        방문은 사전 예약제로 진행됩니다.
+      </p>
+      <a class="phone" href="tel:{{PHONE}}">{{PHONE}}</a>
+    </section>
+    <section class="card">
+      <h2 style="font-size:1.05rem;margin:0 0 .5rem;">이런 경우 상담해 주세요</h2>
+      <ul style="margin:0;padding-left:1.1rem;color:#475569;">
+        <li>이민·이사·군입대 등 피치 못한 사정의 파양</li>
+        <li>새 가족을 찾는 무료분양·매칭 상담</li>
+        <li>입소 비용·케어 안내가 필요한 경우</li>
+      </ul>
+    </section>
+    <footer>
+      <p>발행일 {{DATE}} · {{BRAND}}</p>
+      <p><a href="{{SITE_URL}}/" style="color:#64748b;">홈으로</a></p>
+    </footer>
+  </main>
+</body>
+</html>
