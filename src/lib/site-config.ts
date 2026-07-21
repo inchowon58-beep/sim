@@ -46,12 +46,12 @@ export async function getSiteConfig(): Promise<SiteConfig> {
 }
 
 export function getPageImageUrl(page: SeoPage, config: SiteConfig): string {
+  // 발행기·수동 지정 절대 URL 우선 (커스텀 이미지)
+  if (page.imageUrl?.startsWith("http://") || page.imageUrl?.startsWith("https://")) {
+    return page.imageUrl;
+  }
   if (page.imageIndex) {
     return getImageUrl(page.imageIndex, config);
-  }
-  if (page.imageUrl?.startsWith("http")) {
-    const match = page.imageUrl.match(/\/(\d+)\.webp$/);
-    if (match) return getImageUrl(parseInt(match[1], 10), config);
   }
   return getImageUrl(getImageIndexFromSeed(page.slug || page.keyword, config), config);
 }

@@ -7,6 +7,7 @@ from publisher.deploy import deploy_to_vercel_git
 from publisher.generate import generate_pages_for_site, parse_keywords, read_keywords_file
 from publisher.indexnow import submit_indexnow
 from publisher.sitemap import merge_and_write_sitemap
+from publisher.sites import with_overrides
 
 
 def run_pipeline(
@@ -19,15 +20,27 @@ def run_pipeline(
     do_deploy: bool = True,
     do_indexnow: bool = True,
     push: bool | None = None,
+    brand_name: str | None = None,
+    company_name: str | None = None,
+    phone: str | None = None,
+    image_url: str | None = None,
+    image_cdn: str | None = None,
 ) -> dict:
-    site = find_site(cfg, hostname)
+    site = with_overrides(
+        find_site(cfg, hostname),
+        brand_name=brand_name,
+        company_name=company_name,
+        phone=phone,
+        image_url=image_url,
+        image_cdn=image_cdn,
+    )
 
     if keywords_file:
         keywords = read_keywords_file(keywords_file, count)
     else:
         keywords = parse_keywords(keyword_text or "", count)
 
-    urls = generate_pages_for_site(
+    urls, image_info = generate_pages_for_site(
         site=site,
         keywords=keywords,
         repo_root=cfg.repo_root,
@@ -54,7 +67,6 @@ def run_pipeline(
         output_path=sitemap_path,
     )
 
-    # 레거시 단일 sitemap도 동일 URL로 갱신 (robots 폴백)
     legacy_sitemap = cfg.repo_root / "public" / "seo-guides-sitemap.xml"
     merge_and_write_sitemap(
         site_url=site.site_url,
@@ -102,16 +114,22 @@ def run_pipeline(
     elif do_indexnow and not cfg.indexnow_key:
         indexnow_result = {"skipped": True, "reason": "INDEXNOW_KEY 없음 (.env)"}
 
+    display_brand = (site.company_name or site.brand_name).strip()
     return {
         "generated": len(urls),
         "urls": urls,
         "hostname": site.hostname,
         "site_url": site.site_url,
         "brand_name": site.brand_name,
+        "company_name": display_brand,
+        "image_url": site.image_url,
+        "image_cdn": site.image_cdn,
         "site_design": site.site_design,
         "sitemap_total": total,
         "deploy_log": deploy_log,
         "indexnow": indexnow_result,
         "pages_dir": str(host_dir / "pages"),
         "sitemap_path": str(sitemap_path),
+        "last_urls_file": str(host_dir / "_last_urls.txt"),
+        "image_info": image_info,
     }

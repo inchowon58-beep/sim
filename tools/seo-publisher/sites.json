@@ -3,8 +3,11 @@
     "hostname": "sim-seven-woad.vercel.app",
     "siteUrl": "https://sim-seven-woad.vercel.app",
     "brandName": "아가펫보호소",
+    "companyName": "사단법인 아가펫",
     "phone": "010-0000-0000",
     "siteDesign": "e",
-    "tagline": "강아지·고양이 파양 · 무료분양"
+    "tagline": "강아지·고양이 파양 · 무료분양",
+    "imageUrl": "",
+    "imageCdn": ""
   }
 ]

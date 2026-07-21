@@ -3,24 +3,33 @@
     "hostname": "example-a.com",
     "siteUrl": "https://example-a.com",
     "brandName": "사이트A",
+    "companyName": "주식회사 사이트A",
     "phone": "010-1111-1111",
     "siteDesign": "a",
-    "tagline": "강아지·고양이 파양 · 무료분양"
+    "tagline": "강아지·고양이 파양 · 무료분양",
+    "imageUrl": "https://cdn.example.com/hero.jpg",
+    "imageCdn": ""
   },
   {
     "hostname": "example-b.com",
     "siteUrl": "https://example-b.com",
     "brandName": "사이트B",
+    "companyName": "사이트B 보호소",
     "phone": "010-2222-2222",
     "siteDesign": "c",
-    "tagline": "강아지·고양이 파양 · 무료분양"
+    "tagline": "강아지·고양이 파양 · 무료분양",
+    "imageUrl": "",
+    "imageCdn": "https://image.cattery.co.kr/dogboho"
   },
   {
     "hostname": "sim-seven-woad.vercel.app",
     "siteUrl": "https://sim-seven-woad.vercel.app",
     "brandName": "아가펫보호소",
+    "companyName": "사단법인 아가펫",
     "phone": "010-0000-0000",
     "siteDesign": "e",
-    "tagline": "강아지·고양이 파양 · 무료분양"
+    "tagline": "강아지·고양이 파양 · 무료분양",
+    "imageUrl": "",
+    "imageCdn": ""
   }
 ]

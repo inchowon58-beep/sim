@@ -6,6 +6,7 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
+from publisher.cdn_images import CdnImagePool, resolve_cdn_base
 from publisher.sites import SiteProfile
 
 
@@ -46,6 +47,27 @@ def _page_id(hostname: str, slug: str) -> str:
     return f"static-{digest}"
 
 
+def _display_name(site: SiteProfile) -> str:
+    return (site.company_name or site.brand_name).strip() or site.brand_name
+
+
+def _looks_like_image_file(url: str) -> bool:
+    path = url.split("?", 1)[0].rstrip("/")
+    lower = path.lower()
+    return lower.endswith(
+        (".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif", ".bmp", ".svg")
+    )
+
+
+def _resolve_single_file_url(site: SiteProfile) -> str | None:
+    single = (site.image_url or "").strip()
+    if not single.startswith("http://") and not single.startswith("https://"):
+        return None
+    if single.endswith("/") or not _looks_like_image_file(single):
+        return None
+    return single
+
+
 def _build_content(keyword: str, brand: str, phone: str) -> str:
     return f"""
 <p><strong>{keyword}</strong> 관련 파양·무료분양 안내입니다. {brand}에서 입소 절차와 매칭 상담을 도와드립니다.</p>
@@ -83,14 +105,15 @@ def generate_pages_for_site(
     site: SiteProfile,
     keywords: list[str],
     repo_root: Path,
-) -> list[str]:
+) -> tuple[list[str], dict]:
     """도메인별 JSON 페이지 생성 → data/seo-static/{hostname}/pages/{slug}.json
-    URL은 /guide/{slug} (기존 Next 라우트 + 테넌트 디자인 적용)
+    반환: (urls, image_info)
     """
     if not keywords:
         raise ValueError("등록할 키워드가 없습니다.")
 
     host = site.hostname
+    brand = _display_name(site)
     pages_dir = repo_root / "data" / "seo-static" / host / "pages"
     pages_dir.mkdir(parents=True, exist_ok=True)
 
@@ -98,7 +121,23 @@ def generate_pages_for_site(
     urls: list[str] = []
     slugs: list[str] = []
 
-    # keep existing slugs in index
+    image_info: dict = {"mode": "default", "cdnBase": None, "imageCount": None}
+
+    single_file = _resolve_single_file_url(site)
+    cdn_pool: CdnImagePool | None = None
+
+    if single_file:
+        image_info = {"mode": "single", "url": single_file, "cdnBase": None, "imageCount": 1}
+    else:
+        cdn_base = resolve_cdn_base(site.image_url, site.image_cdn)
+        if cdn_base:
+            cdn_pool = CdnImagePool(cdn_base)
+            image_info = {
+                "mode": "cdn_random",
+                "cdnBase": cdn_base,
+                "imageCount": cdn_pool.count,
+            }
+
     index_path = repo_root / "data" / "seo-static" / host / "index.json"
     existing_slugs: list[str] = []
     if index_path.exists():
@@ -112,7 +151,6 @@ def generate_pages_for_site(
         slug = base
         n = 2
         while slug in existing_slugs or slug in slugs:
-            # allow overwrite if same keyword file already intended
             existing_file = pages_dir / f"{slug}.json"
             if existing_file.exists():
                 try:
@@ -124,21 +162,35 @@ def generate_pages_for_site(
             slug = f"{base}-{n}"
             n += 1
 
-        page = {
+        image_url: str | None = None
+        image_index: int | None = None
+
+        if single_file:
+            image_url = single_file
+        elif cdn_pool:
+            image_url = cdn_pool.random_url()
+        else:
+            image_index = (i % 20) + 1
+
+        page: dict = {
             "id": _page_id(host, slug),
             "slug": slug,
             "keyword": keyword,
-            "title": f"{keyword} | {site.brand_name}",
+            "title": f"{keyword} | {brand}",
             "description": (
-                f"{keyword} 안내 — {site.brand_name}에서 파양·무료분양 상담을 도와드립니다. "
+                f"{keyword} 안내 — {brand}에서 파양·무료분양 상담을 도와드립니다. "
                 f"문의 {site.phone}"
             ),
-            "content": _build_content(keyword, site.brand_name, site.phone),
-            "faqs": _build_faqs(keyword, site.brand_name, site.phone),
-            "imageIndex": (i % 20) + 1,
+            "content": _build_content(keyword, brand, site.phone),
+            "faqs": _build_faqs(keyword, brand, site.phone),
             "createdAt": now,
             "updatedAt": now,
         }
+        if image_url:
+            page["imageUrl"] = image_url
+        if image_index is not None:
+            page["imageIndex"] = image_index
+
         (pages_dir / f"{slug}.json").write_text(
             json.dumps(page, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
@@ -146,14 +198,18 @@ def generate_pages_for_site(
         slugs.append(slug)
         urls.append(f"{site.site_url.rstrip('/')}/guide/{slug}")
 
-    # meta for publisher / debugging
     meta = {
         "hostname": host,
         "siteUrl": site.site_url,
         "brandName": site.brand_name,
+        "companyName": site.company_name or site.brand_name,
         "phone": site.phone,
         "siteDesign": site.site_design,
         "tagline": site.tagline,
+        "imageUrl": site.image_url,
+        "imageCdn": site.image_cdn,
+        "imageMode": image_info.get("mode"),
+        "imageCount": image_info.get("imageCount"),
         "updatedAt": now,
     }
     (repo_root / "data" / "seo-static" / host / "site.json").write_text(
@@ -167,4 +223,7 @@ def generate_pages_for_site(
         + "\n",
         encoding="utf-8",
     )
-    return urls
+
+    last_urls = repo_root / "data" / "seo-static" / host / "_last_urls.txt"
+    last_urls.write_text("\n".join(urls) + ("\n" if urls else ""), encoding="utf-8")
+    return urls, image_info

@@ -42,15 +42,18 @@ python publish.py run --hostname example.com --keywords keywords.txt --count 100
 python app_gui.py
 ```
 
-## 출력
+## 업체명 · 이미지 · URL 확인
 
-| 경로 | 설명 |
+GUI에서 도메인 선택 후:
+
+| 항목 | 설명 |
 |------|------|
-| `data/seo-static/{host}/pages/{slug}.json` | 도메인별 SEO 본문 |
-| `public/seo-hosts/{host}/sitemap.xml` | 도메인별 sitemap |
-| `public/seo-guides-sitemap.xml` | 통합 sitemap (폴백) |
+| **업체명** | 본문·제목에 사용 (`companyName`) |
+| **브랜드명** | 보조 브랜드명 |
+| **이미지 URL** | 히어로 이미지 절대 주소. 비우면 테넌트 CDN `01.webp`~`20.webp` |
+| **생성 URL** | 실행 후 아래 상자에 `https://도메인/guide/슬러그` 목록 표시 |
 
-접속 URL: `https://{host}/guide/{slug}` (`.html` 아님)
+`sites.json`에도 `companyName`, `imageUrl`, `imageCdn`을 넣을 수 있습니다.
 
 ## 참고
 
